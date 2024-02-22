@@ -1,4 +1,6 @@
+using System.Text;
 using EmotionDetectionSystem.DomainLayer.objects;
+using EmotionDetectionSystem.RepoLayer;
 using EmotionDetectionSystem.Service;
 using EmotionDetectionSystem.ServiceLayer;
 
@@ -6,13 +8,22 @@ namespace EmotionDetectionSystem.DomainLayer.Managers;
 
 public class LessonManager
 {
+    private IRepo<Lesson> _lessonRepo;
 
-    public Lesson CreateLesson(string sessionId, string title, string description, string[] tags)
+    public LessonManager()
     {
-        throw new NotImplementedException();
+        _lessonRepo = new LessonRepo();
     }
 
-    public void EndLesson(string sessionId)
+    public Lesson CreateLesson(Teacher teacher, string title, string description, string[] tags)
+    {
+        Lesson newLesson = new Lesson(teacher, title, description, GenerateEntryCode(),
+                                      tags.ToList());
+        _lessonRepo.Add(newLesson);
+        return newLesson;
+    }
+
+    public void EndLesson(string email)
     {
         throw new NotImplementedException();
     }
@@ -35,5 +46,22 @@ public class LessonManager
     public Response<ServiceUser> ViewStudent(string sessionId)
     {
         throw new NotImplementedException();
+    }
+
+    private static string GenerateEntryCode(int length = 15)
+    {
+        var random = new Random();
+
+        const string allowedChars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+        var code = new StringBuilder();
+
+        for (var i = 0; i < length; i++)
+        {
+            var index = random.Next(0, allowedChars.Length);
+            code.Append(allowedChars[index]);
+        }
+
+        return code.ToString();
     }
 }

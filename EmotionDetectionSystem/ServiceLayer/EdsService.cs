@@ -9,9 +9,10 @@ namespace EmotionDetectionSystem.ServiceLayer;
 public class EdsService : IEdsService
 {
     private EdsManager _edsManager;
-    private ILog _logger = LogManager.GetLogger(typeof(EdsService));
+    private ILog       _logger = LogManager.GetLogger(typeof(EdsService));
+
     public Response Register(string email, string firstName, string lastName, string password, string confirmPassword,
-        bool isStudent)
+                             bool   isStudent)
     {
         _logger.InfoFormat($"Registering user with email: {email} has been received");
         try
@@ -44,12 +45,12 @@ public class EdsService : IEdsService
         }
     }
 
-    public Response Logout(string sessionId)
+    public Response Logout(string sessionId, string email)
     {
         _logger.InfoFormat($"Logout request for session: {sessionId} has been received");
         try
         {
-            _edsManager.Logout(sessionId);
+            _edsManager.Logout(sessionId, email);
             _logger.InfoFormat($"Session: {sessionId} has been logged out");
             return new Response();
         }
@@ -60,14 +61,37 @@ public class EdsService : IEdsService
         }
     }
 
-    public Response<string> CreateLesson(string sessionId, string title, string description, string[] tags)
+    public Response<string> CreateLesson(string   sessionId, string email, string title, string description,
+                                         string[] tags)
     {
-        throw new NotImplementedException();
+        _logger.InfoFormat($"Create lesson request for session: {sessionId} has been received");
+        try
+        {
+            var lesson = _edsManager.CreateLesson(sessionId, email, title, description, tags);
+            _logger.InfoFormat($"Lesson with title: {title} has been created");
+            return Response<string>.FromValue(lesson.EntryCode);
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error creating lesson with title: {title} - {e.Message}");
+            return Response<string>.FromError(e.Message);
+        }
     }
 
-    public Response EndLesson(string sessionId)
+    public Response EndLesson(string sessionId, string email)
     {
-        throw new NotImplementedException();
+        _logger.InfoFormat($"End lesson request for session: {sessionId} has been received");
+        try
+        {
+            _edsManager.EndLesson(sessionId, email);
+            _logger.InfoFormat($"Lesson with session: {sessionId} has been ended");
+            return new Response();
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error ending lesson with session: {sessionId} - {e.Message}");
+            return new Response(e.Message);
+        }
     }
 
     public Response<ServiceUser> JoinLesson(string sessionId, string entryCode)

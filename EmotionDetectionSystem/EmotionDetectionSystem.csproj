@@ -13,8 +13,23 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.16" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
-
   <ItemGroup>
-    <None Remove="ServiceLayer\" />
+    <Content Include="obj\Debug\net7.0\apphost" />
+    <Content Include="obj\Debug\net7.0\EmotionDetectionSystem.assets.cache" />
+    <Content Include="obj\Debug\net7.0\EmotionDetectionSystem.csproj.CopyComplete" />
+    <Content Include="obj\Debug\net7.0\EmotionDetectionSystem.csproj.CoreCompileInputs.cache" />
+    <Content Include="obj\Debug\net7.0\EmotionDetectionSystem.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\net7.0\EmotionDetectionSystem.dll" />
+    <Content Include="obj\Debug\net7.0\EmotionDetectionSystem.genruntimeconfig.cache" />
+    <Content Include="obj\Debug\net7.0\EmotionDetectionSystem.MvcApplicationPartsAssemblyInfo.cache" />
+    <Content Include="obj\Debug\net7.0\EmotionDetectionSystem.pdb" />
+    <Content Include="obj\Debug\net7.0\EmotionDetectionSystem.sourcelink.json" />
+    <Content Include="obj\Debug\net7.0\staticwebassets.build.json" />
+    <Content Include="obj\EmotionDetectionSystem.csproj.nuget.dgspec.json" />
+    <Content Include="obj\project.assets.json" />
+    <Content Include="obj\project.nuget.cache" />
+    <Content Include="obj\rider.project.model.nuget.info" />
+    <Content Include="obj\rider.project.restore.info" />
   </ItemGroup>
+
 </Project>

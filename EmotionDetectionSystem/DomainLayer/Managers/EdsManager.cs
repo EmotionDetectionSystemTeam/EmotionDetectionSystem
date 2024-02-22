@@ -10,24 +10,24 @@ public class EdsManager
     private UserManager _userManager;
     private LessonManager _lessonManager;
     private static readonly ILog Log = LogManager.GetLogger(typeof(EdsManager));
-    public EdsManager(UserManager userManager, LessonManager lessonManager)
+    public EdsManager()
     {
-        _userManager = userManager;
-        _lessonManager = lessonManager;
+        _userManager = new UserManager();
+        _lessonManager = new LessonManager();
     }
     
     public void Register(string email, string firstName, string lastName, string password, bool isStudent)
     {
-        throw new NotImplementedException();
+        _userManager.Register(email, firstName, lastName, password, isStudent);
     }
 
-    public string Login(string sessionId, string email, string password)
+    public User Login(string sessionId, string email, string password)
     {
-        throw new NotImplementedException();
+        return _userManager.Login(sessionId, email, password);
     }
     public void Logout(string sessionId)
     {
-        throw new NotImplementedException();
+        _userManager.Logout(sessionId);
     }
     
     public Lesson CreateLesson(string sessionId, string title, string description, string[] tags)

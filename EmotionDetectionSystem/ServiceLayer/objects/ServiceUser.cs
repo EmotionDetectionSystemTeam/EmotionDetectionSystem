@@ -1,22 +1,55 @@
+using EmotionDetectionSystem.DomainLayer.objects;
+
 namespace EmotionDetectionSystem.ServiceLayer;
 
-public abstract class ServiceUser
+public class ServiceUser
 {
     protected ServiceUser(string email, string firstName, string lastName)
     {
-        _email = email;
-        _firstName = firstName;
-        _lastName = lastName;
+        Email = email;
+        FirstName = firstName;
+        LastName = lastName;
+    }
+    public ServiceUser(Teacher teacher)
+    {
+        Email = teacher.Email;
+        FirstName = teacher.FirstName;
+        LastName = teacher.LastName;
+        Type = teacher.Type;
+        Lessons = new List<ServiceLesson>();
+        foreach (var lesson in teacher.Lessons)
+        {
+            Lessons.Add(new ServiceLesson(lesson));
+        }
+    }
+    public ServiceUser(User user)
+    {
+        Email     = user.Email;
+        FirstName = user.FirstName;
+        LastName  = user.LastName;
+        Type      = user.Type;
+        Lessons   = new List<ServiceLesson>();
+
+        if (user is not Teacher teacher) return;
+        foreach (var lesson in teacher.Lessons)
+        {
+            Lessons.Add(new ServiceLesson(lesson));
+        }
+    }
+    
+    public ServiceUser(Student student)
+    {
+        Email     = student.Email;
+        FirstName = student.FirstName;
+        LastName  = student.LastName;
+        Type      = student.Type;
+        Lessons   = new List<ServiceLesson>();
     }
 
-    private string _email;
-    private string _firstName;
-    private string _lastName;
-    private string _type;
+    public string              Email;
+    public string              FirstName;
+    public string              LastName;
+    public string              Type;
+    public List<ServiceLesson> Lessons;
     
-    public string Email { get => _email; set => _email = value; }
-    public string FirstName { get => _firstName; set => _firstName = value; }
-    public string LastName { get => _lastName; set => _lastName = value; }
-    public string Type { get => _type; set => _type = value; }
-    public List<ServiceLesson> Lessons { get; set; }
 }

@@ -1,5 +1,5 @@
 export const textColor = "black";
-export const serverPort = "https://localhost:7209";
+export const serverPort = "https://localhost:7172";
 export const squaresColor = "#E8F0FE";
 
 

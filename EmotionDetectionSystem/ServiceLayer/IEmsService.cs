@@ -5,7 +5,7 @@ namespace EmotionDetectionSystem.Service
 {
 	public interface IEmsService
 	{
-		Response Register(string email, string firstName, string lastName, string password, string confirmPassword, bool isStudent);
+		Response Register(string email, string firstName, string lastName, string password, string confirmPassword, int isStudent);
 		Response<ServiceUser> Login(string email, string password);
 		Response Logout(string sessionId);
 		Response<string> CreateLesson(string sessionId, string title, string description, string[] tags);

@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { pathHome } from "../Paths";
+import * as Server from "../Services/ClientService";
 import { squaresColor } from "../Utils";
 
 function Register() {
@@ -32,13 +33,20 @@ function Register() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const username = data.get("username")?.toString();
+    const email = data.get("email")?.toString();
+    const firstName = data.get("firstName")?.toString();
+    const lastName = data.get("lastName")?.toString();
     const password = data.get("password")?.toString();
+    const confirmPassword = data.get("confirmPassword")?.toString();
+
     try {
-      //const serverResponse = await Server.Register(username, password);
+      if (password !== confirmPassword) {
+        throw new Error("Passwords do not match");
+      }
+      const response = Server.register(email, firstName, lastName, password, confirmPassword,1);
       //const Id: string = serverResponse.value;
       //navigate(pathLogin);
-      alert(`${username} Server is not ready yet!`);
+      //alert(`${firstName} Server is not ready yet!`);
     } catch (e) {
       alert(e);
     }
@@ -83,10 +91,21 @@ function Register() {
                 margin="normal"
                 required
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                variant="outlined"
+              />
+                <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                name="firstName"
+                autoComplete="firstName"
                 autoFocus
                 variant="outlined"
               />
@@ -94,10 +113,32 @@ function Register() {
                 margin="normal"
                 required
                 fullWidth
+                name="lastName"
+                label="Last Name"
+                type="lastName"
+                id="lastName"
+                autoComplete="current-password"
+                variant="outlined"
+              />
+                <TextField
+                margin="normal"
+                required
+                fullWidth
                 name="password"
                 label="Password"
                 type="password"
                 id="password"
+                autoComplete="current-password"
+                variant="outlined"
+              />
+                <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type="confirmPassword"
+                id="confirmPassword"
                 autoComplete="current-password"
                 variant="outlined"
               />

@@ -8,35 +8,46 @@ namespace EmotionDetectionSystem.DomainLayer.Managers;
 
 public class UserManager
 {
-    private                 UserRepo                           _userRepo;
-    private static          ConcurrentDictionary<string, User> _userBySession;
-    private                 Security                           _paswwordSecurity;
-    private static readonly ILog                               _logger = LogManager.GetLogger(typeof(UserManager));
+    private readonly        UserRepo                           _userRepo;
+    private static          ConcurrentDictionary<string, User> _userBySession = null!;
+    private readonly        Security                           _passwordSecurity;
+    private static readonly ILog                               Logger = LogManager.GetLogger(typeof(UserManager));
 
     public UserManager()
     {
         _userRepo         = new UserRepo();
-        _paswwordSecurity = new Security();
+        _passwordSecurity = new Security();
         _userBySession    = new ConcurrentDictionary<string, User>();
     }
 
-    public void Register(string email, string firstName, string lastName, string password, bool isStudent)
+    public void Register(string email, string firstName, string lastName, string password, int userType)
     {
         email = email.ToLower();
-        if (_userRepo.GetByEmail(email) != null)
+        if (_userRepo.ContainsEmail(email))
         {
             throw new Exception("Email is already in use");
         }
 
-        if (!_paswwordSecurity.IsValidPassword(password))
+        if (!_passwordSecurity.IsValidPassword(password))
         {
             throw new Exception("Password is not valid");
         }
 
-        User user = isStudent
-            ? new Student(email, firstName, lastName, _paswwordSecurity.HashPassword(password))
-            : new Teacher(email, firstName, lastName, password);
+        var type = (UserType)userType;
+        var user = CreateUser(email, firstName, lastName, password, type);
         _userRepo.Add(user);
+    }
+
+    private User CreateUser(string email, string firstName, string lastName, string password, UserType userType)
+    {
+        var encryptedPassword = _passwordSecurity.HashPassword(password);
+        return userType switch
+        {
+            UserType.Student => new Student(email, firstName, lastName, encryptedPassword),
+            UserType.Teacher => new Teacher(email, firstName, lastName, encryptedPassword),
+            UserType.Admin   => new Admin(email, firstName, lastName, encryptedPassword),
+            _                => throw new Exception("User type is not valid")
+        };
     }
 
     public User Login(string sessionId, string email, string password)
@@ -52,13 +63,13 @@ public class UserManager
             throw new Exception("User does not exist");
         }
 
-        User user = _userRepo.GetByEmail(email);
-        if (!_paswwordSecurity.VerifyPassword(password, user.Password))
+        var user = _userRepo.GetByEmail(email);
+        if (!_passwordSecurity.VerifyPassword(password, user.Password))
         {
             throw new Exception("Password is incorrect");
         }
 
-        _userBySession.TryAdd(sessionId, user);
+        _userBySession?.TryAdd(sessionId, user);
         return user;
     }
 
@@ -72,17 +83,14 @@ public class UserManager
     {
         if (!_userBySession.ContainsKey(sessionId))
         {
-            _logger.ErrorFormat($"Session: {sessionId} is not valid");
+            Logger.ErrorFormat($"Session: {sessionId} is not valid");
             return false;
         }
 
-        if (!_userBySession[sessionId].Email.Equals(email))
-        {
-            _logger.ErrorFormat($"Session: {sessionId} is not valid for user with email: {email}");
-            return false;
-        }
+        if (_userBySession[sessionId].Email.Equals(email)) return true;
+        Logger.ErrorFormat($"Session: {sessionId} is not valid for user with email: {email}");
+        return false;
 
-        return true;
     }
 
     public void Logout(string sessionId)
@@ -92,10 +100,10 @@ public class UserManager
             throw new Exception("Session does not exist");
         }
 
-        _userBySession.TryRemove(sessionId, out User user);
+        _userBySession.TryRemove(sessionId, out var user);
         if (user != null)
         {
-            _logger.InfoFormat($"User with email: {user.Email} and sessionId {sessionId} has been logged out");
+            Logger.InfoFormat($"User with email: {user.Email} and sessionId {sessionId} has been logged out");
         }
     }
 
@@ -106,6 +114,12 @@ public class UserManager
         {
             return teacher;
         }
+
         throw new Exception("User is not a teacher");
+    }
+
+    public User GetUser(string email)
+    {
+        return _userRepo.GetByEmail(email);
     }
 }

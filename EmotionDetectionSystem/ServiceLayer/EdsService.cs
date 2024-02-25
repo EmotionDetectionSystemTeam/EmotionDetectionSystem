@@ -8,16 +8,21 @@ namespace EmotionDetectionSystem.ServiceLayer;
 
 public class EdsService : IEdsService
 {
-    private EdsManager _edsManager;
-    private ILog       _logger = LogManager.GetLogger(typeof(EdsService));
+    private          EdsManager _edsManager;
+    private readonly ILog       _logger = LogManager.GetLogger(typeof(EdsService));
+
+    public EdsService()
+    {
+        _edsManager = new EdsManager();
+    }
 
     public Response Register(string email, string firstName, string lastName, string password, string confirmPassword,
-                             bool   isStudent)
+                             int    userType)
     {
         _logger.InfoFormat($"Registering user with email: {email} has been received");
         try
         {
-            _edsManager.Register(email, firstName, lastName, password, isStudent);
+            _edsManager.Register(email, firstName, lastName, password, userType);
             return new Response();
         }
         catch (Exception e)
@@ -94,9 +99,20 @@ public class EdsService : IEdsService
         }
     }
 
-    public Response<ServiceUser> JoinLesson(string sessionId, string entryCode)
+    public Response<ServiceLesson> JoinLesson(string sessionId, string email, string entryCode)
     {
-        throw new NotImplementedException();
+        _logger.InfoFormat($"Join lesson request for session: {sessionId} has been received");
+        try
+        {
+            var lesson = _edsManager.JoinLesson(sessionId, email, entryCode);
+            _logger.InfoFormat($"User with session: {sessionId} has joined the lesson");
+            return Response<ServiceLesson>.FromValue(new ServiceLesson(lesson));
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error joining lesson with session: {sessionId} - {e.Message}");
+            return Response<ServiceLesson>.FromError(e.Message);
+        }
     }
 
     public Response<Dictionary<int, ServiceEnrollmentSummary>> ViewStudentsDuringLesson(string sessionId)

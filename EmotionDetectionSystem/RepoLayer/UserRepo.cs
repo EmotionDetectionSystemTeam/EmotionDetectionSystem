@@ -27,13 +27,11 @@ public class UserRepo : IRepo<User>
 
     public User GetByEmail(string email)
     {
-        if (!_userByEmail.ContainsKey(email))
-        {
-            _logger.ErrorFormat($"User with email: {email} does not exist");
-            return null;
-        }
+        if (_userByEmail.TryGetValue(email, out var value)) return value;
+        var errorMsg = $"User with email: {email} does not exist";
+        _logger.ErrorFormat(errorMsg);
+        throw new Exception(errorMsg);
 
-        return _userByEmail[email];
     }
 
     public void Add(User item)

@@ -3,12 +3,15 @@ using EmotionDetectionSystem.DomainLayer.objects;
 using EmotionDetectionSystem.RepoLayer;
 using EmotionDetectionSystem.Service;
 using EmotionDetectionSystem.ServiceLayer;
+using log4net;
 
 namespace EmotionDetectionSystem.DomainLayer.Managers;
 
 public class LessonManager
 {
     private LessonRepo _lessonRepo;
+    private long _lessonIdFactory = 1;
+    private static readonly ILog Log = LogManager.GetLogger(typeof(LessonManager));
 
     public LessonManager()
     {
@@ -22,7 +25,7 @@ public class LessonManager
             throw new Exception("Teacher already has an active lesson");
         }
 
-        var newLesson = new Lesson(teacher, title, description, GenerateEntryCode(),
+        var newLesson = new Lesson(_lessonIdFactory++.ToString(),teacher, title, description, GenerateEntryCode(),
                                    tags.ToList());
         _lessonRepo.Add(newLesson);
         return newLesson;
@@ -55,31 +58,19 @@ public class LessonManager
         {
             throw new Exception("Invalid entry code");
         }
-        if(user.Type == UserType.Student.GetStringValue())
-        {
-            var student = (Student) user;
-            if (lesson.ContainStudent(student))
-            {
-                throw new Exception("Student is already in the lesson");
-            }
-        }
-        else
-        {
-            throw new Exception("Only students can join lessons");
-        }
-        lesson.AddUser(user);
-        _lessonRepo.Update(lesson);
+        user.JoinLesson(lesson);
         return lesson;
     }
 
-    public Dictionary<string, EnrollmentSummary> ViewStudentsDuringLesson(string sessionId)
+    public List<EnrollmentSummary> ViewStudentsDuringLesson(Viewer viewer, string lessonId)
     {
-        throw new NotImplementedException();
-    }
+        var lesson = _lessonRepo.GetById(lessonId);
+        if (!lesson.IsAllowedToViewStudentsData(viewer))
+        {
+            throw new Exception("Viewer is not allowed to view students data");
+        }
 
-    public List<Lesson> ViewTeacherDashboard(string sessionId)
-    {
-        throw new NotImplementedException();
+        return lesson.GetEnrollmentSummaries();
     }
 
     public Response<ServiceUser> ViewStudent(string sessionId)
@@ -102,5 +93,10 @@ public class LessonManager
         }
 
         return code.ToString();
+    }
+
+    public Lesson GetLesson(string lessonId)
+    {
+        return _lessonRepo.GetById(lessonId);
     }
 }

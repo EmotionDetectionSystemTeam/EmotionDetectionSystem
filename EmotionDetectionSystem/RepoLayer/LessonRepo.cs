@@ -5,12 +5,13 @@ namespace EmotionDetectionSystem.RepoLayer;
 public class LessonRepo : IRepo<Lesson>
 {
     //Dictionary<teacherEmail, List<Lesson>>
-    private Dictionary<string,List<Lesson> > _lessons = new Dictionary<string, List<Lesson>>();
+    private Dictionary<string, List<Lesson>> _lessons = new Dictionary<string, List<Lesson>>();
+
     public List<Lesson> GetAll()
     {
         return _lessons.Values.SelectMany(x => x).ToList();
     }
-    
+
     public List<Lesson> GetByEntryCode(string entryCode)
     {
         return _lessons.Values.SelectMany(x => x).Where(x => x.EntryCode.Equals(entryCode)).ToList();
@@ -18,7 +19,8 @@ public class LessonRepo : IRepo<Lesson>
 
     public Lesson GetById(string id)
     {
-        throw new NotImplementedException();
+        return _lessons.Values.SelectMany(x => x).FirstOrDefault(x => x.LessonId.Equals(id)) ??
+               throw new Exception("Lesson not found");
     }
 
     public void Add(Lesson item)
@@ -29,13 +31,12 @@ public class LessonRepo : IRepo<Lesson>
         }
         else
         {
-            _lessons.Add(item.Teacher.Email, new List<Lesson> {item});
+            _lessons.Add(item.Teacher.Email, new List<Lesson> { item });
         }
     }
 
     public void Update(Lesson item)
     {
-        throw new NotImplementedException();
     }
 
     public void Delete(string id)

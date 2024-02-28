@@ -41,5 +41,7 @@ public abstract class User
         get => _type;
         set => _type = value;
     }
+
+    public abstract void JoinLesson(Lesson lesson);
     
 }

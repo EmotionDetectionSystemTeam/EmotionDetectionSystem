@@ -4,9 +4,19 @@ namespace EmotionDetectionSystem.RepoLayer;
 
 public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
 {
+    private string _lessonId;
+    private List<EnrollmentSummary> _enrollmentSummaries;
+    
+
+    public EnrollmentSummaryRepo(string lessonId)
+    {
+        _lessonId = lessonId;
+        _enrollmentSummaries = new List<EnrollmentSummary>();
+    }
+    
     public List<EnrollmentSummary> GetAll()
     {
-        throw new NotImplementedException();
+        return _enrollmentSummaries;
     }
 
     public EnrollmentSummary GetById(string id)
@@ -52,5 +62,11 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
     public bool ContainStudent(Student student)
     {
         throw new NotImplementedException();
+    }
+
+    public void PutEmotionData(string userEmail, EmotionData emotionData)
+    {
+        var enrollmentSummary = _enrollmentSummaries.Find(x => x.Student.Email.Equals(userEmail))!;
+        enrollmentSummary.AddEmotionData(emotionData);
     }
 }

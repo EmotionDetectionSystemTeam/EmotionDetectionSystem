@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using EmotionDetectionSystem.DomainLayer.objects;
 using EmotionDetectionSystem.Service;
 using EmotionDetectionSystem.ServiceLayer;
@@ -7,14 +8,32 @@ namespace EmotionDetectionSystem.DomainLayer.Managers;
 
 public class EdsManager
 {
-    private                 UserManager   _userManager;
-    private                 LessonManager _lessonManager;
-    private static readonly ILog          Log = LogManager.GetLogger(typeof(EdsManager));
+    private readonly        UserManager                   _userManager;
+    private readonly        LessonManager                 _lessonManager;
+    private readonly        ConcurrentQueue<PushEmotionDataTask> _concurrentQueue;
+    private readonly        CancellationTokenSource       _cancellationTokenSource;
+    private readonly        AutoResetEvent                _taskEvent;
+    private                 bool                          _isProcessingTasks;
+    private static readonly ILog                          Log = LogManager.GetLogger(typeof(EdsManager));
 
     public EdsManager()
     {
-        _userManager   = new UserManager();
-        _lessonManager = new LessonManager();
+        _userManager             = new UserManager();
+        _lessonManager           = new LessonManager();
+        _concurrentQueue         = new ConcurrentQueue<PushEmotionDataTask>();
+        _cancellationTokenSource = new CancellationTokenSource();
+        _taskEvent               = new AutoResetEvent(false);
+        _isProcessingTasks       = true;
+
+        // Start the background worker thread
+        ThreadPool.QueueUserWorkItem(ProcessQueue);
+    }
+
+    public void StopProcessingTasks()
+    {
+        _isProcessingTasks = false;
+        _cancellationTokenSource.Cancel();
+        _taskEvent.Set(); // Signal the event to unblock the background thread
     }
 
     public void Register(string email, string firstName, string lastName, string password, int userType)
@@ -36,18 +55,16 @@ public class EdsManager
     public Lesson CreateLesson(string sessionId, string email, string title, string description, string[] tags)
     {
         IsValidSession(sessionId, email);
-        Teacher teacher = _userManager.GetTeacher(email);
+        var teacher = _userManager.GetTeacher(email);
         return _lessonManager.CreateLesson(teacher, title, description, tags);
     }
 
-    private bool IsValidSession(string sessionId, string email)
+    private void IsValidSession(string sessionId, string email)
     {
         if (!_userManager.IsValidSession(sessionId, email))
         {
             throw new Exception("Session is not valid");
         }
-
-        return true;
     }
 
     public void EndLesson(string sessionId, string email)
@@ -63,18 +80,85 @@ public class EdsManager
         return _lessonManager.JoinLesson(user, entryCode);
     }
 
-    public Dictionary<string, EnrollmentSummary> ViewStudentsDuringLesson(string sessionId)
+    public IEnumerable<EnrollmentSummary> ViewStudentsDuringLesson(
+        string sessionId, string email, string lessonId)
     {
-        throw new NotImplementedException();
+        IsValidSession(sessionId, email);
+        var user = _userManager.GetUser(email);
+        if (user is not Viewer)
+        {
+            throw new Exception($"User {user.Email} cannot view students data");
+        }
+
+        var viewer = (Viewer)user;
+        return _lessonManager.ViewStudentsDuringLesson(viewer, lessonId);
     }
 
-    public List<Lesson> ViewTeacherDashboard(string sessionId)
+    public IEnumerable<Lesson> ViewTeacherDashboard(string sessionId, string email)
     {
-        throw new NotImplementedException();
+        IsValidSession(sessionId, email);
+        var user = _userManager.GetUser(email);
+        if (user is not Teacher)
+        {
+            throw new Exception($"User {user.Email} is not a teacher");
+        }
+
+        var teacher = (Teacher)user;
+        return teacher.Lessons;
     }
 
-    public Response<ServiceUser> ViewStudent(string sessionId)
+    public Student ViewStudent(string sessionId, string email, string studentEmail)
     {
-        throw new NotImplementedException();
+        IsValidSession(sessionId, email);
+        var user = _userManager.GetUser(email);
+        if (user is not Viewer)
+        {
+            throw new Exception($"User {user.Email} cannot view students data");
+        }
+
+        return _userManager.GetStudent(studentEmail);
+    }
+
+    public void PushEmotionData(string sessionId, string email, string lessonId, EmotionData emotionData)
+    {
+        var pushTaskInfo = new PushEmotionDataTask(sessionId, email, lessonId, emotionData);
+        _concurrentQueue.Enqueue(pushTaskInfo);
+        _taskEvent.Set(); // Signal the event to unblock the background thread
+    }
+
+    private void ProcessQueue(object state)
+    {
+        while (_isProcessingTasks)
+        {
+            if (WaitHandle.WaitAny(new[] { _taskEvent, _cancellationTokenSource.Token.WaitHandle }) == 1)
+            {
+                break;
+            }
+
+            while (_concurrentQueue.TryDequeue(out var taskInfo))
+            {
+                ProcessTask(taskInfo);
+            }
+        }
+    }
+
+    private void ProcessTask(PushEmotionDataTask emotionDataTask)
+    {
+        try
+        {
+            IsValidSession(emotionDataTask.SessionId, emotionDataTask.Email);
+            var user = _userManager.GetUser(emotionDataTask.Email);
+            if (user is not Student)
+            {
+                throw new Exception($"User {user.Email} is not a student");
+            }
+
+            var lesson = _lessonManager.GetLesson(emotionDataTask.LessonId);
+            lesson.PushEmotionData(user.Email, emotionDataTask.EmotionData);
+        }
+        catch (Exception e)
+        {
+            Log.Error($"Error processing emotion data task - {e.Message}");
+        }
     }
 }

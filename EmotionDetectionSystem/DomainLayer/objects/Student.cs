@@ -7,4 +7,9 @@ public class Student : User
     {
         Type = "Student";
     }
+
+    public override void JoinLesson(Lesson lesson)
+    {
+        lesson.AddStudent(this);
+    }
 }

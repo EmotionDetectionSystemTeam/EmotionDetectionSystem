@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
 using EmotionDetectionSystem.DomainLayer.objects;
 using EmotionDetectionSystem.RepoLayer;
 using log4net;
@@ -23,6 +24,11 @@ public class UserManager
     public void Register(string email, string firstName, string lastName, string password, int userType)
     {
         email = email.ToLower();
+        if (!IsValidEmail(email))
+        {
+            throw new Exception("Email is not valid");
+        }
+
         if (_userRepo.ContainsEmail(email))
         {
             throw new Exception("Email is already in use");
@@ -90,7 +96,6 @@ public class UserManager
         if (_userBySession[sessionId].Email.Equals(email)) return true;
         Logger.ErrorFormat($"Session: {sessionId} is not valid for user with email: {email}");
         return false;
-
     }
 
     public void Logout(string sessionId)
@@ -121,5 +126,23 @@ public class UserManager
     public User GetUser(string email)
     {
         return _userRepo.GetByEmail(email);
+    }
+
+    public Student GetStudent(string studentEmail)
+    {
+        var student = _userRepo.GetByEmail(studentEmail);
+        return student as Student ?? throw new Exception($"There is no student with email: {studentEmail}");
+    }
+
+    public static bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+
+        // Regular expression pattern for basic email validation
+        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+
+        // Check if the email matches the pattern
+        return Regex.IsMatch(email, pattern);
     }
 }

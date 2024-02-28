@@ -5,6 +5,7 @@ public class EnrollmentSummary
     private Student           _student;
     private Lesson            _lesson;
     private List<EmotionData> _emotionData;
+    private object _lock = new object();
 
     public EnrollmentSummary(Student student, Lesson lesson, List<EmotionData> emotionData)
     {
@@ -18,6 +19,27 @@ public class EnrollmentSummary
         _student     = student;
         _lesson      = lesson;
         _emotionData = new List<EmotionData>();
+    }
+    
+    public void AddEmotionData(EmotionData emotionData)
+    {
+        lock (_lock)
+        {
+            _emotionData.Add(emotionData);
+        }
+    }
+    
+    private EmotionData validateEmotionData(EmotionData emotionData)
+    {
+        if (emotionData == null)
+        {
+            throw new Exception("EmotionData is null");
+        }
+        if(emotionData.Time==null)
+        {
+            throw new Exception("Time is null");
+        }
+        return emotionData;
     }
 
     public Student Student

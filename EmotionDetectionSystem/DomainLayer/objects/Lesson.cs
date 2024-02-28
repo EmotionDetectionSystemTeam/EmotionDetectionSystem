@@ -4,17 +4,21 @@ namespace EmotionDetectionSystem.DomainLayer.objects;
 
 public class Lesson
 {
+    private string                  _lessonId;
     private string                _lessonName;
     private string                _description;
     private Teacher               _teacher;
+    private List<Viewer>          _viewers;
     private DateTime              _date;
     private bool                  _isActive;
     private string                _entryCode;
     private List<string>          _tags;
     private EnrollmentSummaryRepo _enrollmentSummaryRepo;
 
-    public Lesson(Teacher teacher, string lessonName, string description, string entryCode, List<string> tags)
+    public Lesson(string         lessonId, Teacher teacher, string lessonName, string description, string entryCode,
+                  List<string> tags)
     {
+        _lessonId              = lessonId;
         _teacher               = teacher;
         _lessonName            = lessonName;
         _description           = description;
@@ -22,7 +26,8 @@ public class Lesson
         _isActive              = true;
         _entryCode             = entryCode;
         _tags                  = tags;
-        _enrollmentSummaryRepo = new EnrollmentSummaryRepo();
+        _enrollmentSummaryRepo = new EnrollmentSummaryRepo(lessonId);
+        _viewers               = new List<Viewer>();
     }
 
     public string LessonName
@@ -66,21 +71,41 @@ public class Lesson
         get => _description;
         set => _description = value;
     }
+    
+    public string LessonId
+    {
+        get => _lessonId;
+        set => _lessonId = value;
+    }
 
     public void EndLesson()
     {
         _isActive = false;
     }
 
-    public void AddUser(User user)
-    {
-        if (user is not Student student) return;
-        var enrollmentSummary = new EnrollmentSummary(student, this);
-        _enrollmentSummaryRepo.Add(enrollmentSummary);
-    }
-
     public bool ContainStudent(Student student)
     {
         return _enrollmentSummaryRepo.ContainStudent(student);
+    }
+
+    public void AddStudent(Student student)
+    {
+        var enrollmentSummary = new EnrollmentSummary(student, this);
+        _enrollmentSummaryRepo.Add(enrollmentSummary);
+    }
+    
+    public bool IsAllowedToViewStudentsData(Viewer viewer)
+    {
+        return _viewers.Contains(viewer);
+    }
+    
+    public List<EnrollmentSummary> GetEnrollmentSummaries()
+    {
+        return _enrollmentSummaryRepo.GetAll();
+    }
+
+    public void PushEmotionData(string userEmail, EmotionData emotionData)
+    {
+        _enrollmentSummaryRepo.PutEmotionData(userEmail, emotionData);
     }
 }

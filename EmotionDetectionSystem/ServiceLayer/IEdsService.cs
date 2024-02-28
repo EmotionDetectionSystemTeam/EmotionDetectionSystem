@@ -1,7 +1,6 @@
-﻿using System;
-using EmotionDetectionSystem.ServiceLayer;
+﻿using EmotionDetectionSystem.Service;
 
-namespace EmotionDetectionSystem.Service
+namespace EmotionDetectionSystem.ServiceLayer
 {
     public interface IEdsService
     {
@@ -13,8 +12,12 @@ namespace EmotionDetectionSystem.Service
         Response<string> CreateLesson(string sessionId, string email, string title, string description, string[] tags);
         Response EndLesson(string sessionId, string email);
         Response<ServiceLesson> JoinLesson(string sessionId, string email, string entryCode);
-        Response<Dictionary<int, ServiceEnrollmentSummary>> ViewStudentsDuringLesson(string sessionId);
-        Response<List<ServiceLesson>> ViewLessonDashboard(string sessionId);
-        Response<ServiceUser> ViewStudent(string sessionId);
+
+        Response<List<ServiceEnrollmentSummary>> ViewStudentsDuringLesson(
+            string sessionId, string email, string lessonId);
+
+        Response<List<ServiceLesson>> ViewLessonDashboard(string sessionId, string email);
+        Response<ServiceUser> ViewStudent(string sessionId, string email, string studentEmail);
+        Response PushEmotionData(string sessionId, string email, string lessonId, ServiceEmotionData emotionData);
     }
 }

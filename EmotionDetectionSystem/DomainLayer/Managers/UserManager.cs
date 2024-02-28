@@ -72,7 +72,7 @@ public class UserManager
         var user = _userRepo.GetByEmail(email);
         if (!_passwordSecurity.VerifyPassword(password, user.Password))
         {
-            throw new Exception("Password is incorrect");
+            throw new Exception("Password or username are incorrect");
         }
 
         _userBySession?.TryAdd(sessionId, user);

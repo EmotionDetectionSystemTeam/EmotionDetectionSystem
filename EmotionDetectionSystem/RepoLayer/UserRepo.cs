@@ -8,6 +8,11 @@ public class UserRepo : IRepo<User>
 {
     private static          ConcurrentDictionary<string, User> _userByEmail;
     private static readonly ILog                               _logger = LogManager.GetLogger(typeof(UserRepo));
+    
+    public UserRepo()
+    {
+        _userByEmail = new ConcurrentDictionary<string, User>();
+    }
 
     public List<User> GetAll()
     {

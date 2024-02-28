@@ -1,9 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1706.9
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionDetectionSystem", "EmotionDetectionSystem.csproj", "{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmotionDetectionSystem", "EmotionDetectionSystem.csproj", "{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EDServer", "..\EDServer\EDServer.csproj", "{100B9751-CDAF-4EFB-92E8-08578016D5E6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD} = {DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{100B9751-CDAF-4EFB-92E8-08578016D5E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{100B9751-CDAF-4EFB-92E8-08578016D5E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{100B9751-CDAF-4EFB-92E8-08578016D5E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{100B9751-CDAF-4EFB-92E8-08578016D5E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -26,7 +26,7 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
 
     public void Add(EnrollmentSummary item)
     {
-        throw new NotImplementedException();
+        _enrollmentSummaries.Add(item);
     }
 
     public void Update(EnrollmentSummary item)
@@ -61,12 +61,22 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
 
     public bool ContainStudent(Student student)
     {
-        throw new NotImplementedException();
+        return _enrollmentSummaries.Exists(x => x.Student.Email.Equals(student.Email));
     }
 
     public void PutEmotionData(string userEmail, EmotionData emotionData)
     {
-        var enrollmentSummary = _enrollmentSummaries.Find(x => x.Student.Email.Equals(userEmail))!;
+        var enrollmentSummary = _enrollmentSummaries.Find(x => x.Student.Email.Equals(userEmail));
+        if (enrollmentSummary == null)
+        {
+            throw new Exception($" Student with email {userEmail} not found in lesson");
+        }
         enrollmentSummary.AddEmotionData(emotionData);
+    }
+
+    public IEnumerable<EmotionData> GetEmotionDataEntries()
+    {
+        var emotionsData = new List<EmotionData>();
+        return emotionsData.Concat(_enrollmentSummaries.SelectMany(x => x.EmotionData));
     }
 }

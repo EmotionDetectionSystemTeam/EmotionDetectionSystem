@@ -4,7 +4,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects;
 
 public class Lesson
 {
-    private string                  _lessonId;
+    private string                _lessonId;
     private string                _lessonName;
     private string                _description;
     private Teacher               _teacher;
@@ -15,7 +15,7 @@ public class Lesson
     private List<string>          _tags;
     private EnrollmentSummaryRepo _enrollmentSummaryRepo;
 
-    public Lesson(string         lessonId, Teacher teacher, string lessonName, string description, string entryCode,
+    public Lesson(string       lessonId, Teacher teacher, string lessonName, string description, string entryCode,
                   List<string> tags)
     {
         _lessonId              = lessonId;
@@ -66,12 +66,18 @@ public class Lesson
         set => _tags = value;
     }
 
+    public List<Viewer> Viewers
+    {
+        get => _viewers;
+        set => _viewers = value;
+    }
+
     public string Description
     {
         get => _description;
         set => _description = value;
     }
-    
+
     public string LessonId
     {
         get => _lessonId;
@@ -93,12 +99,12 @@ public class Lesson
         var enrollmentSummary = new EnrollmentSummary(student, this);
         _enrollmentSummaryRepo.Add(enrollmentSummary);
     }
-    
+
     public bool IsAllowedToViewStudentsData(Viewer viewer)
     {
-        return _viewers.Contains(viewer);
+        return _viewers.Contains(viewer) || viewer == _teacher;
     }
-    
+
     public List<EnrollmentSummary> GetEnrollmentSummaries()
     {
         return _enrollmentSummaryRepo.GetAll();
@@ -107,5 +113,20 @@ public class Lesson
     public void PushEmotionData(string userEmail, EmotionData emotionData)
     {
         _enrollmentSummaryRepo.PutEmotionData(userEmail, emotionData);
+    }
+
+    public void AddViewer(Viewer viewer)
+    {
+        if (!_viewers.Contains(viewer) || viewer != _teacher)
+        {
+            _viewers.Add(viewer);
+        }
+    }
+
+    public IEnumerable<EmotionData> GetEmotionDataEntries()
+    {
+        var entries = new List<EmotionData>();
+        entries.AddRange(_enrollmentSummaryRepo.GetEmotionDataEntries());
+        return entries;
     }
 }

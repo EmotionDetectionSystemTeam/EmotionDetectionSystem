@@ -3,15 +3,15 @@ namespace EmotionDetectionSystem.DomainLayer.objects;
 public class EmotionData
 {
     private DateTime _time;
-    private float    _neutral;
-    private float    _happy;
-    private float    _sad;
-    private float    _angry;
-    private float    _surprised;
-    private float    _disgusted;
-    private float    _fearful;
+    private double    _neutral;
+    private double    _happy;
+    private double    _sad;
+    private double    _angry;
+    private double    _surprised;
+    private double    _disgusted;
+    private double    _fearful;
     
-    public EmotionData(DateTime time, float neutral, float happy, float sad, float angry, float surprised, float disgusted, float fearful)
+    public EmotionData(DateTime time, double neutral, double happy, double sad, double angry, double surprised, double disgusted, double fearful)
     {
         _time          = time;
         _neutral   = neutral;
@@ -24,11 +24,11 @@ public class EmotionData
     }
     
     public DateTime Time { get => _time; set => _time = value; }
-    public float Neutral { get => _neutral; set => _neutral = value; }
-    public float Happy { get => _happy; set => _happy = value; }
-    public float Sad { get => _sad; set => _sad = value; }
-    public float Angry { get => _angry; set => _angry = value; }
-    public float Surprised { get => _surprised; set => _surprised = value; }
-    public float Disgusted { get => _disgusted; set => _disgusted = value; }
-    public float Fearful { get => _fearful; set => _fearful = value; }
+    public double Neutral { get => _neutral; set => _neutral = value; }
+    public double Happy { get => _happy; set => _happy = value; }
+    public double Sad { get => _sad; set => _sad = value; }
+    public double Angry { get => _angry; set => _angry = value; }
+    public double Surprised { get => _surprised; set => _surprised = value; }
+    public double Disgusted { get => _disgusted; set => _disgusted = value; }
+    public double Fearful { get => _fearful; set => _fearful = value; }
 }

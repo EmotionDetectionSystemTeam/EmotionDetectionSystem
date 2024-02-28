@@ -28,6 +28,7 @@ public class LessonManager
         var newLesson = new Lesson(_lessonIdFactory++.ToString(),teacher, title, description, GenerateEntryCode(),
                                    tags.ToList());
         _lessonRepo.Add(newLesson);
+        teacher.AddLesson(newLesson);
         return newLesson;
     }
 
@@ -98,5 +99,12 @@ public class LessonManager
     public Lesson GetLesson(string lessonId)
     {
         return _lessonRepo.GetById(lessonId);
+    }
+    
+    public void AddViewer(string lessonId, Viewer viewer)
+    {
+        var lesson = _lessonRepo.GetById(lessonId);
+        lesson.AddViewer(viewer);
+        _lessonRepo.Update(lesson);
     }
 }

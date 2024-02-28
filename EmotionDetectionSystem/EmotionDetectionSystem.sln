@@ -5,6 +5,8 @@ VisualStudioVersion = 25.0.1706.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionDetectionSystem", "EmotionDetectionSystem.csproj", "{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionDetectionSystem.Tests", "..\EmotionDetectionSystem.Tests\EmotionDetectionSystem.Tests.csproj", "{EDE254A7-AEDF-4BEF-AA66-AFFCED6B1449}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDE254A7-AEDF-4BEF-AA66-AFFCED6B1449}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDE254A7-AEDF-4BEF-AA66-AFFCED6B1449}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDE254A7-AEDF-4BEF-AA66-AFFCED6B1449}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDE254A7-AEDF-4BEF-AA66-AFFCED6B1449}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

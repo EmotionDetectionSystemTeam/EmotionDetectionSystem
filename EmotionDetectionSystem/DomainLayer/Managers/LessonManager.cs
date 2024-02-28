@@ -3,12 +3,15 @@ using EmotionDetectionSystem.DomainLayer.objects;
 using EmotionDetectionSystem.RepoLayer;
 using EmotionDetectionSystem.Service;
 using EmotionDetectionSystem.ServiceLayer;
+using log4net;
 
 namespace EmotionDetectionSystem.DomainLayer.Managers;
 
 public class LessonManager
 {
-    private IRepo<Lesson> _lessonRepo;
+    private LessonRepo _lessonRepo;
+    private long _lessonIdFactory = 1;
+    private static readonly ILog Log = LogManager.GetLogger(typeof(LessonManager));
 
     public LessonManager()
     {
@@ -17,30 +20,58 @@ public class LessonManager
 
     public Lesson CreateLesson(Teacher teacher, string title, string description, string[] tags)
     {
-        Lesson newLesson = new Lesson(teacher, title, description, GenerateEntryCode(),
-                                      tags.ToList());
+        if (HasActiveLesson(teacher.Email))
+        {
+            throw new Exception("Teacher already has an active lesson");
+        }
+
+        var newLesson = new Lesson(_lessonIdFactory++.ToString(),teacher, title, description, GenerateEntryCode(),
+                                   tags.ToList());
         _lessonRepo.Add(newLesson);
+        teacher.AddLesson(newLesson);
         return newLesson;
+    }
+
+    private bool HasActiveLesson(string email)
+    {
+        var lessons = _lessonRepo.GetByTeacherEmail(email);
+        return lessons.Any(l => l.IsActive);
     }
 
     public void EndLesson(string email)
     {
-        throw new NotImplementedException();
+        var lessons = _lessonRepo.GetByTeacherEmail(email);
+        var lesson  = lessons.FirstOrDefault(l => l.IsActive);
+        if (lesson == null)
+        {
+            throw new Exception("No active lesson found");
+        }
+
+        lesson.EndLesson();
+        _lessonRepo.Update(lesson);
     }
 
-    public User JoinLesson(string sessionId, string entryCode)
+    public Lesson JoinLesson(User user, string entryCode)
     {
-        throw new NotImplementedException();
+        var lessons = _lessonRepo.GetByEntryCode(entryCode);
+        var lesson  = lessons.FirstOrDefault(l => l.IsActive);
+        if (lesson == null)
+        {
+            throw new Exception("Invalid entry code");
+        }
+        user.JoinLesson(lesson);
+        return lesson;
     }
 
-    public Dictionary<string, EnrollmentSummary> ViewStudentsDuringLesson(string sessionId)
+    public List<EnrollmentSummary> ViewStudentsDuringLesson(Viewer viewer, string lessonId)
     {
-        throw new NotImplementedException();
-    }
+        var lesson = _lessonRepo.GetById(lessonId);
+        if (!lesson.IsAllowedToViewStudentsData(viewer))
+        {
+            throw new Exception("Viewer is not allowed to view students data");
+        }
 
-    public List<Lesson> ViewTeacherDashboard(string sessionId)
-    {
-        throw new NotImplementedException();
+        return lesson.GetEnrollmentSummaries();
     }
 
     public Response<ServiceUser> ViewStudent(string sessionId)
@@ -63,5 +94,17 @@ public class LessonManager
         }
 
         return code.ToString();
+    }
+
+    public Lesson GetLesson(string lessonId)
+    {
+        return _lessonRepo.GetById(lessonId);
+    }
+    
+    public void AddViewer(string lessonId, Viewer viewer)
+    {
+        var lesson = _lessonRepo.GetById(lessonId);
+        lesson.AddViewer(viewer);
+        _lessonRepo.Update(lesson);
     }
 }

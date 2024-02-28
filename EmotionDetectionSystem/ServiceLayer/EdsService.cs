@@ -8,16 +8,21 @@ namespace EmotionDetectionSystem.ServiceLayer;
 
 public class EdsService : IEdsService
 {
-    private EdsManager _edsManager;
-    private ILog       _logger = LogManager.GetLogger(typeof(EdsService));
+    private          EdsManager _edsManager;
+    private readonly ILog       _logger = LogManager.GetLogger(typeof(EdsService));
+
+    public EdsService()
+    {
+        _edsManager = new EdsManager();
+    }
 
     public Response Register(string email, string firstName, string lastName, string password, string confirmPassword,
-                             bool   isStudent)
+                             int    userType)
     {
         _logger.InfoFormat($"Registering user with email: {email} has been received");
         try
         {
-            _edsManager.Register(email, firstName, lastName, password, isStudent);
+            _edsManager.Register(email, firstName, lastName, password, userType);
             return new Response();
         }
         catch (Exception e)
@@ -94,23 +99,87 @@ public class EdsService : IEdsService
         }
     }
 
-    public Response<ServiceUser> JoinLesson(string sessionId, string entryCode)
+    public Response<ServiceLesson> JoinLesson(string sessionId, string email, string entryCode)
     {
-        throw new NotImplementedException();
+        _logger.InfoFormat($"Join lesson request for session: {sessionId} has been received");
+        try
+        {
+            var lesson = _edsManager.JoinLesson(sessionId, email, entryCode);
+            _logger.InfoFormat($"User with session: {sessionId} has joined the lesson");
+            return Response<ServiceLesson>.FromValue(new ServiceLesson(lesson));
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error joining lesson with session: {sessionId} - {e.Message}");
+            return Response<ServiceLesson>.FromError(e.Message);
+        }
     }
 
-    public Response<Dictionary<int, ServiceEnrollmentSummary>> ViewStudentsDuringLesson(string sessionId)
+    public Response<List<ServiceEnrollmentSummary>> ViewStudentsDuringLesson(
+        string sessionId, string email, string lessonId)
     {
-        throw new NotImplementedException();
+        _logger.InfoFormat($"View students during lesson request for session: {sessionId} has been received");
+        try
+        {
+            var enrollmentSummaries = _edsManager.ViewStudentsDuringLesson(sessionId, email, lessonId);
+            var enrollmentSummariesService = enrollmentSummaries
+                .Select(enrollmentSummary => new ServiceEnrollmentSummary(enrollmentSummary)).ToList();
+            _logger.InfoFormat($"View students during lesson request for session: {sessionId} has been completed");
+            return Response<List<ServiceEnrollmentSummary>>.FromValue(enrollmentSummariesService);
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error viewing students during lesson with session: {sessionId} - {e.Message}");
+            return Response<List<ServiceEnrollmentSummary>>.FromError(e.Message);
+        }
     }
 
-    public Response<List<ServiceLesson>> ViewLessonDashboard(string sessionId)
+    public Response<List<ServiceLesson>> ViewLessonDashboard(string sessionId, string email)
     {
-        throw new NotImplementedException();
+        _logger.InfoFormat($"View lesson dashboard request for session: {sessionId} has been received");
+        try
+        {
+            var lessons = _edsManager.ViewTeacherDashboard(sessionId, email);
+            var lessonsService = lessons.Select(lesson => new ServiceLesson(lesson)).ToList();
+            _logger.InfoFormat($"View lesson dashboard request for session: {sessionId} has been completed");
+            return Response<List<ServiceLesson>>.FromValue(lessonsService);
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error viewing lesson dashboard with session: {sessionId} - {e.Message}");
+            return Response<List<ServiceLesson>>.FromError(e.Message);
+        }
     }
-
-    public Response<ServiceUser> ViewStudent(string sessionId)
+    
+    public Response<ServiceUser> ViewStudent(string sessionId, string email, string studentEmail)
     {
-        throw new NotImplementedException();
+        _logger.InfoFormat($"View student request for session: {sessionId} has been received");
+        try
+        {
+            var student = _edsManager.ViewStudent(sessionId, email, studentEmail);
+            _logger.InfoFormat($"View student request for session: {sessionId} has been completed");
+            return Response<ServiceUser>.FromValue(new ServiceUser(student));
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error viewing student with session: {sessionId} - {e.Message}");
+            return Response<ServiceUser>.FromError(e.Message);
+        }
+    }
+    
+    public Response PushEmotionData(string sessionId, string email, string lessonId, ServiceEmotionData emotionData)
+    {
+        _logger.InfoFormat($"Push emotion data request for session: {sessionId} has been received");
+        try
+        {
+            _edsManager.PushEmotionData(sessionId, email, lessonId, emotionData.ToDomainObject());
+            _logger.InfoFormat($"Push emotion data request for session: {sessionId} has been completed");
+            return new Response();
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error pushing emotion data with session: {sessionId} - {e.Message}");
+            return new Response(e.Message);
+        }
     }
 }

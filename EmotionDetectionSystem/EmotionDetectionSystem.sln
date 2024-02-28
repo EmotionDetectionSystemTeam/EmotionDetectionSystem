@@ -10,6 +10,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EDServer", "..\EDServer\EDS
 		{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD} = {DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionDetectionSystem.Tests", "..\EmotionDetectionSystem.Tests\EmotionDetectionSystem.Tests.csproj", "{EDE254A7-AEDF-4BEF-AA66-AFFCED6B1449}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

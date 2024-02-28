@@ -8,6 +8,11 @@ public class UserRepo : IRepo<User>
 {
     private static          ConcurrentDictionary<string, User> _userByEmail;
     private static readonly ILog                               _logger = LogManager.GetLogger(typeof(UserRepo));
+    
+    public UserRepo()
+    {
+        _userByEmail = new ConcurrentDictionary<string, User>();
+    }
 
     public List<User> GetAll()
     {
@@ -27,13 +32,11 @@ public class UserRepo : IRepo<User>
 
     public User GetByEmail(string email)
     {
-        if (!_userByEmail.ContainsKey(email))
-        {
-            _logger.ErrorFormat($"User with email: {email} does not exist");
-            return null;
-        }
+        if (_userByEmail.TryGetValue(email, out var value)) return value;
+        var errorMsg = $"User with email: {email} does not exist";
+        _logger.ErrorFormat(errorMsg);
+        throw new Exception(errorMsg);
 
-        return _userByEmail[email];
     }
 
     public void Add(User item)

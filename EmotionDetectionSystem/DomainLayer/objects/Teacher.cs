@@ -22,5 +22,11 @@ public class Teacher: User, Viewer
 
     public override void JoinLesson(Lesson lesson)
     {
+        lesson.AddViewer(this);
+    }
+
+    public void AddLesson(Lesson newLesson)
+    {
+        _lessons.Add(newLesson);
     }
 }

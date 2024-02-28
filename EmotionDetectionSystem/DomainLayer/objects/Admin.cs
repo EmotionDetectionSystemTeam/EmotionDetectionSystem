@@ -8,5 +8,6 @@ public class Admin : User, Viewer
 
     public override void JoinLesson(Lesson lesson)
     {
+        lesson.AddViewer(this);
     }
 }

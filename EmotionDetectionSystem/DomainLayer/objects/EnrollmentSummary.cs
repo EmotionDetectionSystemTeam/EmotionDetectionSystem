@@ -28,19 +28,6 @@ public class EnrollmentSummary
             _emotionData.Add(emotionData);
         }
     }
-    
-    private EmotionData validateEmotionData(EmotionData emotionData)
-    {
-        if (emotionData == null)
-        {
-            throw new Exception("EmotionData is null");
-        }
-        if(emotionData.Time==null)
-        {
-            throw new Exception("Time is null");
-        }
-        return emotionData;
-    }
 
     public Student Student
     {

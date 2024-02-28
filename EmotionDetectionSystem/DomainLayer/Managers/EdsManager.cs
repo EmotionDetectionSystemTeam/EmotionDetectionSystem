@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using EmotionDetectionSystem.DomainLayer.objects;
+using EmotionDetectionSystem.RepoLayer;
 using EmotionDetectionSystem.Service;
 using EmotionDetectionSystem.ServiceLayer;
 using log4net;
@@ -15,7 +16,7 @@ public class EdsManager
     private readonly        AutoResetEvent                _taskEvent;
     private                 bool                          _isProcessingTasks;
     private static readonly ILog                          Log = LogManager.GetLogger(typeof(EdsManager));
-
+    
     public EdsManager()
     {
         _userManager             = new UserManager();
@@ -63,7 +64,7 @@ public class EdsManager
     {
         if (!_userManager.IsValidSession(sessionId, email))
         {
-            throw new Exception("Session is not valid");
+            throw new Exception($"Session: {sessionId} is not valid");
         }
     }
 
@@ -158,7 +159,26 @@ public class EdsManager
         }
         catch (Exception e)
         {
-            Log.Error($"Error processing emotion data task - {e.Message}");
+            throw new Exception($"Error processing emotion data task - {e.Message}");
         }
     }
+
+    public bool IsLoggedIn(string sessionId, string email)
+    {
+        try
+        {
+            IsValidSession(sessionId, email);
+            return true;
+        }
+        catch (Exception _)
+        {
+            return false;
+        }
+    }
+    
+    public User GetUser(string email)
+    {
+        return _userManager.GetUser(email);
+    }
+    public bool IsProcessingTasks => _concurrentQueue.Count > 0;
 }

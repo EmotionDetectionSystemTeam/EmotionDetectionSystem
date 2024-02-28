@@ -5,16 +5,16 @@ namespace EmotionDetectionSystem.ServiceLayer;
 public class ServiceEmotionData
 {
     public DateTime Time;
-    public float    Neutral;
-    public float    Happy;
-    public float    Sad;
-    public float    Angry;
-    public float    Surprised;
-    public float    Disgusted;
-    public float    Fearful;
+    public double    Neutral;
+    public double    Happy;
+    public double    Sad;
+    public double    Angry;
+    public double    Surprised;
+    public double    Disgusted;
+    public double    Fearful;
 
-    public ServiceEmotionData(float neutral, float happy, float sad, float angry, float surprised, float disgusted,
-                              float fearful)
+    public ServiceEmotionData(double neutral, double happy, double sad, double angry, double surprised, double disgusted,
+                              double fearful)
     {
         Time      = DateTime.Now;
         Neutral   = neutral;

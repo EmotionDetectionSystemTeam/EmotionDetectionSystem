@@ -112,7 +112,7 @@ public class EdsManagerTest
         const int    userType  = 1;
         _edsManager.Register(email, firstName, lastName, password, userType);
         var e = Assert.ThrowsException<Exception>(() => _edsManager.Logout(_sessionId, email));
-        Assert.AreEqual("Session is not valid", e.Message);
+        Assert.AreEqual($"Session: {_sessionId} is not valid", e.Message);
     }
 
     [TestMethod]
@@ -262,12 +262,6 @@ public class EdsManagerTest
         Assert.AreEqual(2,                lessons.Count());
         Assert.AreEqual(lesson.LessonId,  lessons.First().LessonId);
         Assert.AreEqual(lesson2.LessonId, lessons.Last().LessonId);
-    }
-
-    [TestMethod]
-    public void ViewStudent(string sessionId, string email, string studentEmail)
-    {
-        //throw new System.NotImplementedException();
     }
 
     [TestMethod]

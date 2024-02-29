@@ -1,7 +1,5 @@
 using System.Collections.Concurrent;
 using EmotionDetectionSystem.DomainLayer.objects;
-using EmotionDetectionSystem.RepoLayer;
-using EmotionDetectionSystem.Service;
 using EmotionDetectionSystem.ServiceLayer;
 using log4net;
 

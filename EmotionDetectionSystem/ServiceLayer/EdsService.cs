@@ -1,7 +1,5 @@
 using EmotionDetectionSystem.DomainLayer.Managers;
-using EmotionDetectionSystem.DomainLayer.objects;
-using EmotionDetectionSystem.Service;
-using EmotionDetectionSystem.ServiceLayer;
+using EmotionDetectionSystem.ServiceLayer.Responses;
 using log4net;
 
 namespace EmotionDetectionSystem.ServiceLayer;

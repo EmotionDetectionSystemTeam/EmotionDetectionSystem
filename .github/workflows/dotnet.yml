@@ -18,7 +18,9 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: |
+        cd EmotionDetectionSystem/EmotionDetectionSystem.sln
+        dotnet restore
     - name: Build
       run: dotnet build EmotionDetectionSystem.sln --no-restore
     - name: Test

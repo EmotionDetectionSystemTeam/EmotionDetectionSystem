@@ -1,4 +1,4 @@
-﻿using EmotionDetectionSystem.Service;
+﻿using EmotionDetectionSystem.ServiceLayer.Responses;
 
 namespace EmotionDetectionSystem.ServiceLayer
 {

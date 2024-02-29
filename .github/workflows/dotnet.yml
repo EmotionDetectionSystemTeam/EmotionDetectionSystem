@@ -22,6 +22,8 @@ jobs:
         cd EmotionDetectionSystem
         dotnet restore
     - name: Build
-      run: dotnet build EmotionDetectionSystem.sln --no-restore
+      run: |
+        cd EmotionDetectionSystem
+        dotnet build EmotionDetectionSystem.sln --no-restore
     - name: Test
       run: dotnet test EmotionDetectionSystem.Tests/EmotionDetectionSystem.Tests.csproj --no-build --verbosity normal

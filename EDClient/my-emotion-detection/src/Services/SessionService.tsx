@@ -30,7 +30,7 @@ export async function initFields(id: string) {
   storage.setItem(isInitOccured, "true");
   setSessionId(id);
   setIsGuest(true);
-  setUsername("guest");
+  //setUsername("guest");
   setIsAdmin(false);
 }
 

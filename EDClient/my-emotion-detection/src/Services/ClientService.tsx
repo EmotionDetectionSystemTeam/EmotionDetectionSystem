@@ -1,6 +1,6 @@
 import checkInput, { serverPort } from "../Utils";
 import ClientResponse from "./Response";
-import { getSessionId } from "./SessionService";
+import { getSessionId, getUserName } from "./SessionService";
 
 export async function serverEnterAsGuest(): Promise<ClientResponse<string>> {
     const uri = serverPort + "/api/eds/enter-as-guest";
@@ -43,7 +43,7 @@ export async function serverRegister(
     password: string | undefined | null,
     confirmPassword: string | undefined | null,
     isStudent: number | undefined | null,
-  ): Promise<ClientResponse<string>> {
+  ): Promise<string> {
     const fields: any[] = [email, firstName, lastName, password, isStudent];
     if (!checkInput(fields)) return Promise.reject("Regev's notification");
     const uri = serverPort + "/api/eds/register";
@@ -73,19 +73,19 @@ export async function serverRegister(
       if (!response) {
         throw new Error("Empty response received");
       }
-  
+      
       //const response = JSON.parse(responseText);
-      return response;
+      return response.value;
     } catch (e) {
       return Promise.reject(e);
     }
   }
 
-  export async function serverLogin(
-    username: string| undefined | null,
+export async function serverLogin(
+    email: string| undefined | null,
     password: string| undefined | null
-  ): Promise<ClientResponse<string>> {
-    const fields: any[] = [username, password];
+  ): Promise<string> {
+    const fields: any[] = [email, password];
     if (!checkInput(fields)) return Promise.reject();
     const uri = serverPort + "/api/eds/login";
     try {
@@ -98,7 +98,7 @@ export async function serverRegister(
         // body: '{\n  "userName": "string",\n  "password": "string"\n}',
         body: JSON.stringify({
           SessionId: getSessionId(),
-          Username: username,
+          Email: email,
           Password: password,
         }),
       });
@@ -115,9 +115,124 @@ export async function serverRegister(
       }
 
   
-      return response;
+      return response.value;
     } catch (e) {
       return Promise.reject(e);
     }
   }
 
+export async function serverJoinLesson(
+    classCode: string | undefined | null,
+  ): Promise<string> {
+    const fields: any[] = [classCode];
+    if (!checkInput(fields)) return Promise.reject();
+    const uri = serverPort + "/api/eds/join-lesson";
+    try {
+      const jsonResponse = await fetch(uri, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+        body: JSON.stringify({
+          SessionId: getSessionId(),
+          Email: getUserName(),
+          EntryCode: classCode
+        }),
+      });
+  
+      if (!jsonResponse.ok) {
+        const errorResponse: ClientResponse<string> = await jsonResponse.json();
+        throw new Error(errorResponse.errorMessage);
+      }
+  
+      const response: ClientResponse<string> = await jsonResponse.json();
+      // Handle empty response
+      if (!response) {
+        throw new Error("Empty response received");
+      }
+
+  
+      return response.value;
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+  export async function serverCreateLesson(
+    title: string | undefined | null,
+    description: string | undefined | null,
+    tags: string[] | undefined | null
+  ): Promise<string> {
+    const fields: any[] = [title,description];
+    if (!checkInput(fields)) return Promise.reject();
+    const uri = serverPort + "/api/eds/create-lesson";
+    try {
+      const jsonResponse = await fetch(uri, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+        body: JSON.stringify({
+          SessionId: getSessionId(),
+          Email: getUserName(),
+          Title: title,
+          Description: description,
+          Tags: tags
+        }),
+      });
+  
+      if (!jsonResponse.ok) {
+        const errorResponse: ClientResponse<string> = await jsonResponse.json();
+        throw new Error(errorResponse.errorMessage);
+      }
+  
+      const response: ClientResponse<string> = await jsonResponse.json();
+      // Handle empty response
+      if (!response) {
+        throw new Error("Empty response received");
+      }
+
+  
+      return response.value;
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+
+export async function serverLogout(
+  ): Promise<string> {
+    const uri = serverPort + "/api/eds/logout";
+    try {
+      const jsonResponse = await fetch(uri, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+        body: JSON.stringify({
+          SessionId: getSessionId(),
+          Email: getUserName(),
+        }),
+      });
+  
+      if (!jsonResponse.ok) {
+        const errorResponse: ClientResponse<string> = await jsonResponse.json();
+        throw new Error(errorResponse.errorMessage);
+      }
+  
+      const response: ClientResponse<string> = await jsonResponse.json();
+      // Handle empty response
+      if (!response) {
+        throw new Error("Empty response received");
+      }
+
+  
+      return response.value;
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }

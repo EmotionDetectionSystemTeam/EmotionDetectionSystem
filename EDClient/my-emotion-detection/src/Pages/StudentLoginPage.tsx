@@ -47,14 +47,14 @@ import { squaresColor } from "../Utils";
       */
       event.preventDefault();
       const data = new FormData(event.currentTarget);
-      const username = data.get("username")?.toString();
+      const email = data.get("email")?.toString();
       const password = data.get("password")?.toString();
 
-      const serverResponse = await serverLogin(username, password).then(() => {
-        const address = `ws://127.0.0.1:4560/${username}-notifications`;
+      const serverResponse = await serverLogin(email, password).then(() => {
+        const address = `ws://127.0.0.1:4560/${email}-notifications`;
         initWebSocket(address);
         navigate(pathStudentDashBoard);
-        alert(`${username} DashBoard is not ready yet!`);
+        alert(`${email} DashBoard is not ready yet!`);
         }).catch((e) => alert(e));
     };
   
@@ -97,10 +97,10 @@ import { squaresColor } from "../Utils";
                   margin="normal"
                   required
                   fullWidth
-                  id="username"
-                  label="username"
-                  name="username"
-                  autoComplete="username"
+                  id="email"
+                  label="email"
+                  name="email"
+                  autoComplete="email"
                   autoFocus
                   variant="outlined"
                 />

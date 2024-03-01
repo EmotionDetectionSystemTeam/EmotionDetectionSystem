@@ -3,9 +3,9 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import './App.css'; // Assuming you have a CSS file for styling
 import HomePage from './Pages/HomePage';
 import Register from './Pages/RegisterPage';
-import StudentDashboard from './Pages/StudentDashboard';
+import StudentDashboard from './Pages/StudentDashboardPage';
 import StudentLogin from './Pages/StudentLoginPage';
-import TeacherDashboard from './Pages/TeacherDashboard';
+import TeacherDashboard from './Pages/TeacherDashboardPage';
 import TeacherLogin from './Pages/TeacherLoginPage';
 import * as Path from "./Paths";
 import { initSession } from "./Services/SessionService";

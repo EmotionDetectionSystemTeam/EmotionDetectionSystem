@@ -9,8 +9,9 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { pathHome, pathStudentDashBoard } from "../Paths";
+import { pathHome, pathStudentLogin, pathTeacherLogin } from "../Paths";
 import { serverRegister } from "../Services/ClientService";
+import { getUserName, setUsername } from "../Services/SessionService";
 import { squaresColor } from "../Utils";
 
 
@@ -42,11 +43,15 @@ function Register() {
     const firstName = data.get("firstName")?.toString();
     const lastName = data.get("lastName")?.toString();
     const password = data.get("password")?.toString();
-    const confirmPassword = data.get("confirmPassword")?.toString();
+    const confirmPassword = data.get("confirmPassword")?.toString();//TODO: password match
     const isStudentValue = isStudent ? 1 : 0;
     serverRegister(email, firstName, lastName, password, confirmPassword,isStudentValue)
-    .then(() => navigate(pathStudentDashBoard))
-    .catch((e) => alert(e))
+    .then((response : string) => {
+      isStudent ? navigate(pathStudentLogin) : navigate(pathTeacherLogin);
+      setUsername(String(email));
+      alert(getUserName());
+      alert(response)})
+      .catch((e) => alert(e))
 
   };
 
@@ -95,6 +100,7 @@ function Register() {
                 autoComplete="email"
                 autoFocus
                 variant="outlined"
+                type="email"
               />
                 <TextField
                 margin="normal"

@@ -13,9 +13,9 @@ namespace EmotionDetectionServer.API
         private WebSocketServer notificationServer;
         private WebSocketServer logserver;
 
-        public EdsController(WebSocketServer notificationServer, WebSocketServer lgs)
+        public EdsController(IEdsService edsService, WebSocketServer notificationServer, WebSocketServer lgs)
         {
-            this.service = new EdsService();
+            this.service = edsService;
             this.notificationServer = notificationServer;
             this.logserver = lgs;
 

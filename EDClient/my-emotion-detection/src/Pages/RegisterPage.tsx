@@ -44,7 +44,7 @@ function Register() {
     const lastName = data.get("lastName")?.toString();
     const password = data.get("password")?.toString();
     const confirmPassword = data.get("confirmPassword")?.toString();//TODO: password match
-    const isStudentValue = isStudent ? 1 : 0;
+    const isStudentValue = isStudent ? 0 : 1;
     serverRegister(email, firstName, lastName, password, confirmPassword,isStudentValue)
     .then((response : string) => {
       isStudent ? navigate(pathStudentLogin) : navigate(pathTeacherLogin);

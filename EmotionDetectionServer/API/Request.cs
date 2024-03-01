@@ -85,9 +85,7 @@ namespace EmotionDetectionServer.API
     public class LogoutRequest : IRequest
     {
         public string SessionId { get; set; }
-        public string Email { get; set; }
-        public string EntryCode { get; set; }
-
+        public string Email { get; set; }   
         public LogoutRequest(string sessionId, string email)
         {
             SessionId = sessionId;

@@ -64,7 +64,7 @@ function HomePage() {
             variant="h2"
             sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}
           >
-            Welcome to EMS 
+            Welcome to Emotion Detection System's Developer site 
           </Typography>
           <ButtonGroup
             orientation="vertical"

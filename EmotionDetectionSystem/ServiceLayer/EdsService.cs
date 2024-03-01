@@ -180,4 +180,10 @@ public class EdsService : IEdsService
             return new Response(e.Message);
         }
     }
+
+    public Response EnterAsGuest(string sessionId)
+    {
+        _logger.InfoFormat($"Enter as guest request for session: {sessionId} has been received");
+        return new Response();
+    }
 }

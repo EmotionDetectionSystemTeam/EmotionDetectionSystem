@@ -22,4 +22,17 @@ namespace EmotionDetectionServer.API
             this.isStudent = isStudent;
         }
     }
+
+    public class EnterAsGuestRequest : IRequest
+    {
+
+        public string sessionId { get; set; }
+
+
+        public EnterAsGuestRequest(string SessionID)
+        {
+            this.sessionId = SessionID;
+
+        }
+    }
 }

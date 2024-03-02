@@ -2,6 +2,18 @@
 
 namespace EmotionDetectionServer.API
 {
+    public class EnterAsGuestRequest : IRequest
+    {
+
+        public string sessionId { get; set; }
+
+
+        public EnterAsGuestRequest(string SessionID)
+        {
+            this.sessionId = SessionID;
+
+        }
+    }
     public class RegisterRequest : IRequest
     {
 
@@ -21,5 +33,68 @@ namespace EmotionDetectionServer.API
             this.confirmPassword = confirmPassword;
             this.isStudent = isStudent;
         }
+
+
     }
+    public class LoginRequest : IRequest
+    {
+        public string sessionId { get; set; }
+        public string email { get; set; }
+        public string password { get; set; }
+
+        public LoginRequest(string SessionId, string Email, string Password)
+        {
+            this.sessionId = SessionId;
+            this.email = Email;
+            this.password = Password;
+        }
+    }
+
+    public class CreateLessonRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string Email { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string[] Tags { get; set; }
+
+        public CreateLessonRequest(string sessionId, string email, string title, string description, string[] tags)
+        {
+            SessionId = sessionId;
+            Email = email;
+            Title = title;
+            Description = description;
+            Tags = tags;
+        }
+    }
+
+    public class JoinLessonRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string Email { get; set; }
+        public string EntryCode { get; set; }
+
+        public JoinLessonRequest(string sessionId, string email, string entryCode)
+        {
+            SessionId = sessionId;
+            Email = email;
+            EntryCode = entryCode;
+        }
+    }
+
+    public class LogoutRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string Email { get; set; }   
+        public LogoutRequest(string sessionId, string email)
+        {
+            SessionId = sessionId;
+            Email = email;
+        }
+    }
+
+
+
+
+
 }

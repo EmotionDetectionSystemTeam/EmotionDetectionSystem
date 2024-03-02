@@ -1,17 +1,22 @@
 import {
-    Box,
-    Button,
-    Grid,
-    Link,
-    TextField,
-    ThemeProvider,
-    Typography,
-    createTheme,
+  Box,
+  Button,
+  Grid,
+  Link,
+  TextField,
+  ThemeProvider,
+  Typography,
+  createTheme,
 } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import { pathHome } from "../Paths";
+import { pathHome, pathStudentDashBoard } from "../Paths";
+import { serverLogin } from "../Services/ClientService";
+import { initWebSocket } from "../Services/NotificationService";
 import { squaresColor } from "../Utils";
+
+
+
   
   function StudentLogin() {
     const theme = createTheme({
@@ -42,21 +47,15 @@ import { squaresColor } from "../Utils";
       */
       event.preventDefault();
       const data = new FormData(event.currentTarget);
-      const username = data.get("username")?.toString();
+      const email = data.get("email")?.toString();
       const password = data.get("password")?.toString();
-      if (username != undefined && password != undefined) {
-        // Cant set username with value that can be undefined
-        try {
-          //const serverResponse = await serverLogin(username, password);
-          //const Id: string = serverResponse.value;
-          const address = `ws://127.0.0.1:4560/${username}-notifications`;
-          //initWebSocket(address);
-          //navigate(pathMarket);
-          alert(`${username} DashBoard is not ready yet!`);
-        } catch (e) {
-          alert(e);
-        }
-      }
+
+      const serverResponse = await serverLogin(email, password).then(() => {
+        const address = `ws://127.0.0.1:4560/${email}-notifications`;
+        initWebSocket(address);
+        navigate(pathStudentDashBoard);
+        alert(`${email} DashBoard is not ready yet!`);
+        }).catch((e) => alert(e));
     };
   
     return (
@@ -98,10 +97,10 @@ import { squaresColor } from "../Utils";
                   margin="normal"
                   required
                   fullWidth
-                  id="username"
-                  label="username"
-                  name="username"
-                  autoComplete="username"
+                  id="email"
+                  label="email"
+                  name="email"
+                  autoComplete="email"
                   autoFocus
                   variant="outlined"
                 />

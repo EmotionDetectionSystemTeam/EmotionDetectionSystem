@@ -1,5 +1,7 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -7,8 +9,11 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { pathHome } from "../Paths";
+import { pathHome, pathStudentLogin, pathTeacherLogin } from "../Paths";
+import { serverRegister } from "../Services/ClientService";
+import { getUserName, setUsername } from "../Services/SessionService";
 import { squaresColor } from "../Utils";
+
 
 function Register() {
   const theme = createTheme({
@@ -29,19 +34,25 @@ function Register() {
   });
   const navigate = useNavigate();
 
+  const [isStudent, setIsStudent] = React.useState(false);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const username = data.get("username")?.toString();
+    const email = data.get("email")?.toString();
+    const firstName = data.get("firstName")?.toString();
+    const lastName = data.get("lastName")?.toString();
     const password = data.get("password")?.toString();
-    try {
-      //const serverResponse = await Server.Register(username, password);
-      //const Id: string = serverResponse.value;
-      //navigate(pathLogin);
-      alert(`${username} Server is not ready yet!`);
-    } catch (e) {
-      alert(e);
-    }
+    const confirmPassword = data.get("confirmPassword")?.toString();//TODO: password match
+    const isStudentValue = isStudent ? 0 : 1;
+    serverRegister(email, firstName, lastName, password, confirmPassword,isStudentValue)
+    .then((response : string) => {
+      isStudent ? navigate(pathStudentLogin) : navigate(pathTeacherLogin);
+      setUsername(String(email));
+      alert(getUserName());
+      alert(response)})
+      .catch((e) => alert(e))
+
   };
 
   return (
@@ -83,14 +94,37 @@ function Register() {
                 margin="normal"
                 required
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                variant="outlined"
+                type="email"
+              />
+                <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                name="firstName"
+                autoComplete="firstName"
                 autoFocus
                 variant="outlined"
               />
               <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="lastName"
+                label="Last Name"
+                type="lastName"
+                id="lastName"
+                autoComplete="current-password"
+                variant="outlined"
+              />
+                <TextField
                 margin="normal"
                 required
                 fullWidth
@@ -100,6 +134,21 @@ function Register() {
                 id="password"
                 autoComplete="current-password"
                 variant="outlined"
+              />
+                <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type="confirmPassword"
+                id="confirmPassword"
+                autoComplete="current-password"
+                variant="outlined"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={isStudent} onChange={(e) => setIsStudent(e.target.checked)} color="primary" name="isStudent" />}
+                label="Are you a student?"
               />
               <Button
                 type="submit"

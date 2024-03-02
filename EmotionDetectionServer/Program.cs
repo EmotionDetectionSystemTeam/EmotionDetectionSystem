@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Net;
 using WebSocketSharp.Server;
 using static EmotionDetectionServer.API.EdsController;
+using EmotionDetectionSystem.ServiceLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,11 +27,13 @@ builder.Services.AddControllers();
 
 WebSocketServer notificationServer = new WebSocketServer($"ws://{GetLocalIPAddress()}:" + "7172");
 WebSocketServer logsServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 4560);
+EdsService service = new EdsService();
 logsServer.AddWebSocketService<logsService>("/logs");
 notificationServer.Start();
 logsServer.Start();
 builder.Services.AddSingleton(_ => notificationServer);
 builder.Services.AddSingleton(_ => logsServer);
+builder.Services.AddSingleton<IEdsService, EdsService>();
 
 
 var app = builder.Build();

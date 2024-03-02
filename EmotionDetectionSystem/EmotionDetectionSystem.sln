@@ -7,10 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmotionDetectionSystem", "E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmotionDetectionSystem.Tests", "..\EmotionDetectionSystem.Tests\EmotionDetectionSystem.Tests.csproj", "{EDE254A7-AEDF-4BEF-AA66-AFFCED6B1449}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionDetectionServer", "..\EmotionDetectionServer\EmotionDetectionServer.csproj", "{588B047A-DEBB-4155-A856-8FC4192182BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmotionDetectionServer", "..\EmotionDetectionServer\EmotionDetectionServer.csproj", "{588B047A-DEBB-4155-A856-8FC4192182BE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DAD94F10-C3BA-4FCF-857F-DA74A7875CCD} = {DAD94F10-C3BA-4FCF-857F-DA74A7875CCD}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcceptanceTests", "..\AcceptanceTests\AcceptanceTests.csproj", "{968CFDC2-D8DD-475F-9196-C925D79A6495}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +32,10 @@ Global
 		{588B047A-DEBB-4155-A856-8FC4192182BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{588B047A-DEBB-4155-A856-8FC4192182BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{588B047A-DEBB-4155-A856-8FC4192182BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{968CFDC2-D8DD-475F-9196-C925D79A6495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{968CFDC2-D8DD-475F-9196-C925D79A6495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{968CFDC2-D8DD-475F-9196-C925D79A6495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{968CFDC2-D8DD-475F-9196-C925D79A6495}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

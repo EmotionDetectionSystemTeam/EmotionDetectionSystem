@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddControllers();
-
+builder.WebHost.UseUrls("http://127.0.0.1:5001");
 WebSocketServer notificationServer = new WebSocketServer($"ws://{GetLocalIPAddress()}:" + "7172");
 WebSocketServer logsServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 4560);
 logsServer.AddWebSocketService<logsService>("/logs");

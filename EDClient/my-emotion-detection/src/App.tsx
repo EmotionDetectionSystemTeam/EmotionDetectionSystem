@@ -3,11 +3,16 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import './App.css'; // Assuming you have a CSS file for styling
 import HomePage from './Pages/HomePage';
 import Register from './Pages/RegisterPage';
+import StudentDashboard from './Pages/StudentDashboardPage';
 import StudentLogin from './Pages/StudentLoginPage';
+import TeacherDashboard from './Pages/TeacherDashboardPage';
 import TeacherLogin from './Pages/TeacherLoginPage';
 import * as Path from "./Paths";
+import { initSession } from "./Services/SessionService";
+
 
 const App = () => {
+  initSession();
   return (
     <Router>
       <Routes>
@@ -15,6 +20,9 @@ const App = () => {
         <Route path={Path.pathRegister} element={<Register />} />
         <Route path={Path.pathStudentLogin} element={<StudentLogin />} />
         <Route path={Path.pathTeacherLogin} element={<TeacherLogin />} />
+        <Route path={Path.pathStudentDashBoard} element={<StudentDashboard />} />
+        <Route path={Path.pathTeacherDashBoard} element={<TeacherDashboard />} />
+
       </Routes>
     </Router>
   );

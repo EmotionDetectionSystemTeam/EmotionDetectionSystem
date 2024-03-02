@@ -2,23 +2,19 @@ import {
   Box,
   Button,
   Grid,
-  Link,
   TextField,
   ThemeProvider,
   Typography,
-  createTheme,
+  createTheme
 } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import { pathHome, pathTeacherDashBoard } from "../Paths";
-import { serverLogin } from "../Services/ClientService";
-import { initWebSocket } from "../Services/NotificationService";
+import { pathHome } from "../Paths";
+import { serverCreateLesson, serverLogout } from "../Services/ClientService";
 import { squaresColor } from "../Utils";
 
-
-
   
-  function TeacherLogin() {
+  function TeacherDashboard() {
     const theme = createTheme({
       typography: {
         fontFamily: [
@@ -39,24 +35,25 @@ import { squaresColor } from "../Utils";
     const navigate = useNavigate();
   
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        /*
-      if (!sessionService.getIsGuest()) {
-        alert("You are already logged in!\n");
-        return;
-      }
-      */
+
       event.preventDefault();
       const data = new FormData(event.currentTarget);
-      const email = data.get("email")?.toString();
-      const password = data.get("password")?.toString();
+      const title = data.get("title")?.toString();
+      const description = data.get("description")?.toString();
 
-      serverLogin(email, password).then(() => {
-        const address = `ws://127.0.0.1:4560/${email}-notifications`;
-        initWebSocket(address);
-        navigate(pathTeacherDashBoard);
-        alert(`${email} DashBoard is not ready yet!`);
+      serverCreateLesson(title, description,[]).then((message : string) => { //TODO: tags impl 
+        //navigate(pathStudentDashBoard);
+        alert(message);
         }).catch((e) => alert(e));
     };
+
+    const handleLogout = () => {
+      serverLogout().then((message : string) => {
+          alert(message);
+          navigate(pathHome);
+      }).catch((e) => alert(e))
+      
+    }
   
     return (
       <ThemeProvider theme={theme}>
@@ -83,7 +80,7 @@ import { squaresColor } from "../Utils";
               }}
             >
               <Typography component="h1" variant="h5">
-                Login To Your Account
+                Teacher Dash Board
               </Typography>
               <Box
                 component="form"
@@ -94,26 +91,38 @@ import { squaresColor } from "../Utils";
                 }}
               >
                 <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="email"
-                  name="email"
-                  autoComplete="email"
-                  autoFocus
-                  variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="title"
+                    label="Title"
+                    name="title"
+                    autoComplete="title"
+                    variant="outlined"
+                    type="text"
                 />
                 <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="password"
-                  label="password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="description"
+                    label="Description"
+                    name="description"
+                    autoComplete="description"
+                    variant="outlined"
+                    type="text"
+                />
+
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="tags"
+                    label="Tags"
+                    name="tags"
+                    autoComplete="tags"
+                    variant="outlined"
+                    type="text"
                 />
                 <Button
                   type="submit"
@@ -127,27 +136,25 @@ import { squaresColor } from "../Utils";
                     "&:hover": { backgroundColor: squaresColor },
                   }}
                 >
-                  Sign In
+                  Enter Lesson Code
                 </Button>
                 <Button
                   fullWidth
                   variant="contained"
-                  href={pathHome}
+                  onClick={() => {
+                      handleLogout();
+                    }}
                   sx={{
                     mt: 3,
                     mb: 2,
                     color: "black",
                     backgroundColor: "#fff	",
                     "&:hover": { backgroundColor: squaresColor },
+
                   }}
                 >
                   Back
                 </Button>
-                <Grid item>
-                  <Link href="/register" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
               </Box>
             </Box>
           </Grid>
@@ -156,5 +163,5 @@ import { squaresColor } from "../Utils";
     );
   }
   
-  export default TeacherLogin;
+  export default TeacherDashboard;
   

@@ -7,14 +7,14 @@ namespace EmotionDetectionSystem.DomainLayer.Managers;
 
 public class EdsManager
 {
-    private readonly        UserManager                   _userManager;
-    private readonly        LessonManager                 _lessonManager;
+    private readonly        UserManager                          _userManager;
+    private readonly        LessonManager                        _lessonManager;
     private readonly        ConcurrentQueue<PushEmotionDataTask> _concurrentQueue;
-    private readonly        CancellationTokenSource       _cancellationTokenSource;
-    private readonly        AutoResetEvent                _taskEvent;
-    private                 bool                          _isProcessingTasks;
-    private static readonly ILog                          Log = LogManager.GetLogger(typeof(EdsManager));
-    
+    private readonly        CancellationTokenSource              _cancellationTokenSource;
+    private readonly        AutoResetEvent                       _taskEvent;
+    private                 bool                                 _isProcessingTasks;
+    private static readonly ILog                                 Log = LogManager.GetLogger(typeof(EdsManager));
+
     public EdsManager()
     {
         _userManager             = new UserManager();
@@ -173,10 +173,11 @@ public class EdsManager
             return false;
         }
     }
-    
+
     public User GetUser(string email)
     {
         return _userManager.GetUser(email);
     }
+
     public bool IsProcessingTasks => _concurrentQueue.Count > 0;
 }

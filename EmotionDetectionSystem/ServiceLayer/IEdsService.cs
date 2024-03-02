@@ -7,11 +7,11 @@ namespace EmotionDetectionSystem.ServiceLayer
         Response Register(string email, string firstName, string lastName, string password, string confirmPassword,
                           int    userType);
 
-        Response<ServiceUser> Login(string sessionId, string email, string password);
-        Response Logout(string sessionId, string email);
-        Response<string> CreateLesson(string sessionId, string email, string title, string description, string[] tags);
-        Response EndLesson(string sessionId, string email);
-        Response<ServiceLesson> JoinLesson(string sessionId, string email, string entryCode);
+        Response<ServiceUser>   Login(string        sessionId, string email, string password);
+        Response                Logout(string       sessionId, string email);
+        Response<ServiceLesson> CreateLesson(string sessionId, string email, string title, string description, string[] tags);
+        Response                EndLesson(string    sessionId, string email);
+        Response<ServiceLesson> JoinLesson(string   sessionId, string email, string entryCode);
 
         Response<List<ServiceEnrollmentSummary>> ViewStudentsDuringLesson(
             string sessionId, string email, string lessonId);

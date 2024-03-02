@@ -1,4 +1,5 @@
 using EmotionDetectionSystem.DomainLayer.Managers;
+using EmotionDetectionSystem.DomainLayer.objects;
 using EmotionDetectionSystem.ServiceLayer.Responses;
 using log4net;
 
@@ -64,7 +65,7 @@ public class EdsService : IEdsService
         }
     }
 
-    public Response<string> CreateLesson(string   sessionId, string email, string title, string description,
+    public Response<ServiceLesson> CreateLesson(string   sessionId, string email, string title, string description,
                                          string[] tags)
     {
         _logger.InfoFormat($"Create lesson request for session: {sessionId} has been received");
@@ -72,12 +73,12 @@ public class EdsService : IEdsService
         {
             var lesson = _edsManager.CreateLesson(sessionId, email, title, description, tags);
             _logger.InfoFormat($"Lesson with title: {title} has been created");
-            return Response<string>.FromValue(lesson.EntryCode);
+            return Response<ServiceLesson>.FromValue(new ServiceLesson(lesson));
         }
         catch (Exception e)
         {
             _logger.ErrorFormat($"Error creating lesson with title: {title} - {e.Message}");
-            return Response<string>.FromError(e.Message);
+            return Response<ServiceLesson>.FromError(e.Message);
         }
     }
 

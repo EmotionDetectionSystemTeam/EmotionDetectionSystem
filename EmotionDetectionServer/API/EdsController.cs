@@ -111,7 +111,7 @@ namespace EmotionDetectionServer.API
             }
             else
             {
-                var RegisterResponse = new ServerResponse<string>
+                var RegisterResponse = new ServerResponse<ServiceLesson>
                 {
                     value = response.Value,
                 };

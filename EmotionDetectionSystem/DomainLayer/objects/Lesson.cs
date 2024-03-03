@@ -130,7 +130,7 @@ public class Lesson
         return entries;
     }
 
-    public Dictionary<string, EmotionData> GetLastEmotionsData()
+    public Dictionary<Student, EmotionData> GetLastEmotionsData()
     {
         return _enrollmentSummaryRepo.GetLastEmotionsData();
     }

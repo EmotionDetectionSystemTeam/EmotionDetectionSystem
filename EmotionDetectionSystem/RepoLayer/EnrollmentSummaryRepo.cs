@@ -80,8 +80,8 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
         return emotionsData.Concat(_enrollmentSummaries.SelectMany(x => x.GetAllEmotionData()));
     }
 
-    public Dictionary<string, EmotionData> GetLastEmotionsData()
+    public Dictionary<Student, EmotionData> GetLastEmotionsData()
     {
-        return _enrollmentSummaries.ToDictionary(enrollmentSummary => enrollmentSummary.Student.Email, enrollmentSummary => enrollmentSummary.GetFirstNotSeenEmotionData());
+        return _enrollmentSummaries.ToDictionary(enrollmentSummary => enrollmentSummary.Student, enrollmentSummary => enrollmentSummary.GetFirstNotSeenEmotionData());
     }
 }

@@ -113,7 +113,7 @@ namespace EmotionDetectionServer.API
             {
                 var RegisterResponse = new ServerResponse<string>
                 {
-                    value = "Lesson created successfully",
+                    value = response.Value,
                 };
                 return Ok(RegisterResponse);
             }
@@ -164,6 +164,30 @@ namespace EmotionDetectionServer.API
                 return Ok(RegisterResponse);
             }
         }
+
+        [HttpPost]
+        [Route("end-lesson")]
+        public async Task<ObjectResult> EndLesson([FromBody] EndLessonRequest request)
+        {
+            Response response = await Task.Run(() => service.EndLesson(request.SessionId, request.Email));
+            if (response.ErrorOccured)
+            {
+                var endLessonResponse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(endLessonResponse);
+            }
+            else
+            {
+                var endLessonResponse = new ServerResponse<string>
+                {
+                    value = "Lesson ended successfully",
+                };
+                return Ok(endLessonResponse);
+            }
+        }
+
 
 
 

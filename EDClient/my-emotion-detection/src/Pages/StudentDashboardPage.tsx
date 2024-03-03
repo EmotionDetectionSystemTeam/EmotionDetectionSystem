@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import { pathHome } from "../Paths";
-import { serverJoinLesson, serverLogout } from "../Services/ClientService";
+import { pathHome, pathStudentLesson } from "../Paths";
+import { serverLogout } from "../Services/ClientService";
 import { squaresColor } from "../Utils";
 
     
@@ -39,12 +39,13 @@ import { squaresColor } from "../Utils";
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const classCode = data.get("classCode")?.toString();
-
-  
+        navigate(pathStudentLesson);
+        /*
         serverJoinLesson(classCode).then((message : string) => {
-          //navigate(pathStudentDashBoard);
+          navigate(pathStudentLesson);
           alert(message);
           }).catch((e) => alert(e));
+          */
       };
 
       const handleLogout = () => {

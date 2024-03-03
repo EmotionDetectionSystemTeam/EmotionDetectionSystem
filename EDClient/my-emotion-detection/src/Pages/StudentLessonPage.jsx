@@ -1,6 +1,4 @@
 import { useEffect } from "react";
-import * as faceapi from 'face-api.js';
-
 function StudentLesson() {
   let expressionsData = {
     neutral: 0,

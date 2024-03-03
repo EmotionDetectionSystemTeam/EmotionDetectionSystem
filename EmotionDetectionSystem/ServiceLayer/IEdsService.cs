@@ -20,5 +20,6 @@ namespace EmotionDetectionSystem.ServiceLayer
         Response<ServiceUser> ViewStudent(string sessionId, string email, string studentEmail);
         Response PushEmotionData(string sessionId, string email, string lessonId, ServiceEmotionData emotionData);
         Response EnterAsGuest(string session);
+        Response<Dictionary<string, ServiceEmotionData>> GetLastEmotionsData(string sessionId, string email, string lessonId);
     }
 }

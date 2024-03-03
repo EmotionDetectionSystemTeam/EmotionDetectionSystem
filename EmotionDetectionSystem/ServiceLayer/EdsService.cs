@@ -187,4 +187,21 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Enter as guest request for session: {sessionId} has been received");
         return new Response();
     }
+
+    public Response<Dictionary<string, ServiceEmotionData>> GetLastEmotionsData(string sessionId, string email, string lessonId)
+    {
+        _logger.InfoFormat($"Get last emotion data request for session: {sessionId} has been received");
+        try
+        {
+            var emotionData = _edsManager.GetLastEmotionsData(sessionId, email, lessonId);
+            var emotionDataDictionary = emotionData.ToDictionary(kvp => kvp.Key, kvp => new ServiceEmotionData(kvp.Value));
+            _logger.InfoFormat($"Get last emotion data request for session: {sessionId} has been completed");
+            return Response<Dictionary<string, ServiceEmotionData>>.FromValue(emotionDataDictionary);
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error getting last emotion data with session: {sessionId} - {e.Message}");
+            return Response<Dictionary<string, ServiceEmotionData>>.FromError(e.Message);
+        }
+    }
 }

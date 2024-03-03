@@ -1,4 +1,5 @@
 using EmotionDetectionSystem.DomainLayer.objects;
+using EmotionDetectionSystem.ServiceLayer.objects;
 
 namespace EmotionDetectionSystem.ServiceLayer;
 

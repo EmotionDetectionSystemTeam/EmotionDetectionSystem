@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using EmotionDetectionSystem.DomainLayer.objects;
-using EmotionDetectionSystem.ServiceLayer;
 using log4net;
 
 namespace EmotionDetectionSystem.DomainLayer.Managers;
@@ -9,7 +8,7 @@ public class EdsManager
 {
     private readonly        UserManager                          _userManager;
     private readonly        LessonManager                        _lessonManager;
-    private readonly        ConcurrentQueue<PushEmotionDataTask> _concurrentQueue;
+    private readonly        ConcurrentQueue<PushEmotionDataTask> _emotionDataTasks;
     private readonly        CancellationTokenSource              _cancellationTokenSource;
     private readonly        AutoResetEvent                       _taskEvent;
     private                 bool                                 _isProcessingTasks;
@@ -19,7 +18,7 @@ public class EdsManager
     {
         _userManager             = new UserManager();
         _lessonManager           = new LessonManager();
-        _concurrentQueue         = new ConcurrentQueue<PushEmotionDataTask>();
+        _emotionDataTasks         = new ConcurrentQueue<PushEmotionDataTask>();
         _cancellationTokenSource = new CancellationTokenSource();
         _taskEvent               = new AutoResetEvent(false);
         _isProcessingTasks       = true;
@@ -121,7 +120,7 @@ public class EdsManager
     public void PushEmotionData(string sessionId, string email, string lessonId, EmotionData emotionData)
     {
         var pushTaskInfo = new PushEmotionDataTask(sessionId, email, lessonId, emotionData);
-        _concurrentQueue.Enqueue(pushTaskInfo);
+        _emotionDataTasks.Enqueue(pushTaskInfo);
         _taskEvent.Set(); // Signal the event to unblock the background thread
     }
 
@@ -134,7 +133,7 @@ public class EdsManager
                 break;
             }
 
-            while (_concurrentQueue.TryDequeue(out var taskInfo))
+            while (_emotionDataTasks.TryDequeue(out var taskInfo))
             {
                 ProcessTask(taskInfo);
             }
@@ -179,7 +178,7 @@ public class EdsManager
         return _userManager.GetUser(email);
     }
 
-    public bool IsProcessingTasks => _concurrentQueue.Count > 0;
+    public bool IsProcessingTasks => _emotionDataTasks.Count > 0;
 
     public Dictionary<Student, EmotionData> GetLastEmotionsData(string sessionId, string email, string lessonId)
     {

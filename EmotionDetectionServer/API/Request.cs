@@ -93,6 +93,19 @@ namespace EmotionDetectionServer.API
         }
     }
 
+    public class EndLessonRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string Email { get; set; }
+
+        public EndLessonRequest(string sessionId, string email)
+        {
+            SessionId = sessionId;
+            Email = email;
+        }
+    }
+
+
 
 
 

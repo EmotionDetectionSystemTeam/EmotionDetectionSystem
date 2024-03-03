@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import { pathHome } from "../Paths";
+import { pathHome, pathTeacherLesson } from "../Paths";
 import { serverCreateLesson, serverLogout } from "../Services/ClientService";
 import { squaresColor } from "../Utils";
 
@@ -42,7 +42,7 @@ import { squaresColor } from "../Utils";
       const description = data.get("description")?.toString();
 
       serverCreateLesson(title, description,[]).then((message : string) => { //TODO: tags impl 
-        //navigate(pathStudentDashBoard);
+        navigate(pathTeacherLesson);
         alert(message);
         }).catch((e) => alert(e));
     };

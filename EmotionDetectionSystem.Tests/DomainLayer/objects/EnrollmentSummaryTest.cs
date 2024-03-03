@@ -58,4 +58,23 @@ public class EnrollmentSummaryTest
         Assert.AreEqual(0,                _enrollmentSummary.NotSeenEmotionDataQueue.Count);
         Assert.AreEqual(1,                _enrollmentSummary.EmotionData.Count);
     }
+    
+    [TestMethod]
+    public void GetLatestSeenEmotionData_EmptyQueueAndManySeenEmotionData_Success()
+    {
+        var firstEmotionData  = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var fourthEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var thirdEmotionData  = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var secondEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        _enrollmentSummary.AddEmotionData(firstEmotionData);
+        _enrollmentSummary.AddEmotionData(secondEmotionData);
+        _enrollmentSummary.AddEmotionData(thirdEmotionData);
+        _enrollmentSummary.AddEmotionData(fourthEmotionData);
+        _enrollmentSummary.GetFirstNotSeenEmotionData();
+        _enrollmentSummary.GetFirstNotSeenEmotionData();
+        _enrollmentSummary.GetFirstNotSeenEmotionData();
+        _enrollmentSummary.GetFirstNotSeenEmotionData();
+        Assert.AreEqual(0,                 _enrollmentSummary.NotSeenEmotionDataQueue.Count);
+        Assert.AreEqual(secondEmotionData,                 _enrollmentSummary.GetFirstNotSeenEmotionData());
+    }
 }

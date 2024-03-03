@@ -1,19 +1,20 @@
 using EmotionDetectionSystem.DomainLayer.objects;
 
-namespace EmotionDetectionSystem.ServiceLayer;
+namespace EmotionDetectionSystem.ServiceLayer.objects;
 
 public class ServiceEmotionData
 {
     public DateTime Time;
-    public double    Neutral;
-    public double    Happy;
-    public double    Sad;
-    public double    Angry;
-    public double    Surprised;
-    public double    Disgusted;
-    public double    Fearful;
+    public double   Neutral;
+    public double   Happy;
+    public double   Sad;
+    public double   Angry;
+    public double   Surprised;
+    public double   Disgusted;
+    public double   Fearful;
 
-    public ServiceEmotionData(double neutral, double happy, double sad, double angry, double surprised, double disgusted,
+    public ServiceEmotionData(double neutral, double happy, double sad, double angry, double surprised,
+                              double disgusted,
                               double fearful)
     {
         Time      = DateTime.Now;

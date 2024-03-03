@@ -1,4 +1,6 @@
 using EmotionDetectionSystem.DomainLayer.Managers;
+using EmotionDetectionSystem.DomainLayer.objects;
+using EmotionDetectionSystem.ServiceLayer.objects;
 using EmotionDetectionSystem.ServiceLayer.Responses;
 using log4net;
 
@@ -64,20 +66,20 @@ public class EdsService : IEdsService
         }
     }
 
-    public Response<string> CreateLesson(string   sessionId, string email, string title, string description,
-                                         string[] tags)
+    public Response<ServiceLesson> CreateLesson(string   sessionId, string email, string title, string description,
+                                                string[] tags)
     {
         _logger.InfoFormat($"Create lesson request for session: {sessionId} has been received");
         try
         {
             var lesson = _edsManager.CreateLesson(sessionId, email, title, description, tags);
             _logger.InfoFormat($"Lesson with title: {title} has been created");
-            return Response<string>.FromValue(lesson.EntryCode);
+            return Response<ServiceLesson>.FromValue(new ServiceLesson(lesson));
         }
         catch (Exception e)
         {
             _logger.ErrorFormat($"Error creating lesson with title: {title} - {e.Message}");
-            return Response<string>.FromError(e.Message);
+            return Response<ServiceLesson>.FromError(e.Message);
         }
     }
 
@@ -137,7 +139,7 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"View lesson dashboard request for session: {sessionId} has been received");
         try
         {
-            var lessons = _edsManager.ViewTeacherDashboard(sessionId, email);
+            var lessons        = _edsManager.ViewTeacherDashboard(sessionId, email);
             var lessonsService = lessons.Select(lesson => new ServiceLesson(lesson)).ToList();
             _logger.InfoFormat($"View lesson dashboard request for session: {sessionId} has been completed");
             return Response<List<ServiceLesson>>.FromValue(lessonsService);
@@ -148,7 +150,7 @@ public class EdsService : IEdsService
             return Response<List<ServiceLesson>>.FromError(e.Message);
         }
     }
-    
+
     public Response<ServiceUser> ViewStudent(string sessionId, string email, string studentEmail)
     {
         _logger.InfoFormat($"View student request for session: {sessionId} has been received");
@@ -164,7 +166,7 @@ public class EdsService : IEdsService
             return Response<ServiceUser>.FromError(e.Message);
         }
     }
-    
+
     public Response PushEmotionData(string sessionId, string email, string lessonId, ServiceEmotionData emotionData)
     {
         _logger.InfoFormat($"Push emotion data request for session: {sessionId} has been received");
@@ -185,5 +187,24 @@ public class EdsService : IEdsService
     {
         _logger.InfoFormat($"Enter as guest request for session: {sessionId} has been received");
         return new Response();
+    }
+
+    public Response<List<ServiceRealTimeUser>> GetLastEmotionsData(string sessionId, string email, string lessonId)
+    {
+        _logger.InfoFormat($"Get last emotion data request for session: {sessionId} has been received");
+        try
+        {
+            var emotionData = _edsManager.GetLastEmotionsData(sessionId, email, lessonId);
+
+            var emotionDataServices = emotionData
+                .Select(entry => new ServiceRealTimeUser(entry.Key, entry.Value.GetWinningEmotion())).ToList();
+
+            return Response<List<ServiceRealTimeUser>>.FromValue(emotionDataServices);
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error getting last emotion data with session: {sessionId} - {e.Message}");
+            return Response<List<ServiceRealTimeUser>>.FromError(e.Message);
+        }
     }
 }

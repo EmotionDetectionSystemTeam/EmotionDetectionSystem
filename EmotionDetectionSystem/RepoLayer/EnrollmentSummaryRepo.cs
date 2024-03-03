@@ -77,6 +77,11 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
     public IEnumerable<EmotionData> GetEmotionDataEntries()
     {
         var emotionsData = new List<EmotionData>();
-        return emotionsData.Concat(_enrollmentSummaries.SelectMany(x => x.EmotionData));
+        return emotionsData.Concat(_enrollmentSummaries.SelectMany(x => x.GetAllEmotionData()));
+    }
+
+    public Dictionary<Student, EmotionData> GetLastEmotionsData()
+    {
+        return _enrollmentSummaries.ToDictionary(enrollmentSummary => enrollmentSummary.Student, enrollmentSummary => enrollmentSummary.GetFirstNotSeenEmotionData());
     }
 }

@@ -100,7 +100,7 @@ namespace EmotionDetectionServer.API
         [Route("create-lesson")]
         public async Task<ObjectResult> CreateLesson([FromBody] CreateLessonRequest request)
         {
-            Response<string> response = await Task.Run(() => service.CreateLesson(request.SessionId, request.Email, request.Title, request.Description, request.Tags));
+            Response<ServiceLesson> response = await Task.Run(() => service.CreateLesson(request.SessionId, request.Email, request.Title, request.Description, request.Tags));
             if (response.ErrorOccured)
             {
                 var RegisterResponse = new ServerResponse<string>

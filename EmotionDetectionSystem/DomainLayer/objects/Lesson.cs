@@ -1,4 +1,4 @@
-using EmotionDetectionSystem.RepoLayer;
+using EmotionDetectionSystem.DomainLayer.Repos;
 
 namespace EmotionDetectionSystem.DomainLayer.objects;
 

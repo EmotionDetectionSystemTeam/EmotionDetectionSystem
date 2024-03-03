@@ -1,14 +1,24 @@
 using EmotionDetectionSystem.DomainLayer.objects;
 
-namespace EmotionDetectionSystem.ServiceLayer;
+namespace EmotionDetectionSystem.ServiceLayer.objects;
 
 public class ServiceUser
 {
-    protected ServiceUser(string email, string firstName, string lastName)
+    protected ServiceUser(string email, string firstName, string lastName,string type)
     {
-        Email = email;
+        Email     = email;
         FirstName = firstName;
-        LastName = lastName;
+        LastName  = lastName;
+        Lessons   = new List<ServiceLesson>();
+        Type      = type;
+    }
+    protected ServiceUser(string email, string firstName, string lastName, string type, List<Lesson> lessons)
+    {
+        Email     = email;
+        FirstName = firstName;
+        LastName  = lastName;
+        Type      = type;
+        Lessons = lessons.ConvertAll(lesson => new ServiceLesson(lesson));
     }
     public ServiceUser(Teacher teacher)
     {

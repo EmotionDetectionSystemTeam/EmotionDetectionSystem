@@ -1,6 +1,6 @@
 using EmotionDetectionSystem.DomainLayer.objects;
 
-namespace EmotionDetectionSystem.ServiceLayer;
+namespace EmotionDetectionSystem.ServiceLayer.objects;
 
 public class ServiceEnrollmentSummary
 {

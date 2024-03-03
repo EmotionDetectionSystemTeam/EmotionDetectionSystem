@@ -1,6 +1,6 @@
 using EmotionDetectionSystem.DomainLayer.objects;
 
-namespace EmotionDetectionSystem.RepoLayer;
+namespace EmotionDetectionSystem.DomainLayer.Repos;
 
 public class LessonRepo : IRepo<Lesson>
 {

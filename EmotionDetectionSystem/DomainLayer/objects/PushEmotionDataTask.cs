@@ -1,6 +1,4 @@
-using EmotionDetectionSystem.DomainLayer.objects;
-
-namespace EmotionDetectionSystem.ServiceLayer;
+namespace EmotionDetectionSystem.DomainLayer.objects;
 
 public class PushEmotionDataTask
 {

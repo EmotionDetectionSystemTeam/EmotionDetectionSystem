@@ -1,4 +1,4 @@
-namespace EmotionDetectionSystem.RepoLayer;
+namespace EmotionDetectionSystem.DomainLayer.Repos;
 
 public interface IRepo<T>
 {

@@ -1,24 +1,15 @@
 using EmotionDetectionSystem.DomainLayer.objects;
 
-namespace EmotionDetectionSystem.ServiceLayer;
+namespace EmotionDetectionSystem.ServiceLayer.objects;
 
 public class ServiceTeacher : ServiceUser
 {
-    public List<ServiceLesson> Lessons;
     public ServiceTeacher(string email, string firstName, string lastName, List<ServiceLesson> lessons)
-        : base(email, firstName, lastName)
+        : base(email, firstName, lastName,"Teacher")
     {
-        Type = "Teacher";
-        Lessons = lessons;
     }
     
-    public ServiceTeacher(Teacher teacher) : base(teacher.Email, teacher.FirstName, teacher.LastName)
+    public ServiceTeacher(Teacher teacher) : base(teacher.Email, teacher.FirstName, teacher.LastName,teacher.Type, teacher.Lessons)
     {
-        Type = "Teacher";
-        Lessons = new List<ServiceLesson>();
-        foreach (var lesson in teacher.Lessons)
-        {
-            Lessons.Add(new ServiceLesson(lesson));
-        }
     }
 }

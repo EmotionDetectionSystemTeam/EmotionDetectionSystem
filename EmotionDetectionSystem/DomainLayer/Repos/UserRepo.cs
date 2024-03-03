@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using EmotionDetectionSystem.DomainLayer.objects;
 using log4net;
 
-namespace EmotionDetectionSystem.RepoLayer;
+namespace EmotionDetectionSystem.DomainLayer.Repos;
 
 public class UserRepo : IRepo<User>
 {

@@ -129,4 +129,9 @@ public class Lesson
         entries.AddRange(_enrollmentSummaryRepo.GetEmotionDataEntries());
         return entries;
     }
+
+    public Dictionary<Student, EmotionData> GetLastEmotionsData()
+    {
+        return _enrollmentSummaryRepo.GetLastEmotionsData();
+    }
 }

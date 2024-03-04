@@ -4,6 +4,7 @@ using System.Net;
 using WebSocketSharp.Server;
 using static EmotionDetectionServer.API.EdsController;
 using EmotionDetectionSystem.ServiceLayer;
+using EmotionDetectionServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,10 +35,11 @@ logsServer.Start();
 builder.Services.AddSingleton(_ => notificationServer);
 builder.Services.AddSingleton(_ => logsServer);
 builder.Services.AddSingleton<IEdsService, EdsService>();
-
+builder.Services.AddSingleton<ConfigurationFileHandler>();
 
 var app = builder.Build();
-
+var edsService = app.Services.GetRequiredService<IEdsService>();
+new ConfigurationFileHandler(edsService).Parse();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

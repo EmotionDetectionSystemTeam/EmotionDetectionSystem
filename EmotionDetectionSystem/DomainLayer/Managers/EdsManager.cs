@@ -186,4 +186,10 @@ public class EdsManager
         var lesson = _lessonManager.GetLesson(lessonId);
         return lesson.GetLastEmotionsData();
     }
+
+    public Lesson GetLesson(string sessionId, string email, string lessonId)
+    {
+        IsValidSession(sessionId, email);
+        return _lessonManager.GetLesson(lessonId);
+    }
 }

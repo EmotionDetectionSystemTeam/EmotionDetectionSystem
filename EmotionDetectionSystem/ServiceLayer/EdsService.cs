@@ -207,4 +207,19 @@ public class EdsService : IEdsService
             return Response<List<ServiceRealTimeUser>>.FromError(e.Message);
         }
     }
+
+    public Response<ServiceLesson> GetLesson(string sessionId, string email, string lessonId)
+    {
+_logger.InfoFormat($"Get lesson request for session: {sessionId} has been received");
+        try
+        {
+            var lesson = _edsManager.GetLesson(sessionId, email, lessonId);
+            return Response<ServiceLesson>.FromValue(new ServiceLesson(lesson));
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error getting lesson with session: {sessionId} - {e.Message}");
+            return Response<ServiceLesson>.FromError(e.Message);
+        }
+    }
 }

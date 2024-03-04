@@ -48,7 +48,15 @@ function TeacherLesson() {
   }, []);
 
   const HandleGetEmotions = () => {
-    // Logic to handle getting emotions
+    /*
+    serverGetLastEmotionsData().then((students : ServiceRealTimeUser[]) => {
+      students.map((student : ServiceRealTimeUser) => {
+        alert(`${student.firstName} ${student.lastName}`);
+      })
+      //TODO: map ServiceRealTimeUser to ClientStudents
+      setStudentList(clientStudents);
+    })
+    */
     console.log("Getting emotions...");
   };
 

@@ -1,3 +1,5 @@
+import { ServiceEmotionData } from "../Objects/EmotionData";
+import { ServiceRealTimeUser } from "../Objects/ServiceRealTimeUser";
 import checkInput, { serverPort } from "../Utils";
 import ClientResponse from "./Response";
 import { getSessionId, getUserName } from "./SessionService";
@@ -268,5 +270,81 @@ export async function serverEndLesson(
     } catch (e) {
         return Promise.reject(e);
     }
+}
+
+export async function serverGetLastEmotionsData(
+  lessonId: string | undefined | null
+): Promise<ServiceRealTimeUser[]> {
+  const fields: any[] = [lessonId];
+  if (!checkInput(fields)) return Promise.reject();
+  const uri = `${serverPort}/api/eds/get-last-emotions-data`;
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        Email: getUserName(),
+        LessonId: lessonId
+      }),
+    });
+
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
+    }
+
+    const response: ClientResponse<ServiceRealTimeUser[]> = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    return response.value;
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+export async function serverPushEmotionData(
+  lessonId: string | undefined | null,
+  emotionData: ServiceEmotionData
+): Promise<string> {
+  const fields: any[] = [lessonId, emotionData];
+  if (!checkInput(fields)) return Promise.reject();
+  const uri = `${serverPort}/api/eds/push-emotion-data`;
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        Email: getUserName(),
+        LessonId: lessonId,
+        EmotionData: emotionData
+      }),
+    });
+
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
+    }
+
+    const response: ClientResponse<string> = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    return response.value;
+  } catch (e) {
+    return Promise.reject(e);
+  }
 }
 

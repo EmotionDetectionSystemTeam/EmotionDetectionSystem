@@ -25,5 +25,6 @@ namespace EmotionDetectionSystem.ServiceLayer
         Response PushEmotionData(string sessionId, string email, string lessonId, ServiceEmotionData emotionData);
         Response EnterAsGuest(string session);
         Response<List<ServiceRealTimeUser>> GetLastEmotionsData(string sessionId, string email, string lessonId);
+        Response<ServiceLesson> GetLesson(string sessionId, string email, string lessonId);
     }
 }

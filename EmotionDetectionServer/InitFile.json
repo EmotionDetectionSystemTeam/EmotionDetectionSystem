@@ -1,0 +1,31 @@
+﻿{
+  "UseCases": [
+    {
+      "email": "regev@gmail.com",
+      "firstName": "regev ",
+      "lastName": "teacher",
+      "password": "123fsfasGD12312#",
+      "confirmPassword": "123fsfasGD12312#",
+      "userType": 1,
+      "Tag": "Register"
+    },
+    {
+      "email": "nadav@gmail.com",
+      "firstName": "nadav ",
+      "lastName": "student",
+      "password": "123fsffsasS#12312",
+      "confirmPassword": "123fsffsasS#12312",
+      "userType": 0,
+      "Tag": "Register"
+    },
+    {
+      "email": "ben@gmail.com",
+      "firstName": "ben ",
+      "lastName": "student",
+      "password": "123benHomo!123",
+      "confirmPassword": "123benHomo!123",
+      "userType": 0,
+      "Tag": "Register"
+    }
+  ]
+}

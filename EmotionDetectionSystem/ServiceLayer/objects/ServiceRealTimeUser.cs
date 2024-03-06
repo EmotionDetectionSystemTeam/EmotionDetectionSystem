@@ -20,8 +20,8 @@ public class ServiceRealTimeUser
         WiningEmotion = winingEmotion;
     }
 
-    public string Email;
-    public string FirstName;
-    public string LastName;
-    public string WiningEmotion;
+    public string Email { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string WiningEmotion { get; set; }
 }

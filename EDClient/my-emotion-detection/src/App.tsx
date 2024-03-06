@@ -11,6 +11,7 @@ import TeacherLesson from './Pages/TeacherLessonPage';
 import TeacherLogin from './Pages/TeacherLoginPage';
 import * as Path from "./Paths";
 import { initSession } from './Services/SessionService';
+import './styles.css';
 
 
 const App = () => {

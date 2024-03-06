@@ -101,7 +101,7 @@ namespace EmotionDetectionServer.API
         [Route("create-lesson")]
         public async Task<ObjectResult> CreateLesson([FromBody] CreateLessonRequest request)
         {
-            Response<ServiceLesson> response = await Task.Run(() => service.CreateLesson(request.SessionId, request.Email, request.Title, request.Description, request.Tags));
+            Response<SActiveLesson> response = await Task.Run(() => service.CreateLesson(request.SessionId, request.Email, request.Title, request.Description, request.Tags));
             if (response.ErrorOccured)
             {
                 var CreateLessonResponse = new ServerResponse<string>
@@ -112,11 +112,11 @@ namespace EmotionDetectionServer.API
             }
             else
             {
-                var CreateLessonResponse = new ServerResponse<ServiceLesson>
+                var CreateLessonResponse = new ServerResponse<SActiveLesson>
                 {
                     value = response.Value,
                 };
-                return Ok(CreateLessonResponse);
+                return Ok(ServerResponse<SActiveLesson>.sendOkResponse(response.Value));
             }
         }
 
@@ -124,7 +124,7 @@ namespace EmotionDetectionServer.API
         [Route("join-lesson")]
         public async Task<ObjectResult> JoinLesson([FromBody] JoinLessonRequest request)
         {
-            Response<ServiceLesson> response = await Task.Run(() => service.JoinLesson(request.SessionId, request.Email, request.EntryCode));
+            Response<SActiveLesson> response = await Task.Run(() => service.JoinLesson(request.SessionId, request.Email, request.EntryCode));
             if (response.ErrorOccured)
             {
                 var JoinLessonResponse = new ServerResponse<string>
@@ -135,7 +135,7 @@ namespace EmotionDetectionServer.API
             }
             else
             {
-                var JoinLessonResponse = new ServerResponse<ServiceLesson>
+                var JoinLessonResponse = new ServerResponse<SActiveLesson>
                 {
                     value = response.Value,
                 };
@@ -234,6 +234,30 @@ namespace EmotionDetectionServer.API
                 return Ok(SuccessResponse);
             }
         }
+
+        [HttpPost]
+        [Route("get-lesson")]
+        public async Task<ObjectResult> GetLesson([FromBody] GetLessonRequest request)
+        {
+            Response<ServiceLesson> response = await Task.Run(() => service.GetLesson(request.SessionId, request.Email, request.LessonId));
+            if (response.ErrorOccured)
+            {
+                var GetLessonResponse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(GetLessonResponse);
+            }
+            else
+            {
+                var GetLessonResponse = new ServerResponse<ServiceLesson>
+                {
+                    value = response.Value,
+                };
+                return Ok(GetLessonResponse);
+            }
+        }
+
 
 
 

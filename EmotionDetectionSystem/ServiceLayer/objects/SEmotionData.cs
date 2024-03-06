@@ -1,9 +1,9 @@
-using EmotionDetectionSystem.DomainLayer.objects;
+﻿using EmotionDetectionSystem.DomainLayer.objects;
 
 namespace EmotionDetectionSystem.ServiceLayer.objects
 {
     [Serializable]
-    public class ServiceEmotionData
+    public class SEmotionData
     {
         public DateTime Time { get; set; }
         public double Neutral { get; set; }
@@ -14,9 +14,9 @@ namespace EmotionDetectionSystem.ServiceLayer.objects
         public double Disgusted { get; set; }
         public double Fearful { get; set; }
 
-        public ServiceEmotionData(double neutral, double happy, double sad, double angry, double surprised,
-                                  double disgusted,
-                                  double fearful)
+        public SEmotionData(double neutral, double happy, double sad, double angry, double surprised,
+                          double disgusted,
+                          double fearful)
         {
             Time = DateTime.Now;
             Neutral = neutral;
@@ -28,15 +28,11 @@ namespace EmotionDetectionSystem.ServiceLayer.objects
             Fearful = fearful;
         }
 
+
         public EmotionData ToDomainObject()
         {
-            return new EmotionData(Time, Neutral, Happy, Sad, Angry, Surprised, Disgusted, Fearful);
+            return new EmotionData(DateTime.Now, Neutral, Happy, Sad, Angry, Surprised, Disgusted, Fearful);
         }
+
     }
 }
-
-
-
-
-
-

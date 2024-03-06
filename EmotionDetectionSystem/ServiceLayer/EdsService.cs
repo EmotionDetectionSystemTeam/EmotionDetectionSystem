@@ -66,7 +66,7 @@ public class EdsService : IEdsService
         }
     }
 
-    public Response<ServiceLesson> CreateLesson(string   sessionId, string email, string title, string description,
+    public Response<SActiveLesson> CreateLesson(string   sessionId, string email, string title, string description,
                                                 string[] tags)
     {
         _logger.InfoFormat($"Create lesson request for session: {sessionId} has been received");
@@ -74,12 +74,12 @@ public class EdsService : IEdsService
         {
             var lesson = _edsManager.CreateLesson(sessionId, email, title, description, tags);
             _logger.InfoFormat($"Lesson with title: {title} has been created");
-            return Response<ServiceLesson>.FromValue(new ServiceLesson(lesson));
+            return Response<SActiveLesson>.FromValue(new SActiveLesson(lesson));
         }
         catch (Exception e)
         {
             _logger.ErrorFormat($"Error creating lesson with title: {title} - {e.Message}");
-            return Response<ServiceLesson>.FromError(e.Message);
+            return Response<SActiveLesson>.FromError(e.Message);
         }
     }
 
@@ -99,19 +99,19 @@ public class EdsService : IEdsService
         }
     }
 
-    public Response<ServiceLesson> JoinLesson(string sessionId, string email, string entryCode)
+    public Response<SActiveLesson> JoinLesson(string sessionId, string email, string entryCode)
     {
         _logger.InfoFormat($"Join lesson request for session: {sessionId} has been received");
         try
         {
             var lesson = _edsManager.JoinLesson(sessionId, email, entryCode);
             _logger.InfoFormat($"User with session: {sessionId} has joined the lesson");
-            return Response<ServiceLesson>.FromValue(new ServiceLesson(lesson));
+            return Response<SActiveLesson>.FromValue(new SActiveLesson(lesson));
         }
         catch (Exception e)
         {
             _logger.ErrorFormat($"Error joining lesson with session: {sessionId} - {e.Message}");
-            return Response<ServiceLesson>.FromError(e.Message);
+            return Response<SActiveLesson>.FromError(e.Message);
         }
     }
 

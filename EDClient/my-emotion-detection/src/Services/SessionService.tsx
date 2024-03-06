@@ -1,5 +1,7 @@
+import Cookies from 'js-cookie';
 import { serverEnterAsGuest } from "./ClientService";
 import { fetchResponse } from "./GeneralService";
+
 
 interface Iuser {
   username: string;
@@ -12,12 +14,15 @@ const isGuest = "isGuest";
 const sessionId = "sessionId";
 const isAdmin = "isAdmin";
 
+
 export async function initSession() {
   if (storage.getItem(isInitOccured) === null) {
     storage.setItem(isInitOccured, "true");
     fetchResponse(serverEnterAsGuest())
       .then((sessionId: string) => {
         initFields(sessionId);
+        Cookies.set('session', JSON.stringify(sessionId));
+        alert(Cookies.get('session'))
         alert(sessionId);
       })
       .catch((e) => {

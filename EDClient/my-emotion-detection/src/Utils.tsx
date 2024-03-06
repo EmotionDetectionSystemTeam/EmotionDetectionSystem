@@ -1,3 +1,5 @@
+import { createTheme } from "@mui/material";
+
 export const textColor = "black";
 export const serverPort = "https://localhost:7069";
 export const squaresColor = "#E8F0FE";
@@ -22,3 +24,23 @@ export default function checkInput(fields: any[]): boolean {
     }
     return true;
   }
+
+export const mainTheme = createTheme({
+    palette: {
+      mode: "light",
+    },
+    typography: {
+      fontFamily: [
+        "-apple-system",
+        "BlinkMacSystemFont",
+        '"Segoe UI"',
+        "Roboto",
+        '"Helvetica Neue"',
+        "Arial",
+        "sans-serif",
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(","),
+    },
+  });

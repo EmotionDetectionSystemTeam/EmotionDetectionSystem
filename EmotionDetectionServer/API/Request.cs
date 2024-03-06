@@ -1,4 +1,5 @@
 ﻿using EmotionDetectionServer.API;
+using EmotionDetectionSystem.ServiceLayer.objects;
 
 namespace EmotionDetectionServer.API
 {
@@ -104,6 +105,51 @@ namespace EmotionDetectionServer.API
             Email = email;
         }
     }
+
+    public class PushEmotionDataRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string Email { get; set; }
+        public string LessonId { get; set; }
+        public ServiceEmotionData EmotionData { get; set; }
+
+        public PushEmotionDataRequest(string sessionId, string email, string lessonId, ServiceEmotionData emotionData)
+        {
+            SessionId = sessionId;
+            Email = email;
+            LessonId = lessonId;
+            EmotionData = emotionData;
+        }
+    }
+
+    public class GetLastEmotionsDataRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string Email { get; set; }
+        public string LessonId { get; set; }
+
+        public GetLastEmotionsDataRequest(string sessionId, string email, string lessonId)
+        {
+            SessionId = sessionId;
+            Email = email;
+            LessonId = lessonId;
+        }
+    }
+
+    public class GetLessonRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string Email { get; set; }
+        public string LessonId { get; set; }
+
+        public GetLessonRequest(string sessionId, string email, string lessonId)
+        {
+            SessionId = sessionId;
+            Email = email;
+            LessonId = lessonId;
+        }
+    }
+
 
 
 

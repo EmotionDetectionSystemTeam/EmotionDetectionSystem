@@ -2,6 +2,7 @@
 using EmotionDetectionSystem.ServiceLayer;
 using WebSocketSharp.Server;
 using EmotionDetectionSystem.ServiceLayer.Responses;
+using EmotionDetectionSystem.ServiceLayer.objects;
 
 namespace EmotionDetectionServer.API
 {
@@ -80,19 +81,19 @@ namespace EmotionDetectionServer.API
             Response response = await Task.Run(() => service.Login(request.sessionId, request.email, request.password));
             if (response.ErrorOccured)
             {
-                var RegisterResponse = new ServerResponse<string>
+                var LoginResponse = new ServerResponse<string>
                 {
                     errorMessage = response.ErrorMessage,
                 };
-                return BadRequest(RegisterResponse);
+                return BadRequest(LoginResponse);
             }
             else
             {
-                var RegisterResponse = new ServerResponse<string>
+                var LoginResponse = new ServerResponse<string>
                 {
                     value = "Logged in successfully",
                 };
-                return Ok(RegisterResponse);
+                return Ok(LoginResponse);
             }
         }
 
@@ -100,22 +101,22 @@ namespace EmotionDetectionServer.API
         [Route("create-lesson")]
         public async Task<ObjectResult> CreateLesson([FromBody] CreateLessonRequest request)
         {
-            Response<ServiceLesson> response = await Task.Run(() => service.CreateLesson(request.SessionId, request.Email, request.Title, request.Description, request.Tags));
+            Response<SActiveLesson> response = await Task.Run(() => service.CreateLesson(request.SessionId, request.Email, request.Title, request.Description, request.Tags));
             if (response.ErrorOccured)
             {
-                var RegisterResponse = new ServerResponse<string>
+                var CreateLessonResponse = new ServerResponse<string>
                 {
                     errorMessage = response.ErrorMessage,
                 };
-                return BadRequest(RegisterResponse);
+                return BadRequest(CreateLessonResponse);
             }
             else
             {
-                var RegisterResponse = new ServerResponse<ServiceLesson>
+                var CreateLessonResponse = new ServerResponse<SActiveLesson>
                 {
                     value = response.Value,
                 };
-                return Ok(RegisterResponse);
+                return Ok(ServerResponse<SActiveLesson>.sendOkResponse(response.Value));
             }
         }
 
@@ -123,22 +124,22 @@ namespace EmotionDetectionServer.API
         [Route("join-lesson")]
         public async Task<ObjectResult> JoinLesson([FromBody] JoinLessonRequest request)
         {
-            Response<ServiceLesson> response = await Task.Run(() => service.JoinLesson(request.SessionId, request.Email, request.EntryCode));
+            Response<SActiveLesson> response = await Task.Run(() => service.JoinLesson(request.SessionId, request.Email, request.EntryCode));
             if (response.ErrorOccured)
             {
-                var RegisterResponse = new ServerResponse<string>
+                var JoinLessonResponse = new ServerResponse<string>
                 {
                     errorMessage = response.ErrorMessage,
                 };
-                return BadRequest(RegisterResponse);
+                return BadRequest(JoinLessonResponse);
             }
             else
             {
-                var RegisterResponse = new ServerResponse<ServiceLesson>
+                var JoinLessonResponse = new ServerResponse<SActiveLesson>
                 {
                     value = response.Value,
                 };
-                return Ok(RegisterResponse);
+                return Ok(JoinLessonResponse);
             }
         }
 
@@ -149,19 +150,19 @@ namespace EmotionDetectionServer.API
             Response response = await Task.Run(() => service.Logout(request.SessionId, request.Email));
             if (response.ErrorOccured)
             {
-                var RegisterResponse = new ServerResponse<string>
+                var LogoutResponse = new ServerResponse<string>
                 {
                     errorMessage = response.ErrorMessage,
                 };
-                return BadRequest(RegisterResponse);
+                return BadRequest(LogoutResponse);
             }
             else
             {
-                var RegisterResponse = new ServerResponse<string>
+                var LogoutResponse = new ServerResponse<string>
                 {
                     value = "logged out successfully",
                 };
-                return Ok(RegisterResponse);
+                return Ok(LogoutResponse);
             }
         }
 
@@ -187,6 +188,77 @@ namespace EmotionDetectionServer.API
                 return Ok(endLessonResponse);
             }
         }
+
+        [HttpPost]
+        [Route("push-emotion-data")]
+        public async Task<ObjectResult> PushEmotionData([FromBody] PushEmotionDataRequest request)
+        {
+            Response response = await Task.Run(() => service.PushEmotionData(request.SessionId, request.Email, request.LessonId, request.EmotionData));
+            if (response.ErrorOccured)
+            {
+                var pushEmotionDataResponse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(pushEmotionDataResponse);
+            }
+            else
+            {
+                var pushEmotionDataResponse = new ServerResponse<string>
+                {
+                    value = "Data pushed successfuly",
+                };
+                return Ok(pushEmotionDataResponse);
+            }
+        }
+
+        [HttpPost]
+        [Route("get-last-emotions-data")]
+        public async Task<ObjectResult> GetLastEmotionsData([FromBody] GetLastEmotionsDataRequest request)
+        {
+            Response<List<ServiceRealTimeUser>> response = await Task.Run(() => service.GetLastEmotionsData(request.SessionId, request.Email, request.LessonId));
+            if (response.ErrorOccured)
+            {
+                var ErrorResponse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(ErrorResponse);
+            }
+            else
+            {
+                var SuccessResponse = new ServerResponse<List<ServiceRealTimeUser>>
+                {
+                    value = response.Value,
+                };
+                return Ok(SuccessResponse);
+            }
+        }
+
+        [HttpPost]
+        [Route("get-lesson")]
+        public async Task<ObjectResult> GetLesson([FromBody] GetLessonRequest request)
+        {
+            Response<ServiceLesson> response = await Task.Run(() => service.GetLesson(request.SessionId, request.Email, request.LessonId));
+            if (response.ErrorOccured)
+            {
+                var GetLessonResponse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(GetLessonResponse);
+            }
+            else
+            {
+                var GetLessonResponse = new ServerResponse<ServiceLesson>
+                {
+                    value = response.Value,
+                };
+                return Ok(GetLessonResponse);
+            }
+        }
+
+
 
 
 

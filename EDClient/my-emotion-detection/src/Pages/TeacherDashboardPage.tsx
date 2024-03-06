@@ -7,11 +7,15 @@ import {
   Typography,
   createTheme
 } from "@mui/material";
+import Cookies from 'js-cookie';
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import Navbar from "../Components/Navbar";
+import { Lesson } from "../Objects/Lesson";
 import { pathHome, pathTeacherLesson } from "../Paths";
 import { serverCreateLesson, serverLogout } from "../Services/ClientService";
 import { squaresColor } from "../Utils";
+
 
   
   function TeacherDashboard() {
@@ -41,9 +45,9 @@ import { squaresColor } from "../Utils";
       const title = data.get("title")?.toString();
       const description = data.get("description")?.toString();
 
-      serverCreateLesson(title, description,[]).then((message : string) => { //TODO: tags impl 
+      serverCreateLesson(title, description,[]).then((lesson : Lesson) => { //TODO: tags impl 
+        Cookies.set('TeacherLesson', JSON.stringify(lesson));
         navigate(pathTeacherLesson);
-        alert(message);
         }).catch((e) => alert(e));
     };
 
@@ -57,6 +61,9 @@ import { squaresColor } from "../Utils";
   
     return (
       <ThemeProvider theme={theme}>
+        <Box>
+          <Navbar />
+        </Box>
         <Grid
           container
           component="main"
@@ -136,7 +143,7 @@ import { squaresColor } from "../Utils";
                     "&:hover": { backgroundColor: squaresColor },
                   }}
                 >
-                  Enter Lesson Code
+                  Create New Lesson
                 </Button>
                 <Button
                   fullWidth
@@ -153,7 +160,7 @@ import { squaresColor } from "../Utils";
 
                   }}
                 >
-                  Back
+                  Log Out
                 </Button>
               </Box>
             </Box>

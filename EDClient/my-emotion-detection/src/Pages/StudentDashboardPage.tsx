@@ -7,11 +7,14 @@ import {
   Typography,
   createTheme
 } from "@mui/material";
+import Cookies from 'js-cookie';
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { Lesson } from "../Objects/Lesson";
 import { pathHome, pathStudentLesson } from "../Paths";
-import { serverLogout } from "../Services/ClientService";
+import { serverJoinLesson, serverLogout } from "../Services/ClientService";
 import { squaresColor } from "../Utils";
+
 
     
     function StudentDashboard() {
@@ -40,12 +43,12 @@ import { squaresColor } from "../Utils";
         const data = new FormData(event.currentTarget);
         const classCode = data.get("classCode")?.toString();
         navigate(pathStudentLesson);
-        /*
-        serverJoinLesson(classCode).then((message : string) => {
+        
+        serverJoinLesson(classCode).then((lesson : Lesson) => {
+          Cookies.set('StudentLesson', JSON.stringify(lesson));
           navigate(pathStudentLesson);
-          alert(message);
           }).catch((e) => alert(e));
-          */
+          
       };
 
       const handleLogout = () => {
@@ -131,7 +134,7 @@ import { squaresColor } from "../Utils";
 
                     }}
                   >
-                    Back
+                    Log Out
                   </Button>
                 </Box>
               </Box>

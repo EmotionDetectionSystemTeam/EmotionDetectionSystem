@@ -1,4 +1,7 @@
+import Cookies from "js-cookie";
 import { useEffect } from "react";
+import { ServiceEmotionData } from "../Objects/EmotionData";
+import { serverPushEmotionData } from "../Services/ClientService";
 function StudentLesson() {
   let expressionsData = {
     neutral: 0,
@@ -9,6 +12,10 @@ function StudentLesson() {
     disgusted: 0,
     fearful: 0
   };
+
+  const lessonCookie = Cookies.get('StudentLesson');
+  const lesson = lessonCookie ? JSON.parse(lessonCookie) : null;
+
 
   useEffect(() => {
     let intervalId;
@@ -25,26 +32,18 @@ function StudentLesson() {
     };
 
     const sendResultToServer = (data) => {
-      const serverUrl = 'YOUR_SERVER_ENDPOINT';
-      fetch(serverUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
-          })
-          .then(responseData => {
-            console.log('Server response:', responseData);
-          })
-          .catch(error => {
-            console.error('Error sending data to server:', error);
-          });
+      const emotaionData = new ServiceEmotionData(
+        data.neutral,
+        data.happy,
+        data.sad,
+        data.angry,
+        data.surprised,
+        data.disgusted,
+        data.fearful
+      );
+      serverPushEmotionData(lesson.LessonId,emotaionData).catch((e) => alert(e))
+      //serverPushEmotionData("1",emotaionData).catch((e) => alert(e))
+
     };
 
     Promise.all([
@@ -98,7 +97,7 @@ function StudentLesson() {
 
           totalTime += 100;
 
-          if (totalTime >= 30000) {
+          if (totalTime >= 5000) { //30000
             const averageExpressions = {};
             for (const expression in expressionsData) {
               averageExpressions[expression] =

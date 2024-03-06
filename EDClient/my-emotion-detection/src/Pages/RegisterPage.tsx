@@ -17,6 +17,7 @@ import { squaresColor } from "../Utils";
 
 function Register() {
   const theme = createTheme({
+    
     typography: {
       fontFamily: [
         "-apple-system",
@@ -110,7 +111,6 @@ function Register() {
                 label="First Name"
                 name="firstName"
                 autoComplete="firstName"
-                autoFocus
                 variant="outlined"
               />
               <TextField

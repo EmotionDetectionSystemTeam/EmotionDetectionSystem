@@ -82,6 +82,8 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
 
     public Dictionary<Student, EmotionData> GetLastEmotionsData()
     {
-        return _enrollmentSummaries.ToDictionary(enrollmentSummary => enrollmentSummary.Student, enrollmentSummary => enrollmentSummary.GetFirstNotSeenEmotionData());
+        return _enrollmentSummaries
+            .Where(enrollmentSummary => enrollmentSummary.GetFirstNotSeenEmotionData() != null)
+            .ToDictionary(enrollmentSummary => enrollmentSummary.Student, enrollmentSummary => enrollmentSummary.GetFirstNotSeenEmotionData());
     }
 }

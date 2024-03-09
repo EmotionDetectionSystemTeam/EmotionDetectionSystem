@@ -90,7 +90,7 @@ function TeacherLesson() {
   
   React.useEffect(() => {
     // Fetch or initialize class code
-    const lesson : Lesson=  getCookie(getSessionId(), 'lesson')
+    const lesson : Lesson=  getCookie(getSessionId(), 'lesson');
     setClassCode(lesson.EntryCode);
 
     const intervalId = setInterval(() => {
@@ -123,7 +123,7 @@ function TeacherLesson() {
         <Box>
           <Navbar />
         </Box>
-      <Box sx={{ border: "5px solid black", padding: 2 }}>
+      <Box sx={{ padding: 2 }}>
         <Grid container justifyContent="center">
           <Grid item xs={12}>
             <Typography variant="h4" align="center" sx={{ mt: 3 }}>
@@ -148,6 +148,7 @@ function TeacherLesson() {
                     border: `5px solid ${student.color}`,
                     borderRadius: 2,
                     marginBottom: 10,
+                    background: "#ede5e5",
                   }}
                 >
                   <CardContent>

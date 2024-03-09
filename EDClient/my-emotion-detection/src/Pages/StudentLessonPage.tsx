@@ -50,7 +50,7 @@ function StudentLesson() {
         <video ref={videoRef} autoPlay muted playsInline />
         <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }} />
         <Typography variant="h5" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 2 }}>
-          Working...
+          Proccessing Data...
         </Typography>
         <Button variant="contained" color="primary" style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 2 }} onClick={handleExitLesson}>
           Exit Lesson

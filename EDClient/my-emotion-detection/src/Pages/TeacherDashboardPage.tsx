@@ -7,13 +7,13 @@ import {
   Typography,
   createTheme
 } from "@mui/material";
-import Cookies from 'js-cookie';
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import { Lesson } from "../Objects/Lesson";
 import { pathHome, pathTeacherLesson } from "../Paths";
 import { serverCreateLesson, serverLogout } from "../Services/ClientService";
+import { getSessionId, setCookie, setLessonId } from "../Services/SessionService";
 import { squaresColor } from "../Utils";
 
 
@@ -46,7 +46,10 @@ import { squaresColor } from "../Utils";
       const description = data.get("description")?.toString();
 
       serverCreateLesson(title, description,[]).then((lesson : Lesson) => { //TODO: tags impl 
-        Cookies.set('TeacherLesson', JSON.stringify(lesson));
+        //Cookies.set('TeacherLesson', JSON.stringify(lesson));
+        setLessonId(lesson.LessonId);
+        setCookie(getSessionId(), 'lesson', lesson);
+        alert(lesson.EntryCode);
         navigate(pathTeacherLesson);
         }).catch((e) => alert(e));
     };

@@ -7,12 +7,13 @@ import {
   Typography,
   createTheme
 } from "@mui/material";
-import Cookies from 'js-cookie';
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import Navbar from "../Components/Navbar";
 import { Lesson } from "../Objects/Lesson";
 import { pathHome, pathStudentLesson } from "../Paths";
 import { serverJoinLesson, serverLogout } from "../Services/ClientService";
+import { setLessonId } from "../Services/SessionService";
 import { squaresColor } from "../Utils";
 
 
@@ -45,7 +46,8 @@ import { squaresColor } from "../Utils";
         navigate(pathStudentLesson);
         
         serverJoinLesson(classCode).then((lesson : Lesson) => {
-          Cookies.set('StudentLesson', JSON.stringify(lesson));
+          //Cookies.set('StudentLesson', JSON.stringify(lesson));
+          setLessonId(lesson.LessonId)
           navigate(pathStudentLesson);
           }).catch((e) => alert(e));
           
@@ -61,6 +63,9 @@ import { squaresColor } from "../Utils";
     
       return (
         <ThemeProvider theme={theme}>
+          <Box>
+            <Navbar />
+          </Box>
           <Grid
             container
             component="main"

@@ -2,7 +2,6 @@ import { Button, Card, CardContent, Grid } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import Cookies from 'js-cookie';
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
@@ -11,6 +10,7 @@ import { Lesson } from "../Objects/Lesson";
 import { ServiceRealTimeUser } from "../Objects/ServiceRealTimeUser";
 import { pathTeacherDashBoard } from "../Paths";
 import { serverEndLesson, serverGetLastEmotionsData } from "../Services/ClientService";
+import { getCookie, getLessonId, getSessionId } from "../Services/SessionService";
 
 
 const theme = createTheme({
@@ -39,9 +39,9 @@ function TeacherLesson() {
     new ClientStudent("Bob", "Johnson", "bob@example.com", "Neutral", "yellow"),
   ]);
 
-  const lessonCookie = Cookies.get('TeacherLesson');
-  const lesson : Lesson = lessonCookie ? JSON.parse(lessonCookie) : null;
-  alert(lesson.LessonId);
+  //const lessonCookie = Cookies.get('TeacherLesson');
+  //const lesson : Lesson = lessonCookie ? JSON.parse(lessonCookie) : null;
+  //alert(lesson.LessonId);
   const navigate = useNavigate();
 
 
@@ -90,6 +90,7 @@ function TeacherLesson() {
   
   React.useEffect(() => {
     // Fetch or initialize class code
+    const lesson : Lesson=  getCookie(getSessionId(), 'lesson')
     setClassCode(lesson.EntryCode);
 
     const intervalId = setInterval(() => {
@@ -99,10 +100,9 @@ function TeacherLesson() {
     // Clean up interval to avoid memory leaks
     return () => clearInterval(intervalId);
   }, []);
-
   const HandleGetEmotions = () => {
     
-    serverGetLastEmotionsData(lesson.LessonId).then((students : ServiceRealTimeUser[]) => {
+    serverGetLastEmotionsData(getLessonId()).then((students : ServiceRealTimeUser[]) => {
       const clientStudents : ClientStudent[]=  MapEmotionsToStudents(students);
       setStudentList(clientStudents)
     });
@@ -123,7 +123,7 @@ function TeacherLesson() {
         <Box>
           <Navbar />
         </Box>
-      <Box>
+      <Box sx={{ border: "5px solid black", padding: 2 }}>
         <Grid container justifyContent="center">
           <Grid item xs={12}>
             <Typography variant="h4" align="center" sx={{ mt: 3 }}>

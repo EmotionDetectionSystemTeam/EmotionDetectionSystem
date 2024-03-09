@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import './App.css'; // Assuming you have a CSS file for styling
@@ -15,6 +16,10 @@ import './styles.css';
 
 
 const App = () => {
+  const cookieNames = Object.keys(Cookies.get());
+  cookieNames.forEach(cookieName => {
+    Cookies.remove(cookieName);
+});
   initSession();
   return (
     <Router>

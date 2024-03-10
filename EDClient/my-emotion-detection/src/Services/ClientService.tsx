@@ -163,7 +163,8 @@ export async function serverJoinLesson(
         response.value.date,
         response.value.isActive,
         response.value.entryCode,
-        response.value.studentsQuantity
+        response.value.studentsQuantity,
+        response.value.studentsEmotions
       )
 
   
@@ -215,7 +216,9 @@ export async function serverJoinLesson(
         response.value.date,
         response.value.isActive,
         response.value.entryCode,
-        response.value.studentsQuantity
+        response.value.studentsQuantity,
+        response.value.studentsEmotions
+        
       )
 
       return lesson;
@@ -376,9 +379,9 @@ export async function serverPushEmotionData(
     return Promise.reject(e);
   }
 }
-/*
+
 export async function serverGetLesson(
-  lessonId: string
+  lessonId: string | undefined | null
 ): Promise<Lesson> {
   const fields: any[] = [lessonId];
   if (!checkInput(fields)) return Promise.reject();
@@ -402,17 +405,28 @@ export async function serverGetLesson(
       throw new Error(errorResponse.errorMessage);
     }
 
-    const response: ClientResponse<ServiceLesson> = await jsonResponse.json();
+    const response = await jsonResponse.json();
     // Handle empty response
     if (!response) {
       throw new Error("Empty response received");
     }
 
-    return response.value;
+    const lesson : Lesson = new Lesson(
+      response.value.lessonId,
+      response.value.lessonName,
+      response.value.teacher,
+      response.value.date,
+      response.value.isActive,
+      response.value.entryCode,
+      response.value.studentsQuantity,
+      response.value.studentsEmotions
+    )
+
+    return lesson;
   } catch (e) {
     return Promise.reject(e);
   }
 }
-*/
+
 
 

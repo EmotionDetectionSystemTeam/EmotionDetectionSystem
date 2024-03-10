@@ -46,6 +46,16 @@ public class EnrollmentSummary
 
         return _emotionData;
     }
+    public List<string> getAllWiningEmotionData()
+    {
+        List<string> WinningEmotions = new List<String>();
+        foreach(EmotionData emotionData in _emotionData)
+        {
+            WinningEmotions.Add(emotionData.GetWinningEmotion());
+        }
+        return WinningEmotions;
+
+    }
 
     public Student Student
     {

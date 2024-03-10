@@ -78,7 +78,7 @@ class ExpressionProcessor {
   
             totalTime += 100;
   
-            if (totalTime >= 30000) { //30000
+            if (totalTime >= 5000) { //30000
               const averageExpressions = {};
               for (const expression in this.expressionsData) {
                 averageExpressions[expression] =

@@ -23,6 +23,28 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
     {
         throw new NotImplementedException();
     }
+    public Dictionary<string, List<string>> GetStudentWiningEmotions()
+    {
+        Dictionary<string, List<string>> studentWiningEmotions = new Dictionary<string, List<string>>();
+
+        foreach (var enrollmentSummary in _enrollmentSummaries)
+        {
+            string studentEmail = enrollmentSummary.Student.Email;
+            List<string> studentEmotions = enrollmentSummary.getAllWiningEmotionData();
+
+            if (!studentWiningEmotions.ContainsKey(studentEmail))
+            {
+                studentWiningEmotions.Add(studentEmail, studentEmotions);
+            }
+            else
+            {
+                studentWiningEmotions[studentEmail].AddRange(studentEmotions);
+            }
+        }
+
+        return studentWiningEmotions;
+    }
+
 
     public void Add(EnrollmentSummary item)
     {

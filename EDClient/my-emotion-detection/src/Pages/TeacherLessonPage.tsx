@@ -117,7 +117,7 @@ function TeacherLesson() {
 
     const intervalId = setInterval(() => {
       HandleGetEmotions();
-    }, 30000); // Run HandleGetEmotions every 30 seconds
+    }, 12000); // Run HandleGetEmotions every 30 seconds
 
     // Clean up interval to avoid memory leaks
     return () => clearInterval(intervalId);

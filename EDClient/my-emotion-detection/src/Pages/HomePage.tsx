@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Typography, createTheme } from "@mui/material";
+import { Button, ButtonGroup, ThemeProvider, Typography, createTheme } from "@mui/material";
 import React from 'react';
 import * as Paths from "../Paths";
 import { textColor } from "../Utils";
@@ -14,6 +14,7 @@ const createButton = (name: string, path: string) => {
       size="large"
       color="primary"
       sx={{
+        background: "#E8F0FE",
         m: 1,
         color: textColor,
         "&:hover": {
@@ -29,7 +30,10 @@ const createButton = (name: string, path: string) => {
 
 const mainTheme = createTheme({
   palette: {
-    mode: "light",
+    mode: "dark",
+    background: {
+      default: '"#E8F0FE"', // Set the default background color
+    },
   },
   typography: {
     fontFamily: [
@@ -55,28 +59,26 @@ const buttons = [
 
 function HomePage() {
   return (
-    <>
-      <div className={`container ${mainTheme}`}>
-        <main>
-          <Typography
-            color="inherit"
-            align="center"
-            variant="h2"
-            sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}
-          >
-            Welcome to Emotion Detection System's Developer site 
-          </Typography>
-          <ButtonGroup
-            orientation="vertical"
-            aria-label="vertical contained button group"
-            variant="text"
-          >
-            {buttons}
-          </ButtonGroup>
-        </main>
-      </div>
-    </>
+    <ThemeProvider theme={mainTheme}>
+        <Typography
+          color="inherit"
+          align="center"
+          variant="h2"
+          sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}
+        >
+          Welcome to Emotion Detection System's Developer site 
+        </Typography>
+        <ButtonGroup
+          orientation="vertical"
+          aria-label="vertical contained button group"
+          variant="text"
+        >
+          {buttons}
+        </ButtonGroup>
+    </ThemeProvider>
+
   );
 }
+
 
 export default HomePage;

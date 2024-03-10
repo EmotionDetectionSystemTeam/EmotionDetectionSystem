@@ -1,3 +1,4 @@
+import { Dialog } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
@@ -9,10 +10,13 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import FailureSnackbar from "../Components/FailureSnackbar";
+import SuccessSnackbar from "../Components/SuccessSnackbar";
 import { pathHome, pathStudentLogin, pathTeacherLogin } from "../Paths";
 import { serverRegister } from "../Services/ClientService";
-import { getUserName, setUsername } from "../Services/SessionService";
+import { getCookie, getSessionId, setCookie, setUsername } from "../Services/SessionService";
 import { squaresColor } from "../Utils";
+
 
 
 function Register() {
@@ -36,6 +40,14 @@ function Register() {
   const navigate = useNavigate();
 
   const [isStudent, setIsStudent] = React.useState(false);
+  const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false);
+  const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false);
+  const [failuretMsg, setFailuretMsg] = React.useState<string>("");
+  const [successtMsg, setSuccesstMsg] = React.useState<string>("");
+
+
+
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -48,13 +60,28 @@ function Register() {
     const isStudentValue = isStudent ? 0 : 1;
     serverRegister(email, firstName, lastName, password, confirmPassword,isStudentValue)
     .then((response : string) => {
+      //setOpenSuccSnack(true);
+      //setSuccesstMsg(response);
       isStudent ? navigate(pathStudentLogin) : navigate(pathTeacherLogin);
+
       setUsername(String(email));
-      alert(getUserName());
+      setCookie(getSessionId(), "email", email);
+      alert(getCookie(getSessionId(),"email"));
+      //alert(getUserName());
       alert(response)})
-      .catch((e) => alert(e))
+      .catch((e) => {
+        setOpenFailSnack(true);
+        setFailuretMsg(String(e));
+        alert(e);
+      })
 
   };
+
+  const handleCloseSuccessSnack = () => {
+    setOpenSuccSnack(false);
+    isStudent ? navigate(pathStudentLogin) : navigate(pathTeacherLogin);
+  };
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -187,6 +214,16 @@ function Register() {
           </Box>
         </Grid>
       </Grid>
+      <Dialog open={openFailSnack}>
+      {FailureSnackbar(failuretMsg, openFailSnack, () =>
+          setOpenFailSnack(false)
+        )}
+      </Dialog>
+      <Dialog open={openSuccSnack}>
+      {SuccessSnackbar(successtMsg, openSuccSnack, handleCloseSuccessSnack)}
+      </Dialog>
+
+
     </ThemeProvider>
   );
 }

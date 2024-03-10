@@ -134,4 +134,8 @@ public class Lesson
     {
         return _enrollmentSummaryRepo.GetLastEmotionsData();
     }
+    public Dictionary<string, List<string>> GetStudentWiningEmotions() { 
+        return _enrollmentSummaryRepo.GetStudentWiningEmotions();
+
+    }
 }

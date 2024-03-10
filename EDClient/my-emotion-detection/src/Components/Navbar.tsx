@@ -15,9 +15,9 @@ import { useNavigate } from "react-router-dom";
 import { pathHome } from "../Paths";
 import { serverLogout } from "../Services/ClientService";
 import {
-    clearSession,
-    getIsGuest,
-    initSession,
+  clearSession,
+  getIsGuest,
+  initSession,
 } from "../Services/SessionService";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
@@ -127,15 +127,18 @@ export default function Navbar() {
         <Toolbar
           sx={{
             display: "flex",
+            alignItems: "center",
             justifyContent: "space-between",
             position: "fixed",
             top: 0,
             left: "50%",
+            background: "#ede5e5",
+            width: "100%",
             transform: "translateX(-50%)",
           }}
         >
           <div>
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" marginLeft={5} spacing={2}>
               <Typography
                 onClick={handleClickDashboard}
                 variant="h6"
@@ -165,7 +168,7 @@ export default function Navbar() {
             ></Box>
           </div> */}
           <div>
-            <Box sx={{ display: { xs: "none", md: "flex" } }}>
+            <Box marginRight={5} sx={{ display: { xs: "none", md: "flex" } }}>
               {getIsGuest() ? null : (
                 <Tooltip title="Notifications">
                   <IconButton
@@ -184,6 +187,17 @@ export default function Navbar() {
                   </IconButton>
                 </Tooltip>
               )}
+              <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                //aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="default"
+              >
+                <AccountCircle />
+              </IconButton>
               {getIsGuest() ? null : (
                 <Tooltip title="Logout">
                   <IconButton
@@ -199,17 +213,6 @@ export default function Navbar() {
                   </IconButton>
                 </Tooltip>
               )}
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                //aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="default"
-              >
-                <AccountCircle />
-              </IconButton>
             </Box>
           </div>
         </Toolbar>

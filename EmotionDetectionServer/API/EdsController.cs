@@ -239,7 +239,7 @@ namespace EmotionDetectionServer.API
         [Route("get-lesson")]
         public async Task<ObjectResult> GetLesson([FromBody] GetLessonRequest request)
         {
-            Response<ServiceLesson> response = await Task.Run(() => service.GetLesson(request.SessionId, request.Email, request.LessonId));
+            Response<SActiveLesson> response = await Task.Run(() => service.GetLesson(request.SessionId, request.Email, request.LessonId));
             if (response.ErrorOccured)
             {
                 var GetLessonResponse = new ServerResponse<string>
@@ -250,7 +250,7 @@ namespace EmotionDetectionServer.API
             }
             else
             {
-                var GetLessonResponse = new ServerResponse<ServiceLesson>
+                var GetLessonResponse = new ServerResponse<SActiveLesson>
                 {
                     value = response.Value,
                 };

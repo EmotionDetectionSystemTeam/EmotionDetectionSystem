@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Dialog,
   Grid,
   Link,
   TextField,
@@ -8,12 +9,18 @@ import {
   Typography,
   createTheme,
 } from "@mui/material";
+import Cookies from 'js-cookie';
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import FailureSnackbar from "../Components/FailureSnackbar";
+import SuccessSnackbar from "../Components/SuccessSnackbar";
+import { Lesson } from "../Objects/Lesson";
 import { pathHome, pathTeacherDashBoard } from "../Paths";
 import { serverLogin } from "../Services/ClientService";
 import { initWebSocket } from "../Services/NotificationService";
 import { squaresColor } from "../Utils";
+
+
 
 
 
@@ -35,6 +42,15 @@ import { squaresColor } from "../Utils";
         ].join(","),
       },
     });
+
+    const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false);
+    const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false);
+    const [failuretMsg, setFailuretMsg] = React.useState<string>("");
+    const [successtMsg, setSuccesstMsg] = React.useState<string>("");
+
+    const lessonCookie = Cookies.get('TeacherLesson');
+    const lesson : Lesson = lessonCookie ? JSON.parse(lessonCookie) : null;
+    //alert(lesson.LessonId);
   
     const navigate = useNavigate();
   
@@ -152,6 +168,16 @@ import { squaresColor } from "../Utils";
             </Box>
           </Grid>
         </Grid>
+        <Dialog open={openFailSnack}>
+        {FailureSnackbar(failuretMsg, openFailSnack, () =>
+          setOpenFailSnack(false)
+        )}
+      </Dialog>
+      <Dialog open={openSuccSnack}>
+        {SuccessSnackbar(successtMsg, openSuccSnack, () =>
+        setOpenSuccSnack(false)
+        )}
+      </Dialog>
       </ThemeProvider>
     );
   }

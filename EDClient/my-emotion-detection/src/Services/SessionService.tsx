@@ -13,6 +13,7 @@ const userName = "userName";
 const isGuest = "isGuest";
 const sessionId = "sessionId";
 const isAdmin = "isAdmin";
+const LessonId = "LessonId";
 
 
 export async function initSession() {
@@ -21,8 +22,7 @@ export async function initSession() {
     fetchResponse(serverEnterAsGuest())
       .then((sessionId: string) => {
         initFields(sessionId);
-        Cookies.set('session', JSON.stringify(sessionId));
-        alert(Cookies.get('session'))
+        //initializeCookie(sessionId);
         alert(sessionId);
       })
       .catch((e) => {
@@ -85,3 +85,54 @@ export function getIsAdmin(): boolean {
 export function setIsAdmin(value: boolean): void {
   storage.setItem(isAdmin, value.toString());
 }
+
+export function getLessonId(): string | null {
+  return storage.getItem(LessonId);
+}
+
+export function setLessonId(value: string): void {
+  storage.setItem(LessonId, value);
+}
+
+export const initializeCookie = (sessionId) => {
+  
+  const cookieName = `session_${sessionId}`; // Construct the cookie name
+  Cookies.set(cookieName, null, { expires: 1 }); // expires in 1 day
+
+  /*
+  const existingData = Cookies.getJSON(cookieName); // Retrieve existing data
+
+  // If no data exists for the cookie, initialize it with an empty object
+  if (!existingData) {
+      Cookies.set(cookieName, {}, { expires: 1 }); // expires in 1 day
+  }
+  */
+};
+
+// Function to set a cookie
+export const setCookie = (sessionId, key, value) => {
+  const cookieName = `session_${sessionId}`; // Construct the cookie name
+  const existing = Cookies.get(cookieName); // Retrieve existing data or initialize an empty object
+  const existingData = existing ? JSON.parse(existing) : {}
+  // Update the existing data with the new key-value pair
+  existingData[key] = value;
+
+  // Set the cookie with the updated data
+  Cookies.set(cookieName, JSON.stringify(existingData), { expires: 1 }); // expires in 1 day
+};
+
+// Function to get a value from the cookie
+export const getCookie = (sessionId, key) => {
+  const cookieName = `session_${sessionId}`; // Construct the cookie name
+  const cookieMenu = Cookies.get(cookieName); // Retrieve the cookie data
+    //const lesson : Lesson = lessonCookie ? JSON.parse(lessonCookie) : null;
+  const cookieData = cookieMenu ? JSON.parse(cookieMenu) : null;
+
+  // If the cookie data exists and has the specified key, return its value
+  if (cookieData && cookieData.hasOwnProperty(key)) {
+      return cookieData[key];
+  }
+
+  // If the key doesn't exist or cookieData is null, return null
+  return null;
+};

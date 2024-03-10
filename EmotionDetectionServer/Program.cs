@@ -25,8 +25,8 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddControllers();
-
-WebSocketServer notificationServer = new WebSocketServer($"ws://{GetLocalIPAddress()}:");
+int port = 7080;
+WebSocketServer notificationServer = new WebSocketServer($"ws://{GetLocalIPAddress()}:{port}");
 WebSocketServer logsServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 4560);
 EdsService service = new EdsService();
 logsServer.AddWebSocketService<logsService>("/logs");

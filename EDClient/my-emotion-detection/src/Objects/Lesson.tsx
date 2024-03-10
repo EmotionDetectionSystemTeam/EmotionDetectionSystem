@@ -7,6 +7,7 @@ export class Lesson {
     public IsActive: boolean;
     public EntryCode: string;
     public studentsQuantity: number;
+    public StudentsEmotions : {};
 
     constructor(
         lessonId: string,
@@ -16,6 +17,7 @@ export class Lesson {
         isActive: boolean,
         entryCode: string,
         studentsQuantity: number,
+        studentsEmotions : {}
     ) {
         this.LessonId = lessonId;
         this.LessonName = lessonName;
@@ -24,6 +26,7 @@ export class Lesson {
         this.IsActive = isActive;
         this.EntryCode = entryCode;
         this.studentsQuantity = studentsQuantity;
+        this.StudentsEmotions = studentsEmotions;
     }
 
 }

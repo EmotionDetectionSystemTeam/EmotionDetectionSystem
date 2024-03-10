@@ -2,15 +2,16 @@ import { Button, Card, CardContent, Grid } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import Cookies from 'js-cookie';
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import EmotionsPopup from "../Components/EmotionPopUp";
 import Navbar from "../Components/Navbar";
 import ClientStudent from "../Objects/ClientStudent";
 import { Lesson } from "../Objects/Lesson";
 import { ServiceRealTimeUser } from "../Objects/ServiceRealTimeUser";
 import { pathTeacherDashBoard } from "../Paths";
-import { serverEndLesson, serverGetLastEmotionsData } from "../Services/ClientService";
+import { serverEndLesson, serverGetLastEmotionsData, serverGetLesson } from "../Services/ClientService";
+import { getLessonId } from "../Services/SessionService";
 
 
 const theme = createTheme({
@@ -32,6 +33,14 @@ const theme = createTheme({
 
 function TeacherLesson() {
   const [classCode, setClassCode] = React.useState<string | null>(null);
+  const [className, setClassName] = React.useState<string | null>(null);
+  const [date, setDate] = React.useState<string | null>(null);
+  const [participants, setParticipants] = React.useState<number>(0);
+  const [teacherName, setTeacherName] = React.useState<string | null>(null);
+  const [les, setLesson] = React.useState<Lesson | null>(null);
+  const [showPopup, setShowPopup] = React.useState(false);
+  const [selectedStudent, setSelectedStudent] = React.useState(null);
+  const [selectedEmotions, setSelectedEmotions] = React.useState([]);
   const [studentList, setStudentList] = React.useState<ClientStudent[]>([
     new ClientStudent("John", "Doe", "john@example.com", "Happy", "gray"),
     new ClientStudent("Jane", "Doe", "jane@example.com", "Excited", "green"),
@@ -39,9 +48,11 @@ function TeacherLesson() {
     new ClientStudent("Bob", "Johnson", "bob@example.com", "Neutral", "yellow"),
   ]);
 
-  const lessonCookie = Cookies.get('TeacherLesson');
-  const lesson : Lesson = lessonCookie ? JSON.parse(lessonCookie) : null;
-  alert(lesson.LessonId);
+
+
+  //const lessonCookie = Cookies.get('TeacherLesson');
+  //const lesson : Lesson = lessonCookie ? JSON.parse(lessonCookie) : null;
+  //alert(lesson.LessonId);
   const navigate = useNavigate();
 
 
@@ -87,10 +98,22 @@ function TeacherLesson() {
   
     return mappedStudents;
   };
+
+  const handleStudentClick = (studentName,emotions) => {
+    setSelectedStudent(studentName);
+    setSelectedEmotions(emotions);
+    setShowPopup(true);
+  };
   
   React.useEffect(() => {
+    serverGetLesson(getLessonId()).then((lesson: Lesson) => {
+      setClassCode(lesson.EntryCode);
+      setClassName(lesson.LessonName);
+      setDate(lesson.Date.toString());
+      setTeacherName(lesson.Teacher);
+      setLesson(lesson);
+    })
     // Fetch or initialize class code
-    setClassCode(lesson.EntryCode);
 
     const intervalId = setInterval(() => {
       HandleGetEmotions();
@@ -99,10 +122,9 @@ function TeacherLesson() {
     // Clean up interval to avoid memory leaks
     return () => clearInterval(intervalId);
   }, []);
-
   const HandleGetEmotions = () => {
     
-    serverGetLastEmotionsData(lesson.LessonId).then((students : ServiceRealTimeUser[]) => {
+    serverGetLastEmotionsData(getLessonId()).then((students : ServiceRealTimeUser[]) => {
       const clientStudents : ClientStudent[]=  MapEmotionsToStudents(students);
       setStudentList(clientStudents)
     });
@@ -123,11 +145,27 @@ function TeacherLesson() {
         <Box>
           <Navbar />
         </Box>
-      <Box>
+        {showPopup && selectedStudent && selectedEmotions && (
+        <EmotionsPopup
+          studentName={selectedStudent}
+          onClose={() => setShowPopup(false)}
+          emotions={selectedEmotions}
+        />
+      )}
+      <Box sx={{ padding: 2, }}>
         <Grid container justifyContent="center">
           <Grid item xs={12}>
             <Typography variant="h4" align="center" sx={{ mt: 3 }}>
               Class Code: {classCode}
+            </Typography>
+            <Typography variant="h5" align="center" gutterBottom>
+              Class Name: {className}
+            </Typography>
+            <Typography variant="h6" align="center" gutterBottom>
+              Date: {date}
+            </Typography>
+            <Typography variant="h6" align="center" gutterBottom>
+              Teacher Name: {teacherName}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -148,6 +186,7 @@ function TeacherLesson() {
                     border: `5px solid ${student.color}`,
                     borderRadius: 2,
                     marginBottom: 10,
+                    background: "#ede5e5",
                   }}
                 >
                   <CardContent>
@@ -171,6 +210,29 @@ function TeacherLesson() {
           </Grid>
         </Grid>
       </Box>
+      <Box sx={{
+        left: '0%',
+        top: '10%',
+        position: 'absolute', 
+        maxHeight: '100%',
+         overflowY: 'auto', 
+         maxWidth: '200px',
+         background: "#ede5e5",   
+         }}>
+        {les && les.StudentsEmotions && typeof les.StudentsEmotions === 'object' && (
+          <Typography variant="h6" align="center" gutterBottom>
+            Participants: {Object.keys(les.StudentsEmotions).length}
+          </Typography>
+        )}
+        <Grid>
+          {les && Object.keys(les.StudentsEmotions).map((studentName, index) => (
+          <Button sx={{border: '1px solid black',width: '100%'}} key={index} onClick={() => handleStudentClick(studentName,les.StudentsEmotions[studentName])}>
+            {studentName}
+          </Button>
+          ))}
+        </Grid>
+      </Box>
+
     </ThemeProvider>
   );
 }

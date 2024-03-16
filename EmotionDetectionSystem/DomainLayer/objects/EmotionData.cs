@@ -1,3 +1,5 @@
+using EmotionDetectionServer;
+
 namespace EmotionDetectionSystem.DomainLayer.objects;
 
 public class EmotionData
@@ -74,27 +76,26 @@ public class EmotionData
 
     public string GetWinningEmotion()
     {
-        // Define weights for each emotion
         var weights = new Dictionary<string, double>
         {
-            { "Neutral", 0.4 },
-            { "Happy", 1.0 },
-            { "Sad", 1.0 },
-            { "Angry", 1.0 },
-            { "Surprised", 1.0 },
-            { "Disgusted", 1.0 },
-            { "Fearful", 1.0 }
+            { Emotions.NEUTRAL, 0.4 },
+            { Emotions.HAPPY, 1 },
+            { Emotions.SAD, 1 },
+            { Emotions.ANGRY, 1 },
+            { Emotions.SURPRISED, 1 },
+            { Emotions.DISGUSTED, 1 },
+            { Emotions.FEARFUL, 1 }
         };
 
         var emotions = new Dictionary<string, double>
         {
-            { "Neutral", Neutral     * weights["Neutral"] },
-            { "Happy", Happy         * weights["Happy"] },
-            { "Sad", Sad             * weights["Sad"] },
-            { "Angry", Angry         * weights["Angry"] },
-            { "Surprised", Surprised * weights["Surprised"] },
-            { "Disgusted", Disgusted * weights["Disgusted"] },
-            { "Fearful", Fearful     * weights["Fearful"] }
+            { Emotions.NEUTRAL, Neutral     * weights[Emotions.NEUTRAL] },
+            { Emotions.HAPPY, Happy         * weights[Emotions.HAPPY] },
+            { Emotions.SAD, Sad             * weights[Emotions.SAD] },
+            { Emotions.ANGRY, Angry         * weights[Emotions.ANGRY] },
+            { Emotions.SURPRISED, Surprised * weights[Emotions.SURPRISED] },
+            { Emotions.DISGUSTED, Disgusted * weights[Emotions.DISGUSTED] },
+            { Emotions.FEARFUL, Fearful     * weights[Emotions.FEARFUL] }
         };
 
         var max = emotions.MaxBy(kvp => kvp.Value).Key;

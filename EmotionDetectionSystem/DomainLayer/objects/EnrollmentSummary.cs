@@ -109,4 +109,35 @@ public class EnrollmentSummary
             return emotionData!;
         }
     }
+    
+    public EmotionData PeekFirstNotSeenEmotionData()
+    {
+        lock (_lock)
+        {
+            EmotionData emotionData;
+            if (_notSeenEmotionDataQueue.Count > 0)
+            {
+                emotionData = _notSeenEmotionDataQueue.Peek();
+            }
+            else
+            {
+                emotionData = _emotionData.FindLast(ed => ed.Time == _emotionData.Max(ed => ed.Time));
+            }
+            return emotionData!;
+        }
+    }
+
+    public List<string> getPreviousEmotionData()
+    {
+        var winningEmotions = new List<string>();
+        foreach(var emotionData in _emotionData)
+        {
+            var winningEmotion = emotionData.GetWinningEmotion();
+            if (winningEmotion != null)
+            {
+                winningEmotions.Add(winningEmotion);
+            }
+        }
+        return winningEmotions;
+    }
 }

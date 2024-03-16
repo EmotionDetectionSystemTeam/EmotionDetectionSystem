@@ -180,11 +180,11 @@ public class EdsManager
 
     public bool IsProcessingTasks => _emotionDataTasks.Count > 0;
 
-    public Dictionary<Student, EmotionData> GetLastEmotionsData(string sessionId, string email, string lessonId)
+    public IEnumerable<EnrollmentSummary> GetLastEmotionsData(string sessionId, string email, string lessonId)
     {
         IsValidSession(sessionId, email);
         var lesson = _lessonManager.GetLesson(lessonId);
-        return lesson.GetLastEmotionsData();
+        return lesson.GetEnrollmentSummariesWithData();
     }
 
     public Lesson GetLesson(string sessionId, string email, string lessonId)

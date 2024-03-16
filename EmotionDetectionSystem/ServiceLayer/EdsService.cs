@@ -194,12 +194,16 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Get last emotion data request for session: {sessionId} has been received");
         try
         {
-            var emotionData = _edsManager.GetLastEmotionsData(sessionId, email, lessonId);
+            var enrollmentSummaries = _edsManager.GetLastEmotionsData(sessionId, email, lessonId);
 
-            var emotionDataServices = emotionData
-                .Select(entry => new ServiceRealTimeUser(entry.Key, entry.Value.GetWinningEmotion())).ToList();
+            var realTimeUsers = enrollmentSummaries
+                .Select(enrollmentSummary => new ServiceRealTimeUser(
+                            enrollmentSummary.Student,
+                            enrollmentSummary.GetFirstNotSeenEmotionData().GetWinningEmotion(),
+                            enrollmentSummary.getPreviousEmotionData()
+                        )).ToList();
 
-            return Response<List<ServiceRealTimeUser>>.FromValue(emotionDataServices);
+            return Response<List<ServiceRealTimeUser>>.FromValue(realTimeUsers);
         }
         catch (Exception e)
         {
@@ -210,7 +214,7 @@ public class EdsService : IEdsService
 
     public Response<SActiveLesson> GetLesson(string sessionId, string email, string lessonId)
     {
-_logger.InfoFormat($"Get lesson request for session: {sessionId} has been received");
+        _logger.InfoFormat($"Get lesson request for session: {sessionId} has been received");
         try
         {
             var lesson = _edsManager.GetLesson(sessionId, email, lessonId);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using EmotionDetectionSystem.DomainLayer.objects;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,7 +11,6 @@ namespace EmotionDetectionSystem.Tests.DomainLayer.objects;
 [TestSubject(typeof(EnrollmentSummary))]
 public class EnrollmentSummaryTest
 {
-
     private EnrollmentSummary _enrollmentSummary;
     private Student           _student;
     private Lesson            _lesson;
@@ -38,33 +38,36 @@ public class EnrollmentSummaryTest
     [TestMethod]
     public void GetFirstNotSeenEmotionData_Success()
     {
-        var firstEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
-        var secondEmotionData = new EmotionData(DateTime.Now,1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var firstEmotionData  = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var secondEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         _enrollmentSummary.AddEmotionData(firstEmotionData);
         _enrollmentSummary.AddEmotionData(secondEmotionData);
-        Assert.AreEqual(firstEmotionData,_enrollmentSummary.GetFirstNotSeenEmotionData());
-        Assert.AreEqual(secondEmotionData,_enrollmentSummary.GetFirstNotSeenEmotionData());
-        Assert.AreEqual(0,_enrollmentSummary.NotSeenEmotionDataQueue.Count);
-        Assert.AreEqual(2,_enrollmentSummary.EmotionData.Count);
+        Assert.AreEqual(firstEmotionData,  _enrollmentSummary.GetFirstNotSeenEmotionData());
+        Assert.AreEqual(secondEmotionData, _enrollmentSummary.GetFirstNotSeenEmotionData());
+        Assert.AreEqual(0,                 _enrollmentSummary.NotSeenEmotionDataQueue.Count);
+        Assert.AreEqual(2,                 _enrollmentSummary.EmotionData.Count);
     }
-    
+
     [TestMethod]
     public void GetFirstNotSeenEmotionData_EmptyQueueAndOneSeenEmotionData_Success()
     {
-        var firstEmotionData  = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var firstEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         _enrollmentSummary.AddEmotionData(firstEmotionData);
         Assert.AreEqual(firstEmotionData, _enrollmentSummary.GetFirstNotSeenEmotionData());
         Assert.AreEqual(firstEmotionData, _enrollmentSummary.GetFirstNotSeenEmotionData());
         Assert.AreEqual(0,                _enrollmentSummary.NotSeenEmotionDataQueue.Count);
         Assert.AreEqual(1,                _enrollmentSummary.EmotionData.Count);
     }
-    
+
     [TestMethod]
     public void GetLatestSeenEmotionData_EmptyQueueAndManySeenEmotionData_Success()
     {
         var firstEmotionData  = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        Thread.Sleep(1000);
         var fourthEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        Thread.Sleep(1000);
         var thirdEmotionData  = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        Thread.Sleep(1000);
         var secondEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         _enrollmentSummary.AddEmotionData(firstEmotionData);
         _enrollmentSummary.AddEmotionData(secondEmotionData);
@@ -74,7 +77,8 @@ public class EnrollmentSummaryTest
         _enrollmentSummary.GetFirstNotSeenEmotionData();
         _enrollmentSummary.GetFirstNotSeenEmotionData();
         _enrollmentSummary.GetFirstNotSeenEmotionData();
-        Assert.AreEqual(0,                 _enrollmentSummary.NotSeenEmotionDataQueue.Count);
-        Assert.AreEqual(secondEmotionData,                 _enrollmentSummary.GetFirstNotSeenEmotionData());
+        Assert.AreEqual(0, _enrollmentSummary.NotSeenEmotionDataQueue.Count);
+        var emotionsData = _enrollmentSummary.GetFirstNotSeenEmotionData();
+        Assert.AreEqual(secondEmotionData, emotionsData);
     }
 }

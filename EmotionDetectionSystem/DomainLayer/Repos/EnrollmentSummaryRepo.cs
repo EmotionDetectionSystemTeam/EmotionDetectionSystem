@@ -1,3 +1,4 @@
+using System.Collections;
 using EmotionDetectionSystem.DomainLayer.objects;
 
 namespace EmotionDetectionSystem.DomainLayer.Repos;
@@ -102,10 +103,14 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
         return emotionsData.Concat(_enrollmentSummaries.SelectMany(x => x.GetAllEmotionData()));
     }
 
-    public Dictionary<Student, EmotionData> GetLastEmotionsData()
+    public IEnumerable<EnrollmentSummary> GetEnrollmentSummariesWithData()
     {
         return _enrollmentSummaries
-            .Where(enrollmentSummary => enrollmentSummary.GetFirstNotSeenEmotionData() != null)
-            .ToDictionary(enrollmentSummary => enrollmentSummary.Student, enrollmentSummary => enrollmentSummary.GetFirstNotSeenEmotionData());
+            .Where(enrollmentSummary => enrollmentSummary.PeekFirstNotSeenEmotionData() != null).ToList();
+    }
+
+    public Dictionary<Student,EnrollmentSummary> GetStudentsEmotions()
+    {
+        return _enrollmentSummaries.ToDictionary(enrollmentSummary => enrollmentSummary.Student, enrollmentSummary => enrollmentSummary);
     }
 }

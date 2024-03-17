@@ -130,12 +130,14 @@ public class Lesson
         return entries;
     }
 
-    public Dictionary<Student, EmotionData> GetLastEmotionsData()
+    public IEnumerable<EnrollmentSummary> GetEnrollmentSummariesWithData()
     {
-        return _enrollmentSummaryRepo.GetLastEmotionsData();
+        return _enrollmentSummaryRepo.GetEnrollmentSummariesWithData();
     }
     public Dictionary<string, List<string>> GetStudentWiningEmotions() { 
         return _enrollmentSummaryRepo.GetStudentWiningEmotions();
-
+    }
+    public Dictionary<Student,EnrollmentSummary> GetStudentsEmotions() {
+        return _enrollmentSummaryRepo.GetStudentsEmotions();
     }
 }

@@ -331,7 +331,8 @@ export async function serverGetLastEmotionsData(
         student.email,
         student.firstName,
         student.lastName,
-        student.winingEmotion
+        student.winingEmotion,
+        student.previousEmotions
       )
     })
 

@@ -1,3 +1,4 @@
+import { ServiceRealTimeUser } from "./ServiceRealTimeUser";
 
 export class Lesson {
     public LessonId: string;
@@ -7,7 +8,7 @@ export class Lesson {
     public IsActive: boolean;
     public EntryCode: string;
     public studentsQuantity: number;
-    public StudentsEmotions : {};
+    public StudentsEmotions : ServiceRealTimeUser[];
 
     constructor(
         lessonId: string,
@@ -17,7 +18,7 @@ export class Lesson {
         isActive: boolean,
         entryCode: string,
         studentsQuantity: number,
-        studentsEmotions : {}
+        studentsEmotions : ServiceRealTimeUser[]
     ) {
         this.LessonId = lessonId;
         this.LessonName = lessonName;

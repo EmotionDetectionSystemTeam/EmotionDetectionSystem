@@ -56,7 +56,13 @@ function Register() {
     const firstName = data.get("firstName")?.toString();
     const lastName = data.get("lastName")?.toString();
     const password = data.get("password")?.toString();
-    const confirmPassword = data.get("confirmPassword")?.toString();//TODO: password match
+    const confirmPassword = data.get("confirmPassword")?.toString();
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return; // Exit the function if passwords don't match
+  }
+  
     const isStudentValue = isStudent ? 0 : 1;
     serverRegister(email, firstName, lastName, password, confirmPassword,isStudentValue)
     .then((response : string) => {

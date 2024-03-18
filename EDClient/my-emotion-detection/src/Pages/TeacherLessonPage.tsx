@@ -35,18 +35,10 @@ function TeacherLesson() {
   const [classCode, setClassCode] = React.useState<string | null>(null);
   const [className, setClassName] = React.useState<string | null>(null);
   const [date, setDate] = React.useState<string | null>(null);
-  const [participants, setParticipants] = React.useState<number>(0);
   const [teacherName, setTeacherName] = React.useState<string | null>(null);
-  const [les, setLesson] = React.useState<Lesson | null>(null);
   const [showPopup, setShowPopup] = React.useState(false);
-  const [selectedStudent, setSelectedStudent] = React.useState(null);
-  const [selectedEmotions, setSelectedEmotions] = React.useState([]);
-  const [studentList, setStudentList] = React.useState<ClientStudent[]>([
-    new ClientStudent("John", "Doe", "john@example.com", "Happy", "gray"),
-    new ClientStudent("Jane", "Doe", "jane@example.com", "Excited", "green"),
-    new ClientStudent("Alice", "Smith", "alice@example.com", "Sad", "red"),
-    new ClientStudent("Bob", "Johnson", "bob@example.com", "Neutral", "yellow"),
-  ]);
+  const [selectedStudent, setSelectedStudent] = React.useState<ClientStudent | null>(null);
+  const [studentList, setStudentList] = React.useState<ClientStudent[]>([]);
 
 
 
@@ -86,6 +78,7 @@ function TeacherLesson() {
         student.lastName,
         student.email,
         student.winingEmotion,
+        student.previousEmotions,
         color
       );
   
@@ -99,9 +92,8 @@ function TeacherLesson() {
     return mappedStudents;
   };
 
-  const handleStudentClick = (studentName,emotions) => {
-    setSelectedStudent(studentName);
-    setSelectedEmotions(emotions);
+  const handleStudentClick = (student) => {
+    setSelectedStudent(student);
     setShowPopup(true);
   };
   
@@ -111,7 +103,8 @@ function TeacherLesson() {
       setClassName(lesson.LessonName);
       setDate(lesson.Date.toString());
       setTeacherName(lesson.Teacher);
-      setLesson(lesson);
+      setStudentList(MapEmotionsToStudents(lesson.StudentsEmotions));
+      
     })
     // Fetch or initialize class code
 
@@ -145,11 +138,10 @@ function TeacherLesson() {
         <Box>
           <Navbar />
         </Box>
-        {showPopup && selectedStudent && selectedEmotions && (
+        {showPopup && selectedStudent && (
         <EmotionsPopup
-          studentName={selectedStudent}
           onClose={() => setShowPopup(false)}
-          emotions={selectedEmotions}
+          student={selectedStudent}
         />
       )}
       <Box sx={{ padding: 2, }}>
@@ -210,28 +202,38 @@ function TeacherLesson() {
           </Grid>
         </Grid>
       </Box>
-      <Box sx={{
-        left: '0%',
-        top: '10%',
-        position: 'absolute', 
-        maxHeight: '100%',
-         overflowY: 'auto', 
-         maxWidth: '200px',
-         background: "#ede5e5",   
-         }}>
-        {les && les.StudentsEmotions && typeof les.StudentsEmotions === 'object' && (
-          <Typography variant="h6" align="center" gutterBottom>
-            Participants: {Object.keys(les.StudentsEmotions).length}
-          </Typography>
-        )}
-        <Grid>
-          {les && Object.keys(les.StudentsEmotions).map((studentName, index) => (
-          <Button sx={{border: '1px solid black',width: '100%'}} key={index} onClick={() => handleStudentClick(studentName,les.StudentsEmotions[studentName])}>
-            {studentName}
-          </Button>
-          ))}
-        </Grid>
-      </Box>
+      <Box
+            sx={{
+                left: '0%',
+                top: '10%',
+                position: 'absolute',
+                maxHeight: '100%',
+                overflowY: 'auto',
+                maxWidth: '200px',
+                background: "#ede5e5",
+                padding: '16px', // Adding padding for spacing
+                borderRadius: '8px', // Adding border radius for rounded corners
+                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Adding shadow for depth
+            }}
+        >
+            <Typography variant="h6" align="center" gutterBottom>
+                Participants: {studentList.length}
+            </Typography>
+            <Grid container spacing={1} justifyContent="center"> {/* Updated Grid to a container with spacing and alignment */}
+                {studentList != null ? studentList.map((student, index) => (
+                    <Grid item key={index} xs={12}> {/* Each participant button is placed in a grid item */}
+                        <Button
+                            fullWidth
+                            variant="outlined" // Using outlined button for cleaner appearance
+                            onClick={() => handleStudentClick(student)}
+                            sx={{ borderRadius: '4px' }} // Adding button border radius
+                        >
+                            {student.name + " " + student.lastName}
+                        </Button>
+                    </Grid>
+                )) : null}
+            </Grid>
+        </Box>
 
     </ThemeProvider>
   );

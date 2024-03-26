@@ -19,6 +19,8 @@ import {
   getIsGuest,
   initSession,
 } from "../Services/SessionService";
+import logo from "../assets/Logo.png";
+
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -139,6 +141,12 @@ export default function Navbar() {
         >
           <div>
             <Stack direction="row" marginLeft={5} spacing={2}>
+            <img src={logo} alt="Logo" style={{ 
+                  width: "190px", // Adjust the width as needed
+                  height: "auto", // Let height adjust proportionally
+                  marginBottom: "5px", // Adjust margin if necessary
+                  marginRight: "10px", // Adjust margin if necessary
+             }} />
               <Typography
                 onClick={handleClickDashboard}
                 variant="h6"

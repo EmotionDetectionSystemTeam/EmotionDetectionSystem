@@ -1,8 +1,8 @@
-import { Button, ButtonGroup, ThemeProvider, Typography, createTheme } from "@mui/material";
+import { Button, ButtonGroup, ThemeProvider, createTheme } from "@mui/material";
 import React from 'react';
 import * as Paths from "../Paths";
 import { textColor } from "../Utils";
-
+import logo from "../assets/FrontLogo.png";
 
 const createButton = (name: string, path: string) => {
   return (
@@ -60,21 +60,16 @@ const buttons = [
 function HomePage() {
   return (
     <ThemeProvider theme={mainTheme}>
-        <Typography
-          color="inherit"
-          align="center"
-          variant="h2"
-          sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}
-        >
-          Welcome to Emotion Detection System's Developer site 
-        </Typography>
-        <ButtonGroup
-          orientation="vertical"
-          aria-label="vertical contained button group"
-          variant="text"
-        >
-          {buttons}
-        </ButtonGroup>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <img src={logo} alt="Logo" style={{ marginBottom: 40 }} />
+          <ButtonGroup
+            orientation="vertical"
+            aria-label="vertical contained button group"
+            variant="text"
+          >
+            {buttons}
+          </ButtonGroup>
+        </div>
     </ThemeProvider>
 
   );

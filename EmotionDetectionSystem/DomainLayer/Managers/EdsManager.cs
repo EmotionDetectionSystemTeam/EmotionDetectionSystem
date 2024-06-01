@@ -232,4 +232,12 @@ public class EdsManager
         }
         return studentData;
     }
+
+    public void NotifySurpriseStudent(string sessionId, string teacherEmail, string studentEmail)
+    {
+        IsValidSession(sessionId, studentEmail);
+        var teacher = _userManager.GetTeacher(teacherEmail);
+        var student = _userManager.GetStudent(studentEmail);
+        teacher.Notify(new SurprisedEvent("Surprised", student).GenerateMsg());
+    }
 }

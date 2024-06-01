@@ -7,6 +7,7 @@ public class ServiceLesson
 {
     public string                         LessonId;
     public string                         LessonName;
+    public string                         Description;
     public ServiceTeacher                 Teacher;
     public DateTime                       Date;
     public bool                           IsActive;
@@ -18,6 +19,7 @@ public class ServiceLesson
     {
         LessonId = lesson.LessonId;
         LessonName = lesson.LessonName;
+        Description = lesson.Description;
         Teacher = new ServiceTeacher(lesson.Teacher);
         Date = lesson.Date;
         IsActive = lesson.IsActive;

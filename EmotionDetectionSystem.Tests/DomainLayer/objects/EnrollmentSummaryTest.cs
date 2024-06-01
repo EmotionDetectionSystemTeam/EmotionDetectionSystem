@@ -42,9 +42,7 @@ public class EnrollmentSummaryTest
         var secondEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         _enrollmentSummary.AddEmotionData(firstEmotionData);
         _enrollmentSummary.AddEmotionData(secondEmotionData);
-        Assert.AreEqual(firstEmotionData,  _enrollmentSummary.GetFirstNotSeenEmotionData());
-        Assert.AreEqual(secondEmotionData, _enrollmentSummary.GetFirstNotSeenEmotionData());
-        Assert.AreEqual(0,                 _enrollmentSummary.NotSeenEmotionDataQueue.Count);
+        Assert.AreEqual(secondEmotionData,  _enrollmentSummary.GetFirstNotSeenEmotionData());
         Assert.AreEqual(2,                 _enrollmentSummary.EmotionData.Count);
     }
 
@@ -55,7 +53,6 @@ public class EnrollmentSummaryTest
         _enrollmentSummary.AddEmotionData(firstEmotionData);
         Assert.AreEqual(firstEmotionData, _enrollmentSummary.GetFirstNotSeenEmotionData());
         Assert.AreEqual(firstEmotionData, _enrollmentSummary.GetFirstNotSeenEmotionData());
-        Assert.AreEqual(0,                _enrollmentSummary.NotSeenEmotionDataQueue.Count);
         Assert.AreEqual(1,                _enrollmentSummary.EmotionData.Count);
     }
 
@@ -77,7 +74,6 @@ public class EnrollmentSummaryTest
         _enrollmentSummary.GetFirstNotSeenEmotionData();
         _enrollmentSummary.GetFirstNotSeenEmotionData();
         _enrollmentSummary.GetFirstNotSeenEmotionData();
-        Assert.AreEqual(0, _enrollmentSummary.NotSeenEmotionDataQueue.Count);
         var emotionsData = _enrollmentSummary.GetFirstNotSeenEmotionData();
         Assert.AreEqual(secondEmotionData, emotionsData);
     }

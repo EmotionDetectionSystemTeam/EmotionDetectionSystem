@@ -18,11 +18,11 @@ namespace EmotionDetectionSystem.ServiceLayer.objects
         public SActiveLesson(Lesson lesson)
         {
             StudentsEmotions = lesson.GetStudentsEmotions()
-                .Where(entry => entry.Value.PeekFirstNotSeenEmotionData()?.GetWinningEmotion() != null)
+                .Where(entry => entry.Value.GetFirstNotSeenEmotionData()?.GetWinningEmotion() != null)
                 .Select(entry => 
                             new ServiceRealTimeUser(
                                 entry.Key, 
-                                entry.Value.PeekFirstNotSeenEmotionData().GetWinningEmotion(),
+                                entry.Value.GetFirstNotSeenEmotionData().GetWinningEmotion(),
                                 entry.Value.getPreviousEmotionData()
                             )
                 )

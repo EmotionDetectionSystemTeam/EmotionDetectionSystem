@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using EmotionDetectionSystem.DomainLayer.objects;
+using EmotionDetectionSystem.ServiceLayer.objects;
 using log4net;
 
 namespace EmotionDetectionSystem.DomainLayer.Managers;
@@ -18,7 +19,7 @@ public class EdsManager
     {
         _userManager             = new UserManager();
         _lessonManager           = new LessonManager();
-        _emotionDataTasks         = new ConcurrentQueue<PushEmotionDataTask>();
+        _emotionDataTasks        = new ConcurrentQueue<PushEmotionDataTask>();
         _cancellationTokenSource = new CancellationTokenSource();
         _taskEvent               = new AutoResetEvent(false);
         _isProcessingTasks       = true;
@@ -156,7 +157,7 @@ public class EdsManager
         }
         catch (Exception e)
         {
-            throw new Exception($"Error processing emotion data task - {e.Message}");
+            Log.ErrorFormat($"Error processing emotion data task - {e.Message}");
         }
     }
 
@@ -191,5 +192,44 @@ public class EdsManager
     {
         IsValidSession(sessionId, email);
         return _lessonManager.GetLesson(lessonId);
+    }
+
+    public IEnumerable<Lesson> GetEnrolledLessons(string sessionId, string teacherEmail)
+    {
+        IsValidSession(sessionId, teacherEmail);
+        var teacher = _userManager.GetTeacher(teacherEmail);
+        return teacher.Lessons;
+    }
+
+    public List<EnrollmentSummary> GetStudentDataByLesson(string sessionId, string teacherEmail, string lessonId)
+    {
+        IsValidSession(sessionId, teacherEmail);
+        var teacher = _userManager.GetTeacher(teacherEmail);
+        var lesson  = teacher.Lessons.FirstOrDefault(l => l.LessonId == lessonId);
+        if (lesson == null)
+        {
+            throw new Exception($"Lesson with id {lessonId} not found");
+        }
+
+        return lesson.GetEnrollmentSummariesWithData().ToList();
+    }
+
+    public Dictionary<Student, List<EnrollmentSummary>> GetStudentData(string sessionId, string teacherEmail)
+    {
+        IsValidSession(sessionId, teacherEmail);
+        var teacher     = _userManager.GetTeacher(teacherEmail);
+        var lessons     = teacher.Lessons;
+        var studentData = new Dictionary<Student, List<EnrollmentSummary>>();
+        foreach (var enrollmentSummary in lessons.Select(lesson => lesson.GetEnrollmentSummariesWithData().ToList()).SelectMany(enrollmentSummaries => enrollmentSummaries))
+        {
+            if (!studentData.TryGetValue(enrollmentSummary.Student, out var value))
+            {
+                value = new List<EnrollmentSummary>();
+                studentData[enrollmentSummary.Student] = value;
+            }
+
+            value.Add(enrollmentSummary);
+        }
+        return studentData;
     }
 }

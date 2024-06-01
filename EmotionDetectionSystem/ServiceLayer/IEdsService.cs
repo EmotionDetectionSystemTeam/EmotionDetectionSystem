@@ -1,4 +1,5 @@
 ﻿using EmotionDetectionSystem.ServiceLayer.objects;
+using EmotionDetectionSystem.ServiceLayer.objects.charts;
 using EmotionDetectionSystem.ServiceLayer.Responses;
 
 namespace EmotionDetectionSystem.ServiceLayer
@@ -26,5 +27,8 @@ namespace EmotionDetectionSystem.ServiceLayer
         Response EnterAsGuest(string session);
         Response<List<ServiceRealTimeUser>> GetLastEmotionsData(string sessionId, string email, string lessonId);
         Response<SActiveLesson> GetLesson(string sessionId, string email, string lessonId);
+        Response<List<LessonOverview>> GetEnrolledLessons(string sessionId, string teacherEmail);
+        Response<List<StudentInClassOverview>> GetStudentDataByLesson(string sessionId, string teacherEmail, string lessonId);
+        Response<List<StudentOverview>> GetStudentData(string sessionId, string teacherEmail);
     }
 }

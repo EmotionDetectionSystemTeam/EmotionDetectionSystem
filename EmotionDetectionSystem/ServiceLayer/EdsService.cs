@@ -1,6 +1,7 @@
 using EmotionDetectionSystem.DomainLayer.Managers;
 using EmotionDetectionSystem.DomainLayer.objects;
 using EmotionDetectionSystem.ServiceLayer.objects;
+using EmotionDetectionSystem.ServiceLayer.objects.charts;
 using EmotionDetectionSystem.ServiceLayer.Responses;
 using log4net;
 
@@ -224,6 +225,58 @@ public class EdsService : IEdsService
         {
             _logger.ErrorFormat($"Error getting lesson with session: {sessionId} - {e.Message}");
             return Response<SActiveLesson>.FromError(e.Message);
+        }
+    }
+
+    public Response<List<LessonOverview>> GetEnrolledLessons(string sessionId, string teacherEmail)
+    {
+        _logger.InfoFormat($"Get enrolled lesson request for session: {sessionId} has been received");
+        try
+        {
+            var lessons        = _edsManager.GetEnrolledLessons(sessionId, teacherEmail);
+            var lessonsService = lessons.Select(lesson => new LessonOverview(lesson)).ToList();
+            return Response<List<LessonOverview>>.FromValue(lessonsService);
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error getting enrolled lesson with session: {sessionId} - {e.Message}");
+            return Response<List<LessonOverview>>.FromError(e.Message);
+        }
+    }
+
+    public Response<List<StudentInClassOverview>> GetStudentDataByLesson(
+        string sessionId, string teacherEmail, string lessonId)
+    {
+        _logger.InfoFormat($"Get student data by lesson request for session: {sessionId} has been received");
+        try
+        {
+            var enrollmentSummaries = _edsManager.GetStudentDataByLesson(sessionId, teacherEmail, lessonId);
+            var studentInClassOverviews = enrollmentSummaries
+                .Select(enrollmentSummary => new StudentInClassOverview(enrollmentSummary)).ToList();
+            return Response<List<StudentInClassOverview>>.FromValue(studentInClassOverviews);
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error getting student data by lesson with session: {sessionId} - {e.Message}");
+            return Response<List<StudentInClassOverview>>.FromError(e.Message);
+        }
+    }
+
+    public Response<List<StudentOverview>> GetStudentData(string sessionId, string teacherEmail)
+    {
+        _logger.InfoFormat($"Get student data request for session: {sessionId} has been received");
+        try
+        {
+            var enrollmentSummariesDict = _edsManager.GetStudentData(sessionId, teacherEmail);
+            var response = enrollmentSummariesDict
+                .Select(enrollmentSummary => new StudentOverview(enrollmentSummary.Key, enrollmentSummary.Value))
+                .ToList();
+            return Response<List<StudentOverview>>.FromValue(response);
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error getting student data with session: {sessionId} - {e.Message}");
+            return Response<List<StudentOverview>>.FromError(e.Message);
         }
     }
 }

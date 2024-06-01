@@ -31,7 +31,7 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
         foreach (var enrollmentSummary in _enrollmentSummaries)
         {
             string studentEmail = enrollmentSummary.Student.Email;
-            List<string> studentEmotions = enrollmentSummary.getAllWiningEmotionData();
+            List<string> studentEmotions = enrollmentSummary.GetAllWiningEmotionData();
 
             if (!studentWiningEmotions.ContainsKey(studentEmail))
             {
@@ -106,7 +106,7 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
     public IEnumerable<EnrollmentSummary> GetEnrollmentSummariesWithData()
     {
         return _enrollmentSummaries
-            .Where(enrollmentSummary => enrollmentSummary.PeekFirstNotSeenEmotionData() != null).ToList();
+            .Where(enrollmentSummary => enrollmentSummary.GetFirstNotSeenEmotionData() != null).ToList();
     }
 
     public Dictionary<Student,EnrollmentSummary> GetStudentsEmotions()

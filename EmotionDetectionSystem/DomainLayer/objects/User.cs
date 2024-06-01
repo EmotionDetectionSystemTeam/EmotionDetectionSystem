@@ -43,5 +43,9 @@ public abstract class User
     }
 
     public abstract void JoinLesson(Lesson lesson);
+    public string GetFullName()
+    {
+        return _firstName + " " + _lastName;
+    }
     
 }

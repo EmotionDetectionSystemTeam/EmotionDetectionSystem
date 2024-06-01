@@ -30,5 +30,6 @@ namespace EmotionDetectionSystem.ServiceLayer
         Response<List<LessonOverview>> GetEnrolledLessons(string sessionId, string teacherEmail);
         Response<List<StudentInClassOverview>> GetStudentDataByLesson(string sessionId, string teacherEmail, string lessonId);
         Response<List<StudentOverview>> GetStudentData(string sessionId, string teacherEmail);
+        Response NotifySurpriseStudent(string sessionId, string teacherEmail, string studentEmail);
     }
 }

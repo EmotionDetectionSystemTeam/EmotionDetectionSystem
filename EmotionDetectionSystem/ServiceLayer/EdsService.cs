@@ -279,4 +279,19 @@ public class EdsService : IEdsService
             return Response<List<StudentOverview>>.FromError(e.Message);
         }
     }
+
+    public Response NotifySurpriseStudent(string sessionId, string teacherEmail, string studentEmail)
+    {
+        _logger.InfoFormat($"Notify surprise student request for session: {sessionId} has been received");
+        try
+        {
+            _edsManager.NotifySurpriseStudent(sessionId, teacherEmail, studentEmail);
+            return new Response();
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error notifying surprise student with session: {sessionId} - {e.Message}");
+            return new Response(e.Message);
+        }
+    }
 }

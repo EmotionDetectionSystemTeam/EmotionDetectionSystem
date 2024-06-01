@@ -2,6 +2,8 @@ import Cookies from 'js-cookie';
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import './App.css'; // Assuming you have a CSS file for styling
+import ClassesDashboard from './Pages/ClassesDashboardsPage';
+import CreateClass from './Pages/CreateClassPage';
 import HomePage from './Pages/HomePage';
 import Register from './Pages/RegisterPage';
 import StudentDashboard from './Pages/StudentDashboardPage';
@@ -10,6 +12,7 @@ import StudentLogin from './Pages/StudentLoginPage';
 import TeacherDashboard from './Pages/TeacherDashboardPage';
 import TeacherLesson from './Pages/TeacherLessonPage';
 import TeacherLogin from './Pages/TeacherLoginPage';
+import StudentsHistory from './Pages/TeacherStudentsDashboardPage';
 import * as Path from "./Paths";
 import { initSession } from './Services/SessionService';
 import './styles.css';
@@ -32,6 +35,11 @@ const App = () => {
         <Route path={Path.pathTeacherDashBoard} element={<TeacherDashboard />} />
         <Route path={Path.pathTeacherLesson} element={<TeacherLesson />} />
         <Route path={Path.pathStudentLesson} element={<StudentLesson />} />
+        <Route path={Path.pathCreateClass} element={<CreateClass />} />
+        <Route path={Path.pathClassesDashboard} element={<ClassesDashboard />} />
+        <Route path={Path.pathStudentsHistory} element={<StudentsHistory />} />
+
+
 
 
       </Routes>

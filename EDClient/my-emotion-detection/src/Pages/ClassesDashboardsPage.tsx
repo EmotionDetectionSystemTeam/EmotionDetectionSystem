@@ -1,4 +1,4 @@
-import { Box, Button, Grid, TextField, ThemeProvider, Typography, createTheme } from "@mui/material";
+import { Box, Button, Grid, TextField, ThemeProvider, Typography } from "@mui/material";
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import ClassDisplayCard from "../Components/ClassDisplayCard";
@@ -6,108 +6,9 @@ import ClassPopup from "../Components/ClassPopup";
 import Navbar from "../Components/Navbar";
 import Class from "../Objects/Class";
 import ClassDisplay from "../Objects/ClassDisplay";
-import Emotion from "../Objects/Emotion";
-import Student from "../Objects/Student";
 import { pathTeacherDashBoard } from "../Paths";
-import { squaresColor } from "../Utils";
-
-const theme = createTheme({
-  typography: {
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-  },
-});
-
-export const ServerGetClasses = async (): Promise<ClassDisplay[]> => {
-  // Mock data for class displays
-  return [
-    new ClassDisplay(1, "Math 101", "2023-05-25", "Introduction to Algebra"),
-    new ClassDisplay(2, "History 201", "2023-05-26", "World War II Overview"),
-    new ClassDisplay(3, "Science 301", "2023-05-27", "Basics of Physics")
-  ];
-};
-
-export const ServerGetClass = async (id: number): Promise<Class> => {
-  // Mock data for a specific class lesson
-
-  // Generate mock students with emotions over time
-  const students: Student[] = [
-    new Student(1, "Alice", [
-      new Emotion("Happy", new Date("2023-05-25T10:03:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:03:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:03:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:03:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:03:00")),
-
-      new Emotion("Happy", new Date("2023-05-25T10:00:00")),
-
-      new Emotion("Sad", new Date("2023-05-25T10:05:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:10:00")),
-      new Emotion("Surprised", new Date("2023-05-25T10:15:00")),
-      new Emotion("Neutral", new Date("2023-05-25T10:20:00")),
-      new Emotion("Sad", new Date("2023-05-25T10:25:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:30:00")),
-      new Emotion("Surprised", new Date("2023-05-25T10:35:00")),
-      new Emotion("Neutral", new Date("2023-05-25T10:40:00")),
-      new Emotion("Sad", new Date("2023-05-25T10:45:00")),
-    ]),
-    new Student(2, "Bob", [
-      new Emotion("Happy", new Date("2023-05-25T10:00:00")),
-      new Emotion("Surprised", new Date("2023-05-25T10:05:00")),
-      new Emotion("Sad", new Date("2023-05-25T10:10:00")),
-      new Emotion("Neutral", new Date("2023-05-25T10:15:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:20:00")),
-      new Emotion("Surprised", new Date("2023-05-25T10:25:00")),
-      new Emotion("Sad", new Date("2023-05-25T10:30:00")),
-      new Emotion("Neutral", new Date("2023-05-25T10:35:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:40:00")),
-      new Emotion("Surprised", new Date("2023-05-25T10:45:00")),
-    ]),
-    new Student(3, "Charlie", [
-      new Emotion("Happy", new Date("2023-05-25T10:00:00")),
-      new Emotion("Surprised", new Date("2023-05-25T10:05:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:10:00")),
-      new Emotion("Neutral", new Date("2023-05-25T10:15:00")),
-      new Emotion("Sad", new Date("2023-05-25T10:20:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:25:00")),
-      new Emotion("Surprised", new Date("2023-05-25T10:30:00")),
-      new Emotion("Neutral", new Date("2023-05-25T10:35:00")),
-      new Emotion("Sad", new Date("2023-05-25T10:40:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:45:00")),
-    ]),
-    new Student(4, "David", [
-      new Emotion("Happy", new Date("2023-05-25T10:00:00")),
-      new Emotion("Surprised", new Date("2023-05-25T10:05:00")),
-      new Emotion("Neutral", new Date("2023-05-25T10:10:00")),
-      new Emotion("Sad", new Date("2023-05-25T10:15:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:20:00")),
-      new Emotion("Surprised", new Date("2023-05-25T10:25:00")),
-      new Emotion("Neutral", new Date("2023-05-25T10:30:00")),
-      new Emotion("Sad", new Date("2023-05-25T10:35:00")),
-      new Emotion("Happy", new Date("2023-05-25T10:40:00")),
-      new Emotion("Surprised", new Date("2023-05-25T10:45:00")),
-    ]),
-  ];
-
-  return new Class(
-    id,
-    "Math 101",
-    "Introduction to Algebra",
-    new Date("2023-05-25T10:00:00"),
-    students
-  );
-};
-
+import { ServerMockGetClass, ServerMockGetClasses } from "../Services/MockService";
+import { mainTheme, squaresColor } from "../Utils";
 
 
 function ClassesDashboard() {
@@ -120,14 +21,14 @@ function ClassesDashboard() {
 
   useEffect(() => {
     const fetchClasses = async (): Promise<void> => {
-      const data: ClassDisplay[] = await ServerGetClasses();
+      const data: ClassDisplay[] = await ServerMockGetClasses();
       setClasses(data);
     };
     fetchClasses();
   }, []);
 
   const handleCardClick = async (id: number) => {
-    const classData = await ServerGetClass(id);
+    const classData = await ServerMockGetClass(id);
     setSelectedClass(classData);
     setPopupOpen(true);
   };
@@ -143,7 +44,7 @@ function ClassesDashboard() {
 
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mainTheme}>
       <Box>
         <Navbar />
       </Box>

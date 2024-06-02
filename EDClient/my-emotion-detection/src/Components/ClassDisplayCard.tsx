@@ -11,7 +11,6 @@ const ClassDisplayCard: React.FC<ClassDisplayCardProps> = ({ id, name, date, des
     <Card
       sx={{
         width: 200,
-        border: `5px solid #000`, // Adjust the color as needed
         borderRadius: 2,
         marginBottom: 10,
         background: "#ede5e5",

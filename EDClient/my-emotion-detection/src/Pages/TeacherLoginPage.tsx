@@ -6,8 +6,7 @@ import {
   Link,
   TextField,
   ThemeProvider,
-  Typography,
-  createTheme,
+  Typography
 } from "@mui/material";
 import Cookies from 'js-cookie';
 import React from 'react';
@@ -18,7 +17,7 @@ import { Lesson } from "../Objects/Lesson";
 import { pathHome, pathTeacherDashBoard } from "../Paths";
 import { serverLogin } from "../Services/ClientService";
 import { initWebSocket } from "../Services/NotificationService";
-import { squaresColor } from "../Utils";
+import { mainTheme, squaresColor } from "../Utils";
 
 
 
@@ -26,22 +25,6 @@ import { squaresColor } from "../Utils";
 
   
   function TeacherLogin() {
-    const theme = createTheme({
-      typography: {
-        fontFamily: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          '"Segoe UI"',
-          "Roboto",
-          '"Helvetica Neue"',
-          "Arial",
-          "sans-serif",
-          '"Apple Color Emoji"',
-          '"Segoe UI Emoji"',
-          '"Segoe UI Symbol"',
-        ].join(","),
-      },
-    });
 
     const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false);
     const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false);
@@ -75,7 +58,7 @@ import { squaresColor } from "../Utils";
     };
   
     return (
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={mainTheme}>
         <Grid
           container
           component="main"

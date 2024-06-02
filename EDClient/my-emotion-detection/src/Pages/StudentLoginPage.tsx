@@ -5,36 +5,19 @@ import {
   Link,
   TextField,
   ThemeProvider,
-  Typography,
-  createTheme,
+  Typography
 } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { pathHome, pathStudentDashBoard } from "../Paths";
 import { serverLogin } from "../Services/ClientService";
 import { initWebSocket } from "../Services/NotificationService";
-import { squaresColor } from "../Utils";
+import { mainTheme, squaresColor } from "../Utils";
 
 
 
   
   function StudentLogin() {
-    const theme = createTheme({
-      typography: {
-        fontFamily: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          '"Segoe UI"',
-          "Roboto",
-          '"Helvetica Neue"',
-          "Arial",
-          "sans-serif",
-          '"Apple Color Emoji"',
-          '"Segoe UI Emoji"',
-          '"Segoe UI Symbol"',
-        ].join(","),
-      },
-    });
   
     const navigate = useNavigate();
   
@@ -59,7 +42,7 @@ import { squaresColor } from "../Utils";
     };
   
     return (
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={mainTheme}>
         <Grid
           container
           component="main"

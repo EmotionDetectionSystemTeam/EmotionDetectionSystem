@@ -9,7 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
+import { ThemeProvider, styled } from "@mui/material/styles";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { pathHome } from "../Paths";
@@ -19,6 +19,7 @@ import {
   getIsGuest,
   initSession,
 } from "../Services/SessionService";
+import { mainTheme } from "../Utils";
 import logo from "../assets/Logo.png";
 
 
@@ -97,22 +98,6 @@ export default function Navbar() {
   }, []);
   */
 
-  const theme = createTheme({
-    typography: {
-      fontFamily: [
-        "-apple-system",
-        "BlinkMacSystemFont",
-        '"Segoe UI"',
-        "Roboto",
-        '"Helvetica Neue"',
-        "Arial",
-        "sans-serif",
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-      ].join(","),
-    },
-  });
 
   const handleLogout = () => {
     if (!getIsGuest()) {
@@ -124,7 +109,7 @@ export default function Navbar() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mainTheme}>
       <AppBar position="sticky">
         <Toolbar
           sx={{

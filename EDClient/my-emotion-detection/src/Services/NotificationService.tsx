@@ -10,7 +10,9 @@ const f = () => {
       alertFunc("Message from server:\n" + data.message);
     });
 
-    addEventListener(newWs, "open", function (event: any) {});
+    addEventListener(newWs, "open", function (event: any) {
+      alert("open")
+    });
 
     addEventListener(newWs, "close", function (event: any) {});
     return newWs;

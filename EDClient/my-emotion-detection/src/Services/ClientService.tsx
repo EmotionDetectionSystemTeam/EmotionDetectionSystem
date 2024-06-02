@@ -429,5 +429,42 @@ export async function serverGetLesson(
   }
 }
 
+export async function serverNotifyEmotion(
+  teacherEmail: string | undefined | null
+): Promise<string> {
+  const fields: any[] = [teacherEmail];
+  if (!checkInput(fields)) return Promise.reject();
+  const uri = serverPort + "/api/eds/emotion-notification"; // Update the endpoint
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        TeacherEmail: teacherEmail,
+        StudentEmail: getUserName()
+      }),
+    });
+
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
+    }
+
+    const response: ClientResponse<string> = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    return response.value;
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}
+
 
 

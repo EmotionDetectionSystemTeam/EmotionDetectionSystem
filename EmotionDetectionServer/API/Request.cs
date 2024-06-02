@@ -1,5 +1,7 @@
 ﻿using EmotionDetectionServer.API;
 using EmotionDetectionSystem.ServiceLayer.objects;
+using EmotionDetectionSystem.ServiceLayer.objects.charts;
+using EmotionDetectionSystem.ServiceLayer.Responses;
 
 namespace EmotionDetectionServer.API
 {
@@ -86,7 +88,7 @@ namespace EmotionDetectionServer.API
     public class LogoutRequest : IRequest
     {
         public string SessionId { get; set; }
-        public string Email { get; set; }   
+        public string Email { get; set; }
         public LogoutRequest(string sessionId, string email)
         {
             SessionId = sessionId;
@@ -150,10 +152,56 @@ namespace EmotionDetectionServer.API
         }
     }
 
+    public class EmotionNotificationRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string TeacherEmail { get; set; }
+        public string StudentEmail { get; set; }
 
+        public EmotionNotificationRequest(string sessionId, string teacherEmail, string studentEmail)
+        {
+            SessionId = sessionId;
+            TeacherEmail = teacherEmail;
+            StudentEmail = studentEmail;
+        }
+    }
 
+    public class GetEnrolledLessonsRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string TeacherEmail { get; set; }
 
+        public GetEnrolledLessonsRequest(string sessionId, string teacherEmail)
+        {
+            SessionId = sessionId;
+            TeacherEmail = teacherEmail;
+        }
+    }
 
+    public class GetStudentDataByLessonRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string Email { get; set; }
+        public string LessonId { get; set; }
 
+        public GetStudentDataByLessonRequest(string sessionId, string email, string lessonId)
+        {
+            SessionId = sessionId;
+            Email = email;
+            LessonId = lessonId;
+        }
+    }
 
+    public class GetStudentDataRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string Email { get; set; }
+
+        public GetStudentDataRequest(string sessionId, string email)
+        {
+            SessionId = sessionId;
+            Email = email;
+        }
+    }
 }
+

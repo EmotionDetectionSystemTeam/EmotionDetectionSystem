@@ -3,6 +3,9 @@ using EmotionDetectionSystem.ServiceLayer;
 using WebSocketSharp.Server;
 using EmotionDetectionSystem.ServiceLayer.Responses;
 using EmotionDetectionSystem.ServiceLayer.objects;
+using EmotionDetectionSystem.DomainLayer;
+using EmotionDetectionSystem.DomainLayer.Managers;
+using EmotionDetectionSystem.ServiceLayer.objects.charts;
 
 namespace EmotionDetectionServer.API
 {
@@ -18,9 +21,15 @@ namespace EmotionDetectionServer.API
         {
             this.service = edsService;
             this.notificationServer = notificationServer;
+            NotificationManager.GetInstance().setNotificationServer(notificationServer);
             this.logserver = lgs;
 
         }
+        public class NotificationsService : WebSocketBehavior
+        {
+
+        }
+
         public class logsService : WebSocketBehavior
         {
 
@@ -75,8 +84,8 @@ namespace EmotionDetectionServer.API
         }
 
         [HttpPost]
-        [Route("login")]
-        public async Task<ObjectResult> Login([FromBody] LoginRequest request)
+        [Route("login2")]
+        public async Task<ObjectResult> Login2([FromBody] LoginRequest request)
         {
             Response response = await Task.Run(() => service.Login(request.sessionId, request.email, request.password));
             if (response.ErrorOccured)
@@ -94,6 +103,49 @@ namespace EmotionDetectionServer.API
                     value = "Logged in successfully",
                 };
                 return Ok(LoginResponse);
+            }
+        }
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<ObjectResult> Login([FromBody] LoginRequest request)
+        {
+            string relativeServicePath = "/" + request.email + "-notifications";
+            try
+            {
+                if (notificationServer.WebSocketServices[relativeServicePath] == null)
+                {
+                    notificationServer.AddWebSocketService<NotificationsService>(relativeServicePath);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                var loginResponse = new ServerResponse<string>
+                {
+                    errorMessage = ex.Message,
+                };
+                return BadRequest(loginResponse);
+            } // in case the client tries to login again
+
+            string session = HttpContext.Session.Id;
+            Response response = await Task.Run(() => service.Login(request.sessionId, request.email, request.password));
+            if (response.ErrorOccured)
+            {
+                notificationServer.RemoveWebSocketService(relativeServicePath);
+                var loginResponse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(loginResponse);
+            }
+            else
+            {
+                var createShopResponse = new ServerResponse<string>
+                {
+                    value = session,
+                };
+                return Ok(createShopResponse);
             }
         }
 
@@ -258,10 +310,91 @@ namespace EmotionDetectionServer.API
             }
         }
 
+        [HttpPost]
+        [Route("emotion-notification")]
+        public async Task<ObjectResult> EmotionNotificationRequest([FromBody] EmotionNotificationRequest request)
+        {
+            Response response = await Task.Run(() => service.NotifySurpriseStudent(request.SessionId, request.TeacherEmail, request.StudentEmail));
+            if (response.ErrorOccured)
+            {
+                var EmotionNotificationResponse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(EmotionNotificationResponse);
+            }
+            else
+            {
+                var EmotionNotificationResponse = new ServerResponse<string>
+                {
+                    value = "Notification pushed successfuly",
+                };
+                return Ok(EmotionNotificationResponse);
+            }
+        }
 
+        public async Task<ObjectResult> GetEnrolledLessonsRequest([FromBody] GetEnrolledLessonsRequest request)
+        {
+            Response<List<LessonOverview>> response = await Task.Run(() => service.GetEnrolledLessons(request.SessionId, request.TeacherEmail));
+            if (response.ErrorOccured)
+            {
+                var GetEnrolledLessonsRespnse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(GetEnrolledLessonsRespnse);
+            }
+            else
+            {
+                var GetEnrolledLessonsRespnse = new ServerResponse<List<LessonOverview>>
+                {
+                    value = response.Value,
+                };
+                return Ok(GetEnrolledLessonsRespnse);
+            }
+        }
 
+        public async Task<ObjectResult> GetStudentDataByLessonRequest([FromBody] GetStudentDataByLessonRequest request)
+        {
+            Response<List<StudentInClassOverview>> response = await Task.Run(() => service.GetStudentDataByLesson(request.SessionId, request.Email, request.LessonId));
+            if (response.ErrorOccured)
+            {
+                var GetStudentDataByLessonRespnse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(GetStudentDataByLessonRespnse);
+            }
+            else
+            {
+                var GetStudentDataByLessonRespnse = new ServerResponse<List<StudentInClassOverview>>
+                {
+                    value = response.Value,
+                };
+                return Ok(GetStudentDataByLessonRespnse);
+            }
+        }
 
-
+        public async Task<ObjectResult> GetStudentDataRequest([FromBody] GetStudentDataRequest request)
+        {
+            Response<List<StudentOverview>> response = await Task.Run(() => service.GetStudentData(request.SessionId, request.Email));
+            if (response.ErrorOccured)
+            {
+                var GetStudentDataRespnse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(GetStudentDataRespnse);
+            }
+            else
+            {
+                var GetStudentDataRespnse = new ServerResponse<List<StudentOverview>>
+                {
+                    value = response.Value,
+                };
+                return Ok(GetStudentDataRespnse);
+            }
+        }
 
     }
 }

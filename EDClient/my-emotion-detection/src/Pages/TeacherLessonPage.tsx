@@ -1,7 +1,7 @@
 import { Button, Card, CardContent, Grid } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import EmotionsPopup from "../Components/EmotionPopUp";
@@ -12,24 +12,7 @@ import { ServiceRealTimeUser } from "../Objects/ServiceRealTimeUser";
 import { pathTeacherDashBoard } from "../Paths";
 import { serverEndLesson, serverGetLastEmotionsData, serverGetLesson } from "../Services/ClientService";
 import { getLessonId } from "../Services/SessionService";
-
-
-const theme = createTheme({
-  typography: {
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-  },
-});
+import { mainTheme } from "../Utils";
 
 function TeacherLesson() {
   const [classCode, setClassCode] = React.useState<string | null>(null);
@@ -134,7 +117,7 @@ function TeacherLesson() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mainTheme}>
         <Box>
           <Navbar />
         </Box>

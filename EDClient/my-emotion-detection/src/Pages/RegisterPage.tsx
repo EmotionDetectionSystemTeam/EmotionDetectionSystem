@@ -5,7 +5,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
@@ -15,28 +15,11 @@ import SuccessSnackbar from "../Components/SuccessSnackbar";
 import { pathHome, pathStudentLogin, pathTeacherLogin } from "../Paths";
 import { serverRegister } from "../Services/ClientService";
 import { getCookie, getSessionId, setCookie, setUsername } from "../Services/SessionService";
-import { squaresColor } from "../Utils";
+import { mainTheme, squaresColor } from "../Utils";
 
 
 
 function Register() {
-  const theme = createTheme({
-    
-    typography: {
-      fontFamily: [
-        "-apple-system",
-        "BlinkMacSystemFont",
-        '"Segoe UI"',
-        "Roboto",
-        '"Helvetica Neue"',
-        "Arial",
-        "sans-serif",
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-      ].join(","),
-    },
-  });
   const navigate = useNavigate();
 
   const [isStudent, setIsStudent] = React.useState(false);
@@ -90,7 +73,7 @@ function Register() {
   
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mainTheme}>
       <Grid
         container
         component="main"

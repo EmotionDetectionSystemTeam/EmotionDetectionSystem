@@ -44,3 +44,10 @@ export const mainTheme = createTheme({
       ].join(","),
     },
   });
+
+  export const emotionColors = {
+    'Happy': '#4caf50', // Green
+    'Surprised': '#ffeb3b', // Yellow
+    'Neutral': '#9e9e9e', // Gray
+  };
+  

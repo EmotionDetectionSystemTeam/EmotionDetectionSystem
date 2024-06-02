@@ -1,25 +1,10 @@
-import { Box, Button, Typography, createTheme } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import * as React from "react";
 import { ThemeProvider } from "styled-components";
 import Navbar from "../Components/Navbar";
+import { serverNotifyEmotion } from "../Services/ClientService";
 import ExpressionProcessor from "../Services/ModelService";
-
-const theme = createTheme({
-  typography: {
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-  },
-});
+import { mainTheme } from "../Utils";
 
 
 function StudentLesson() {
@@ -41,9 +26,16 @@ function StudentLesson() {
     // You can add your logic here, such as redirecting to another page or displaying a confirmation dialog
     console.log("Exiting lesson...");
   };
+  const handleEmotionNotification = () => {
+    serverNotifyEmotion("a").catch((e) => alert(e));
+    // Logic to handle exiting the lesson
+    // You can add your logic here, such as redirecting to another page or displaying a confirmation dialog
+    console.log("Exiting lesson...");
+  };
+
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mainTheme}>
       <Box>
         <Navbar />
       </Box>
@@ -52,7 +44,7 @@ function StudentLesson() {
         <Typography variant="h5" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 2 }}>
           Proccessing Data...
         </Typography>
-        <Button variant="contained" color="primary" style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 2 }} onClick={handleExitLesson}>
+        <Button variant="contained" color="primary" style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 2 }} onClick={handleEmotionNotification}>
           Exit Lesson
         </Button>
     </ThemeProvider>

@@ -332,7 +332,8 @@ namespace EmotionDetectionServer.API
                 return Ok(EmotionNotificationResponse);
             }
         }
-
+        [HttpPost]
+        [Route("get-enrolled-lessons")]
         public async Task<ObjectResult> GetEnrolledLessonsRequest([FromBody] GetEnrolledLessonsRequest request)
         {
             Response<List<LessonOverview>> response = await Task.Run(() => service.GetEnrolledLessons(request.SessionId, request.TeacherEmail));
@@ -353,7 +354,8 @@ namespace EmotionDetectionServer.API
                 return Ok(GetEnrolledLessonsRespnse);
             }
         }
-
+        [HttpPost]
+        [Route("get-students-data")]
         public async Task<ObjectResult> GetStudentDataByLessonRequest([FromBody] GetStudentDataByLessonRequest request)
         {
             Response<List<StudentInClassOverview>> response = await Task.Run(() => service.GetStudentDataByLesson(request.SessionId, request.Email, request.LessonId));
@@ -374,7 +376,8 @@ namespace EmotionDetectionServer.API
                 return Ok(GetStudentDataByLessonRespnse);
             }
         }
-
+        [HttpPost]
+        [Route("get-students-data")]
         public async Task<ObjectResult> GetStudentDataRequest([FromBody] GetStudentDataRequest request)
         {
             Response<List<StudentOverview>> response = await Task.Run(() => service.GetStudentData(request.SessionId, request.Email));

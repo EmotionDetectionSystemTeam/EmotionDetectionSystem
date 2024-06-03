@@ -8,6 +8,7 @@ import StudentEmotionChart from "../Components/StudentEmotionChart";
 import StudentDisplay from "../Objects/StudentDisplay";
 import StudentOverview from "../Objects/StudentOverview";
 import { pathTeacherDashBoard } from "../Paths";
+import { serverGetStudentData } from "../Services/ClientService";
 import { ServerMockGetStudentsData, ServerMockStudentOverview } from "../Services/MockService";
 import { mainTheme, squaresColor } from "../Utils";
 
@@ -24,11 +25,17 @@ function StudentsHistory() {
   const [students, setStudentsData] = useState<StudentDisplay[]>([]);
 
   useEffect(() => {
-    const fetchStudents = async(): Promise<void> => {
-      const studentData: StudentDisplay[] = await ServerMockGetStudentsData();
-      setStudentsData(studentData);
-    }
-    fetchStudents();
+    // serverGetStudentData().then((studentsOverview : StudentOverview[]) => {
+    //   setStudentsData(studentsOverview.map((student : StudentOverview) =>{
+    //     return new StudentDisplay(
+    //       student.email,
+    //       student.name,
+    //     )
+    //   }))
+    // }).catch((e) =>alert(e));
+
+    ServerMockGetStudentsData().then((students :StudentDisplay[]) =>
+    setStudentsData(students));
 
   },[]);
 
@@ -38,6 +45,9 @@ function StudentsHistory() {
   );
 
   const handleStudentClick = async (student: StudentDisplay) => {
+    serverGetStudentData()
+
+
     //serverGetStudent....
     setDialogOpen(true);
     setSelectedStudent(student);

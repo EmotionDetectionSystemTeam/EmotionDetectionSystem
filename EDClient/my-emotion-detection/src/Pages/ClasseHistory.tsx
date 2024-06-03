@@ -20,15 +20,26 @@ function ClassesDashboard() {
 
 
   useEffect(() => {
-    const fetchClasses = async (): Promise<void> => {
-      const data: ClassDisplay[] = await ServerMockGetClasses();
-      setClasses(data);
-    };
-    fetchClasses();
+    // serverGetEnrolledLessons().then((classes : ClassDisplay[]) => {
+    //   setClasses(classes);
+    // }).catch((e) => alert(e));
+    ServerMockGetClasses().then((data: ClassDisplay[]) => setClasses(data));
   }, []);
 
-  const handleCardClick = async (id: number) => {
-    const classData = await ServerMockGetClass(id);
+  const handleCardClick = async (SelectedClassDisplay: ClassDisplay) => {
+    // serverGetStudentDataByLesson(SelectedClassDisplay.id).then((students : Student[]) => {
+    //   setSelectedClass(new Class(
+    //     SelectedClassDisplay.id,
+    //     SelectedClassDisplay.name,
+    //     SelectedClassDisplay.description,
+    //     SelectedClassDisplay.date,
+    //     students
+    //   ))
+    // }).catch((e) => alert(e));
+
+    
+  
+    const classData = await ServerMockGetClass(SelectedClassDisplay.id);
     setSelectedClass(classData);
     setPopupOpen(true);
   };
@@ -72,10 +83,7 @@ function ClassesDashboard() {
           {filteredClasses.map((classItem) => (
             <Grid item key={classItem.id}>
               <ClassDisplayCard
-                id ={classItem.id}
-                name={classItem.name}
-                date={classItem.date}
-                description={classItem.description}
+                Class ={classItem}
                 onClick={handleCardClick}
 
               />

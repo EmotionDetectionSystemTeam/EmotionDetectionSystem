@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import './App.css'; // Assuming you have a CSS file for styling
-import ClassesDashboard from './Pages/ClassesDashboardsPage';
+import ClassesDashboard from './Pages/ClasseHistory';
 import CreateClass from './Pages/CreateClassPage';
 import HomePage from './Pages/HomePage';
 import Register from './Pages/RegisterPage';

@@ -64,7 +64,7 @@ export const ServerMockStudentOverview = async (studentId) => {
     );
   }
 
-  export const ServerMockGetClass = async (id: number): Promise<Class> => {
+  export const ServerMockGetClass = async (id: string): Promise<Class> => {
     // Mock data for a specific class lesson
   
     // Generate mock students with emotions over time
@@ -139,9 +139,9 @@ export const ServerMockStudentOverview = async (studentId) => {
   export const ServerMockGetClasses = async (): Promise<ClassDisplay[]> => {
     // Mock data for class displays
     return [
-      new ClassDisplay(1, "Math 101", "2023-05-25", "Introduction to Algebra"),
-      new ClassDisplay(2, "History 201", "2023-05-26", "World War II Overview"),
-      new ClassDisplay(3, "Science 301", "2023-05-27", "Basics of Physics")
+      new ClassDisplay('1', "Math 101", new Date("2023-05-25"), "Introduction to Algebra"),
+      new ClassDisplay('2', "History 201", new Date("2023-05-26"), "World War II Overview"),
+      new ClassDisplay('3', "Science 301", new Date("2023-05-27"), "Basics of Physics")
     ];
   };
 

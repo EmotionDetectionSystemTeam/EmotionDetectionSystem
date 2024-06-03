@@ -1,6 +1,10 @@
 import { ServiceEmotionData } from "../Objects/EmotionData";
-import { serverPushEmotionData } from "./ClientService";
+import { serverNotifyEmotion, serverPushEmotionData } from "./ClientService";
 import { getLessonId } from "./SessionService";
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const intervalTime = 5000;
+
 
 class ExpressionProcessor {
   constructor() {
@@ -75,10 +79,26 @@ class ExpressionProcessor {
               }
               expressionCount++;
             });
-  
+            
+            const highestExpression = Object.keys(this.expressionsData).reduce((a, b) => this.expressionsData[a] > this.expressionsData[b] ? a : b);
+            if (highestExpression === 'surprised') {
+                notify()
+                sleep(intervalTime - totalTime)
+                totalTime = 0;
+                this.expressionsData = {
+                  neutral: 0,
+                  happy: 0,
+                  sad: 0,
+                  angry: 0,
+                  surprised: 0,
+                  disgusted: 0,
+                  fearful: 0
+                };
+            }
+
             totalTime += 100;
   
-            if (totalTime >= 15000) { //30000
+            if (totalTime >= intervalTime) { //30000
               const averageExpressions = {};
               for (const expression in this.expressionsData) {
                 averageExpressions[expression] =
@@ -107,6 +127,11 @@ class ExpressionProcessor {
         }, 100);
       });
     }
+
+  notify() {
+    serverNotifyEmotion("a");
+
+  }
 
   sendResultToServer(data) {
     const emotionData = new ServiceEmotionData(

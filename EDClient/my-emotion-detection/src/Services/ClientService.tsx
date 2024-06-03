@@ -1,6 +1,9 @@
+import ClassDisplay from "../Objects/ClassDisplay";
 import { ServiceEmotionData } from "../Objects/EmotionData";
 import { Lesson } from "../Objects/Lesson";
 import { ServiceRealTimeUser } from "../Objects/ServiceRealTimeUser";
+import Student from "../Objects/Student";
+import StudentOverview from "../Objects/StudentOverview";
 import checkInput, { serverPort } from "../Utils";
 import ClientResponse from "./Response";
 import { getSessionId, getUserName, setIsGuest } from "./SessionService";
@@ -466,5 +469,196 @@ export async function serverNotifyEmotion(
   }
 }
 
+export async function serverGetEnrolledLessons(
+): Promise<ClassDisplay[]> {
+  const uri = serverPort + "/api/eds/get-enrolled-lessons"; // Update the endpoint
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        TeacherEmail: getUserName(),
+      }),
+    });
+
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
+    }
+
+    const response = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    const myClasses: ClassDisplay[] = response.value.map((lesson: any) => {
+      return new ClassDisplay(
+        lesson.id,
+        lesson.name,
+        lesson.description,
+        lesson.date,
+
+      );
+    });
+
+    return myClasses;
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+export async function serverGetStudentDataByLesson(
+  lessonId: string | undefined | null
+): Promise<Student[]> {
+  const fields: any[] = [lessonId];
+  if (!checkInput(fields)) return Promise.reject();
+  const uri = serverPort + "/api/eds/get-students-data"; 
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        Email: getUserName(),
+        LessonId: lessonId,
+      }),
+    });
+
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
+    }
+
+    const response = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    const myClasses: Student[] = response.value.map((student: any) => {
+      return new Student(
+        student.email,
+        student.firstName + " " + student.lastName,
+        student.className,
+        student.emotions,
+
+      );
+    });
+
+    return myClasses;
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+export async function serverGetStudentData(
+): Promise<StudentOverview[]> {
+  const uri = serverPort + "/api/eds/get-student-data"; 
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        Email: getUserName(),
+      }),
+    });
+
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
+    }
+
+    const response = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    const myClasses: StudentOverview[] = response.value.map((studentOverview: any) => {
+      let students : Student[] = studentOverview.map((student: any) => {
+        return new Student(
+          student.email,
+          student.firstName + " " + student.lastName,
+          student.className,
+          student.emotions,
+        )
+      })
+      return new StudentOverview(
+        studentOverview.email,
+        studentOverview.firstName + " " + studentOverview.lastName,
+        students,
+      );
+    });
+
+    return myClasses;
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+// export async function serverGetStudentData(                                     TODO:: // for a single StudentOverview
+//   studentEmail: string | undefined | null
+// ): Promise<StudentOverview> {
+//   const fields: any[] = [studentEmail];
+//   if (!checkInput(fields)) return Promise.reject();
+//   const uri = serverPort + "/api/eds/get-student-data"; 
+//   try {
+//     const jsonResponse = await fetch(uri, {
+//       method: "POST",
+//       headers: {
+//         accept: "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         SessionId: getSessionId(),
+//         TeacherEmail: getUserName(),
+//         StudentEmail: studentEmail,
+//       }),
+//     });
+
+//     if (!jsonResponse.ok) {
+//       const errorResponse: ClientResponse<string> = await jsonResponse.json();
+//       throw new Error(errorResponse.errorMessage);
+//     }
+
+//     const response = await jsonResponse.json();
+//     // Handle empty response
+//     if (!response) {
+//       throw new Error("Empty response received");
+//     }
+
+//     const myClasses: StudentOverview[] = response.value.map((studentOverview: any) => {
+//       let students : Student[] = studentOverview.map((student: any) => {
+//         return new Student(
+//           student.email,
+//           student.firstName + " " + student.lastName,
+//           student.className,
+//           student.emotions,
+//         )
+//       })
+//       return new StudentOverview(
+//         studentOverview.email,
+//         studentOverview.firstName + " " + studentOverview.lastName,
+//         students,
+//       );
+//     });
+
+//     return myClasses;
+//   } catch (e) {
+//     return Promise.reject(e);
+//   }
+// }
 
 

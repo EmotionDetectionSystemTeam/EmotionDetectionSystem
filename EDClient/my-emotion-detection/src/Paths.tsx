@@ -7,7 +7,7 @@ export const pathStudentDashBoard: string = "/student-dashboard";
 export const pathTeacherLesson: string = "/teacher-lesson";
 export const pathStudentLesson: string = "/student-lesson";
 export const pathCreateClass: string = "/create-class";
-export const pathClassesDashboard: string = "/classesDashboard";
+export const pathClassesDashboard: string = "/classes-history";
 export const pathStudentsHistory: string = "/students-history";
 
 //export const pathStudentLesson: string = "/";

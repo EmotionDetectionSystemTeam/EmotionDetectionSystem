@@ -1,4 +1,3 @@
-// StudentEmotionChart.tsx
 import React from "react";
 import { Bar } from "react-chartjs-2";
 import StudentOverview from "../Objects/StudentOverview";
@@ -26,14 +25,5 @@ const StudentEmotionChart: React.FC<StudentEmotionChartProps> = ({ studentOvervi
   return <Bar data={chartData} />;
 };
 
-// Helper function to generate random colors (you can use a library like `randomcolor` instead)
-function getRandomColor() {
-  const letters = "0123456789ABCDEF";
-  let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
 
 export default StudentEmotionChart;

@@ -11,7 +11,8 @@ import { Lesson } from "../Objects/Lesson";
 import { ServiceRealTimeUser } from "../Objects/ServiceRealTimeUser";
 import { pathTeacherDashBoard } from "../Paths";
 import { serverEndLesson, serverGetLastEmotionsData, serverGetLesson } from "../Services/ClientService";
-import { getLessonId } from "../Services/SessionService";
+import { initWebSocket } from "../Services/NotificationService";
+import { getLessonId, getUserName } from "../Services/SessionService";
 import { mainTheme } from "../Utils";
 
 function TeacherLesson() {
@@ -50,12 +51,9 @@ function TeacherLesson() {
       gray: 4,
     };
   
-    // Map ServiceRealTimeUser objects to ClientStudent objects
     const mappedStudents: ClientStudent[] = students.map((student: ServiceRealTimeUser) => {
-      // Determine the color based on the emotion
       const color: string = emotionColorMap[student.winingEmotion];
   
-      // Create a new ClientStudent object
       const clientStudent: ClientStudent = new ClientStudent(
         student.firstName,
         student.lastName,
@@ -107,6 +105,36 @@ function TeacherLesson() {
     
     console.log("Getting emotions...");
   };
+
+  const handleWebSocketMessage = (data) => {
+    const email = data;
+    const emotion = 'surprised';
+
+    setStudentList((prevStudentList) =>
+      prevStudentList.map((student) => {
+        if (student.email === email) {
+          const emotionColorMap = {
+            Natural: 'gray',
+            Happy: 'green',
+            Surprised: 'yellow',
+            Angry: 'red',
+            Sad: 'red',
+            Disgusted: 'red',
+            Fearful: 'red',
+          };
+          return {
+            ...student,
+            emotion: emotion,
+            color: emotionColorMap[emotion] || 'gray',
+          };
+        }
+        return student;
+      })
+    );
+  };
+  const address = `ws://127.0.0.1:4560/${getUserName()}-notifications`;
+  initWebSocket(address, handleWebSocketMessage); // Initialize WebSocket with the message handler
+  
 
   const handleEndLesson = () => {
     // Logic to handle ending the lesson

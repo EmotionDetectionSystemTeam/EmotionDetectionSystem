@@ -9,8 +9,9 @@ using System.Reflection;
 namespace TestEDS.ServerTests
 {
     [TestFixture]
-    public class LoadTests : AbstractTestCase
+    public class AcceptanceTests : AbstractTestCase
     {
+        private const string c_className1 = "class1";
         int numberOfStudents = 60;
         [SetUp]
         public new void BeforeTest()
@@ -90,11 +91,11 @@ namespace TestEDS.ServerTests
             }
 
         }
+
         [Test]
         public void RegisterStudentsCunccurently()
         {
             List<Thread> threads = new List<Thread>();
-            List<Task> registrationTasks = new List<Task>();
             MultipleStudentsSendsEmotionToServer server = new MultipleStudentsSendsEmotionToServer();
             // Register all students concurrently
             for (int i = 0; i < numberOfStudents; i++)
@@ -105,6 +106,7 @@ namespace TestEDS.ServerTests
             }
             foreach (var thread in threads) { thread.Join(); }
         }
+
         [Test]
         public void RegisterStudentsAndThenLoginCunccurently()
         {
@@ -217,7 +219,7 @@ namespace TestEDS.ServerTests
                 RegisterRequest teacherData = server.RegisterAsync(true);
                 var teacherLoginRequest = new LoginRequest(teacherData.password, teacherData.email, teacherData.password);
                 server.LogInUser(teacherLoginRequest);
-                Lesson lesson = server.CreateLesson(new CreateLessonRequest(teacherData.password, teacherData.email, "blabla", "blablabla", new string[] { }));
+                Lesson lesson = server.CreateLesson(new CreateLessonRequest(teacherData.password, teacherData.email, c_className1, "blablabla", new string[] { }));
                 for (int i = 0; i < numberOfStudents; i++)
                 {
                     Thread thread = new Thread(() =>
@@ -277,6 +279,7 @@ namespace TestEDS.ServerTests
                 Assert.True(false);
             }
         }
+
         [Test]
         public void RegisterStudentsAndLoginAndStartPushDataTeacherVerifyFor5TimesDataCunccurently()
         {
@@ -347,6 +350,84 @@ namespace TestEDS.ServerTests
                 }
 
                 
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("not working");
+                Assert.True(false);
+            }
+
+        }
+        [Test]
+        public void CheckPassward()
+        {
+            try
+            {
+                List<Thread> threads = new List<Thread>();
+                List<Task> registrationTasks = new List<Task>();
+                var server = new MultipleStudentsSendsEmotionToServer();
+                var map = new ConcurrentDictionary<string, ServiceEmotionData>();
+                RegisterRequest teacherData = server.RegisterAsync(true);
+                var teacherLoginRequest = new LoginRequest(teacherData.password, teacherData.email, teacherData.password);
+                server.LogInUser(teacherLoginRequest);
+                Lesson lesson = server.CreateLesson(new CreateLessonRequest(teacherData.password, teacherData.email, c_className1, "", new string[] { }));
+                for (int i = 0; i < numberOfStudents; i++)
+                {
+                    Thread thread = new Thread(() =>
+                    {
+                        RegisterRequest studentData = new MultipleStudentsSendsEmotionToServer().RegisterAsync(false);
+                        var loginRequest = new LoginRequest(studentData.password, studentData.email, studentData.password);
+                        new MultipleStudentsSendsEmotionToServer().LogInUser(loginRequest);
+                        MultipleStudentsSendsEmotionToServer sender = new MultipleStudentsSendsEmotionToServer();
+                        sender.JoinLesson(new JoinLessonRequest(studentData.password, studentData.email, lesson.entryCode));
+                    });
+                    threads.Add(thread);
+                    thread.Start();
+                }
+                foreach (var thread in threads) { thread.Join(); }
+                for (int i = 0; i < 5; i++)
+                {
+                    foreach (var studentData in MultipleStudentsSendsEmotionToServer.studentsData)
+                    {
+                        // Generate random emotion data
+                        Random random = new Random();
+                        ServiceEmotionData emotionData = new ServiceEmotionData(
+                            random.NextDouble(), random.NextDouble(), random.NextDouble(),
+                            random.NextDouble(), random.NextDouble(), random.NextDouble(),
+                            random.NextDouble());
+
+                        new MultipleStudentsSendsEmotionToServer().PushEmotionDataAsync(new PushEmotionDataRequest(studentData.password, studentData.email, lesson.lessonId, emotionData));
+
+                        Thread.Sleep(300); // simulate time between requests
+                        map[studentData.email] = emotionData;
+                    }
+                    Thread.Sleep(10 * 1000);
+                    GetLastEmotionsDataRequest getLastEmotionsDataRequest = new GetLastEmotionsDataRequest(teacherData.password, teacherData.email, lesson.lessonId);
+                    List<User> emotions = server.ValidateEmotionDataHasArrivedToTeacher(getLastEmotionsDataRequest);
+                    foreach (var kvp in map)
+                    {
+                        string email = kvp.Key;
+                        ServiceEmotionData emotion = kvp.Value;
+
+                        bool found = false;
+                        foreach (var realTimeUser in emotions)
+                        {
+                            if (realTimeUser.Email == email) //&& realTimeUser.WinningEmotion == emotion.GetHighestEmotion())
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found)
+                        {
+                            // Emotion not found in the list
+                            Assert.True(false);
+                        }
+                    }
+                }
+
+
             }
             catch (Exception e)
             {

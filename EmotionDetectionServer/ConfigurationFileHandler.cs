@@ -11,6 +11,7 @@ public class ConfigurationFileHandler
     private int SessionIds = 0;
     private IEdsService service; 
     private string PATH = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "InitFile.json");
+    private string entryCode = "";
     public ConfigurationFileHandler(IEdsService Service)
     {
         service = Service ?? throw new ArgumentNullException(nameof(Service));
@@ -90,6 +91,7 @@ public class ConfigurationFileHandler
 
                     if (res.ErrorOccured)
                         throw new Exception("Failed to parse the createlesson: " + res.ErrorMessage);
+                    entryCode = res.Value.EntryCode;
                     break;
                 }
             case "EnterAsGuest":
@@ -105,7 +107,7 @@ public class ConfigurationFileHandler
                     var res = service.JoinLesson(
                         usecaseJson["sessionid"].ToString(),
                         usecaseJson["email"].ToString(),
-                        usecaseJson["entryCode"].ToString());
+                        entryCode);
                     if (res.ErrorOccured)
                         throw new Exception("Failed to parse the JoinLesson " + res.ErrorMessage);
                     break;

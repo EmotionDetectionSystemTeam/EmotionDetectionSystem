@@ -32,7 +32,7 @@ public class EdsManagerTest
         const int    userType  = 1;
         _edsManager.Register(email, firstName, lastName, password, userType);
     }
-
+    
     [TestMethod]
     public void Register_BadEmail_Fail()
     {
@@ -242,6 +242,26 @@ public class EdsManagerTest
         Assert.IsNotNull(students);
         Assert.AreEqual(1,      students.Count());
         Assert.AreEqual(email2, students.First().Student.Email);
+    }
+
+    [TestMethod]
+    public void ViewStudentsDuringLesson_StudentAttempt_Fail()
+    {
+        const string email = "test@example.com";
+        const string email2 = "test2@example.com";
+        const string firstName = "John";
+        const string lastName = "Doe";
+        const string password = "1q2w3eAS!";
+        const int userType = 1;
+        const string sessionId2 = "2";
+        _edsManager.Register(email, firstName, lastName, password, userType);
+        _edsManager.Register(email2, firstName, lastName, password, 0);
+        _edsManager.Login(_sessionId, email, password);
+        _edsManager.Login(sessionId2, email2, password);
+        var lesson = _edsManager.CreateLesson(_sessionId, email, "test", "test", new[] { "test" });
+        _edsManager.JoinLesson(sessionId2, email2, lesson.EntryCode);
+        Assert.ThrowsException<Exception>(()=>_edsManager.ViewStudentsDuringLesson(sessionId2, email2, lesson.LessonId));
+
     }
 
     [TestMethod]

@@ -1,31 +1,237 @@
 ﻿{
   "UseCases": [
     {
-      "email": "regev@gmail.com",
-      "firstName": "regev ",
-      "lastName": "teacher",
-      "password": "123fsfasGD12312#",
-      "confirmPassword": "123fsfasGD12312#",
-      "userType": 1,
-      "Tag": "Register"
+      "Tag": "Register",
+      "email": "teacher@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "password": "TeacherPass#2024",
+      "confirmPassword": "TeacherPass#2024",
+      "userType": 1
     },
     {
-      "email": "nadav@gmail.com",
-      "firstName": "nadav ",
-      "lastName": "student",
-      "password": "123fsffsasS#12312",
-      "confirmPassword": "123fsffsasS#12312",
-      "userType": 0,
-      "Tag": "Register"
+      "Tag": "Login",
+      "sessionid": "1",
+      "email": "teacher@example.com",
+      "password": "TeacherPass#2024"
     },
     {
-      "email": "ben@gmail.com",
-      "firstName": "ben ",
-      "lastName": "student",
-      "password": "123benHomo!123",
-      "confirmPassword": "123benHomo!123",
-      "userType": 0,
-      "Tag": "Register"
+      "Tag": "CreateLesson",
+      "sessionid": "1",
+      "email": "teacher@example.com",
+      "title": "Math Lesson",
+      "description": "Introduction to Algebra",
+      "tags": [ "Math", "Algebra" ]
+    },
+    {
+      "Tag": "Register",
+      "email": "student1@example.com",
+      "firstName": "Student1",
+      "lastName": "One",
+      "password": "Student1#Pass2024",
+      "confirmPassword": "Student1#Pass2024",
+      "userType": 0
+    },
+    {
+      "Tag": "Register",
+      "email": "student2@example.com",
+      "firstName": "Student2",
+      "lastName": "Two",
+      "password": "Student2#Pass2024",
+      "confirmPassword": "Student2#Pass2024",
+      "userType": 0
+    },
+    {
+      "Tag": "Register",
+      "email": "student3@example.com",
+      "firstName": "Student3",
+      "lastName": "Three",
+      "password": "Student3#Pass2024",
+      "confirmPassword": "Student3#Pass2024",
+      "userType": 0
+    },
+    {
+      "Tag": "Register",
+      "email": "student4@example.com",
+      "firstName": "Student4",
+      "lastName": "Four",
+      "password": "Student4#Pass2024",
+      "confirmPassword": "Student4#Pass2024",
+      "userType": 0
+    },
+    {
+      "Tag": "Register",
+      "email": "student5@example.com",
+      "firstName": "Student5",
+      "lastName": "Five",
+      "password": "Student5#Pass2024",
+      "confirmPassword": "Student5#Pass2024",
+      "userType": 0
+    },
+    {
+      "Tag": "Register",
+      "email": "student6@example.com",
+      "firstName": "Student6",
+      "lastName": "Six",
+      "password": "Student6#Pass2024",
+      "confirmPassword": "Student6#Pass2024",
+      "userType": 0
+    },
+    {
+      "Tag": "Register",
+      "email": "student7@example.com",
+      "firstName": "Student7",
+      "lastName": "Seven",
+      "password": "Student7#Pass2024",
+      "confirmPassword": "Student7#Pass2024",
+      "userType": 0
+    },
+    {
+      "Tag": "Register",
+      "email": "student8@example.com",
+      "firstName": "Student8",
+      "lastName": "Eight",
+      "password": "Student8#Pass2024",
+      "confirmPassword": "Student8#Pass2024",
+      "userType": 0
+    },
+    {
+      "Tag": "Register",
+      "email": "student9@example.com",
+      "firstName": "Student9",
+      "lastName": "Nine",
+      "password": "Student9#Pass2024",
+      "confirmPassword": "Student9#Pass2024",
+      "userType": 0
+    },
+    {
+      "Tag": "Register",
+      "email": "student10@example.com",
+      "firstName": "Student10",
+      "lastName": "Ten",
+      "password": "Student10#Pass2024",
+      "confirmPassword": "Student10#Pass2024",
+      "userType": 0
+    },
+    {
+      "Tag": "Login",
+      "sessionid": "2",
+      "email": "student1@example.com",
+      "password": "Student1#Pass2024"
+    },
+    {
+      "Tag": "Login",
+      "sessionid": "3",
+      "email": "student2@example.com",
+      "password": "Student2#Pass2024"
+    },
+    {
+      "Tag": "Login",
+      "sessionid": "4",
+      "email": "student3@example.com",
+      "password": "Student3#Pass2024"
+    },
+    {
+      "Tag": "Login",
+      "sessionid": "5",
+      "email": "student4@example.com",
+      "password": "Student4#Pass2024"
+    },
+    {
+      "Tag": "Login",
+      "sessionid": "6",
+      "email": "student5@example.com",
+      "password": "Student5#Pass2024"
+    },
+    {
+      "Tag": "Login",
+      "sessionid": "7",
+      "email": "student6@example.com",
+      "password": "Student6#Pass2024"
+    },
+    {
+      "Tag": "Login",
+      "sessionid": "8",
+      "email": "student7@example.com",
+      "password": "Student7#Pass2024"
+    },
+    {
+      "Tag": "Login",
+      "sessionid": "9",
+      "email": "student8@example.com",
+      "password": "Student8#Pass2024"
+    },
+    {
+      "Tag": "Login",
+      "sessionid": "10",
+      "email": "student9@example.com",
+      "password": "Student9#Pass2024"
+    },
+    {
+      "Tag": "Login",
+      "sessionid": "11",
+      "email": "student10@example.com",
+      "password": "Student10#Pass2024"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "2",
+      "email": "student1@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "3",
+      "email": "student2@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "4",
+      "email": "student3@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "5",
+      "email": "student4@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "6",
+      "email": "student5@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "7",
+      "email": "student6@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "8",
+      "email": "student7@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "9",
+      "email": "student8@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "10",
+      "email": "student9@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "11",
+      "email": "student10@example.com",
+      "entryCode": "MathLessonCode"
     }
   ]
 }

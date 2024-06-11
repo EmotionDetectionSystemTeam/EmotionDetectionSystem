@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using EmotionDetectionSystem.DomainLayer.Events;
 using EmotionDetectionSystem.DomainLayer.objects;
 using EmotionDetectionSystem.ServiceLayer.objects;
 using log4net;
@@ -239,5 +240,18 @@ public class EdsManager
         var teacher = _userManager.GetTeacher(teacherEmail);
         var student = _userManager.GetStudent(studentEmail);
         teacher.Notify(new SurprisedEvent("Surprised", student).GenerateMsg());
+    }
+
+    public void LeaveLesson(string sessionId, string email, string lessonId)
+    {
+        IsValidSession(sessionId, email);
+        var user = _userManager.GetUser(email);
+        if (user is not Student)
+        {
+            throw new Exception($"User {user.Email} is not a student");
+        }
+
+        var lesson = _lessonManager.GetLesson(lessonId);
+        lesson.Leave(user);
     }
 }

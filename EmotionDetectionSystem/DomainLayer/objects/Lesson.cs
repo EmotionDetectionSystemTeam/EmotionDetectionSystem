@@ -98,6 +98,7 @@ public class Lesson
     {
         var enrollmentSummary = new EnrollmentSummary(student, this);
         _enrollmentSummaryRepo.Add(enrollmentSummary);
+        // TODO: Add notification to teacher that student joined
     }
 
     public bool IsAllowedToViewStudentsData(Viewer viewer)
@@ -139,5 +140,14 @@ public class Lesson
     }
     public Dictionary<Student,EnrollmentSummary> GetStudentsEmotions() {
         return _enrollmentSummaryRepo.GetStudentsEmotions();
+    }
+
+    public void Leave(User user)
+    {
+        if (user is Viewer viewer)
+        {
+            _viewers.Remove(viewer);
+        }
+        // TODO: Add notification to teacher that student left
     }
 }

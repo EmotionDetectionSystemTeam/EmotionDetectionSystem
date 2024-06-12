@@ -236,6 +236,67 @@ namespace EmotionDetectionSystem.Tests.AcceptanceTests
             }
         }
 
+        [TestMethod]
+        public void StudentShouldBeLoggedInForEnrollment()
+        {
+            // Register Student
+            var registerStudentResponse = _edsService.Register(StudentEmails[0], "Student", "User", StudentPassword, StudentPassword, 0);
+            Assert.IsFalse(registerStudentResponse.ErrorOccured, registerStudentResponse.ErrorMessage);
+
+            // Student Login
+            var loginStudentResponse = _edsService.Login("1", StudentEmails[0], StudentPassword);
+            Assert.IsFalse(loginStudentResponse.ErrorOccured, loginStudentResponse.ErrorMessage);
+
+            // Ensure that the student is logged in
+            Assert.IsNotNull(loginStudentResponse.Value, "Student login failed.");
+        }
+        [TestMethod]
+        public void TeacherShouldAccessEmotionalData()
+        {
+            // Register Teacher
+            _edsService.Register(TeacherEmail, "John", "Doe", TeacherPassword, TeacherPassword, 1);
+
+            // Teacher Login
+            _edsService.Login("1", TeacherEmail, TeacherPassword);
+
+            // Create Lesson
+            var createLessonResponse = _edsService.CreateLesson("1", TeacherEmail, LessonTitle, LessonDescription, new[] { "Math", "Algebra" });
+            // Assume that the entry code for the lesson is returned in the lesson object
+            var activeLesson = createLessonResponse.Value;
+            _lessonEntryCode = activeLesson.EntryCode; // You might need to adjust this according to your actual data structure
+
+            // Access Emotional Data
+            var emotionalDataResponse = _edsService.GetLastEmotionsData("1", TeacherEmail, activeLesson.LessonId);
+            Assert.IsFalse(emotionalDataResponse.ErrorOccured, emotionalDataResponse.ErrorMessage);
+            Assert.IsNotNull(emotionalDataResponse.Value, "Teacher should be able to access emotional data.");
+        }
+
+        [TestMethod]
+        public void StudentShouldNotAccessEmotionalData()
+        {
+            // Register Teacher
+            _edsService.Register(TeacherEmail, "John", "Doe", TeacherPassword, TeacherPassword, 1);
+
+            // Teacher Login
+            _edsService.Login("1", TeacherEmail, TeacherPassword);
+
+            // Create Lesson
+            var createLessonResponse = _edsService.CreateLesson("1", TeacherEmail, LessonTitle, LessonDescription, new[] { "Math", "Algebra" });
+
+            // Register Student
+            _edsService.Register(StudentEmails[0], "Student", "User", StudentPassword, StudentPassword, 0);
+
+            // Student Login
+            _edsService.Login("2", StudentEmails[0], StudentPassword);
+            var activeLesson = createLessonResponse.Value;
+            _lessonEntryCode = activeLesson.EntryCode; // You might need to adjust this according to your actual data structure
+            // Student Joins Lesson
+            _edsService.JoinLesson("2", StudentEmails[0], _lessonEntryCode);
+
+            // Access Emotional Data
+            var emotionalDataResponse = _edsService.GetLastEmotionsData("2", StudentEmails[0], LessonTitle);
+            Assert.IsTrue(emotionalDataResponse.ErrorOccured, "Student should not be able to access emotional data.");
+        }
 
     }
 }

@@ -1,4 +1,4 @@
-namespace EmotionDetectionSystem.DomainLayer;
+namespace EmotionDetectionSystem.DomainLayer.Events;
 
 public class Message
 {

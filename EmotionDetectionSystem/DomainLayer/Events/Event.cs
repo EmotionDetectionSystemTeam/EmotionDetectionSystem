@@ -1,6 +1,6 @@
 using EmotionDetectionSystem.DomainLayer.objects;
 
-namespace EmotionDetectionSystem.DomainLayer;
+namespace EmotionDetectionSystem.DomainLayer.Events;
 
 public abstract class Event
 {

@@ -12,6 +12,6 @@ public class SurprisedEvent: Event
 
     public override string GenerateMsg()
     {
-        return $"{Name}: {_student.GetFullName()} is surprised";
+        return _student.Email;
     }
 }

@@ -16,7 +16,6 @@ import SuccessSnackbar from "../Components/SuccessSnackbar";
 import { Lesson } from "../Objects/Lesson";
 import { pathHome, pathTeacherDashBoard } from "../Paths";
 import { serverLogin } from "../Services/ClientService";
-import { initWebSocket } from "../Services/NotificationService";
 import { mainTheme, squaresColor } from "../Utils";
 
 
@@ -51,7 +50,7 @@ import { mainTheme, squaresColor } from "../Utils";
 
       serverLogin(email, password).then(() => {
         const address = `ws://127.0.0.1:4560/${email}-notifications`;
-        initWebSocket(address);
+        //initWebSocket(address);
         navigate(pathTeacherDashBoard);
         alert(`${email} DashBoard is not ready yet!`);
         }).catch((e) => alert(e));

@@ -5,16 +5,16 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
-import { ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { ThemeProvider } from "@mui/material/styles";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import FailureSnackbar from "../Components/FailureSnackbar";
 import SuccessSnackbar from "../Components/SuccessSnackbar";
 import { pathHome, pathStudentLogin, pathTeacherLogin } from "../Paths";
 import { serverRegister } from "../Services/ClientService";
-import { getCookie, getSessionId, setCookie, setUsername } from "../Services/SessionService";
+import { getSessionId, setCookie, setUsername } from "../Services/SessionService";
 import { mainTheme, squaresColor } from "../Utils";
 
 
@@ -55,9 +55,7 @@ function Register() {
 
       setUsername(String(email));
       setCookie(getSessionId(), "email", email);
-      alert(getCookie(getSessionId(),"email"));
-      //alert(getUserName());
-      alert(response)})
+      })
       .catch((e) => {
         setOpenFailSnack(true);
         setFailuretMsg(String(e));

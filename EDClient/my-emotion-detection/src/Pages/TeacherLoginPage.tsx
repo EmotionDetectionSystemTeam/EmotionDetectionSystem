@@ -52,7 +52,6 @@ import { mainTheme, squaresColor } from "../Utils";
         const address = `ws://127.0.0.1:4560/${email}-notifications`;
         //initWebSocket(address);
         navigate(pathTeacherDashBoard);
-        alert(`${email} DashBoard is not ready yet!`);
         }).catch((e) => alert(e));
     };
   

@@ -398,6 +398,28 @@ namespace EmotionDetectionServer.API
                 return Ok(GetStudentDataRespnse);
             }
         }
+        [HttpPost]
+        [Route("leave-lesson")]
+        public async Task<ObjectResult> LeaveLessonRequest([FromBody] LeaveLessonRequest request)
+        {
+            Response response = await Task.Run(() => service.LeaveLesson(request.SessionId, request.Email, request.LessonId));
+            if (response.ErrorOccured)
+            {
+                var LeaveLessonRespnse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(LeaveLessonRespnse);
+            }
+            else
+            {
+                var LeaveLessonRespnse = new ServerResponse<string>
+                {
+                    value = "Leaved Lesson Successfully",
+                };
+                return Ok(LeaveLessonRespnse);
+            }
+        }
 
     }
 }

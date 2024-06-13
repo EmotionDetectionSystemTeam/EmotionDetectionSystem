@@ -28,7 +28,6 @@ function CreateClass() {
     serverCreateLesson(title, description, []).then((lesson: Lesson) => { // TODO: tags implementation
       setLessonId(lesson.LessonId);
       setCookie(getSessionId(), 'lesson', lesson);
-      alert(lesson.EntryCode);
       navigate(pathTeacherLesson);
     }).catch((e) => alert(e));
   };

@@ -11,7 +11,6 @@ import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { pathHome, pathStudentDashBoard } from "../Paths";
 import { serverLogin } from "../Services/ClientService";
-import { initWebSocket } from "../Services/NotificationService";
 import { mainTheme, squaresColor } from "../Utils";
 
 
@@ -34,10 +33,9 @@ import { mainTheme, squaresColor } from "../Utils";
       const password = data.get("password")?.toString();
 
       const serverResponse = await serverLogin(email, password).then(() => {
-        const address = `ws://127.0.0.1:4560/${email}-notifications`;
-        initWebSocket(address);
+        // const address = `ws://127.0.0.1:4560/${email}-notifications`;
+        //initWebSocket(address);
         navigate(pathStudentDashBoard);
-        alert(`${email} DashBoard is not ready yet!`);
         }).catch((e) => alert(e));
     };
   

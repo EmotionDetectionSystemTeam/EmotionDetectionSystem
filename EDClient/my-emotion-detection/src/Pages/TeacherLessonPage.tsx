@@ -11,8 +11,7 @@ import { Lesson } from "../Objects/Lesson";
 import { ServiceRealTimeUser } from "../Objects/ServiceRealTimeUser";
 import { pathTeacherDashBoard } from "../Paths";
 import { serverEndLesson, serverGetLastEmotionsData, serverGetLesson } from "../Services/ClientService";
-import { initWebSocket } from "../Services/NotificationService";
-import { getLessonId, getUserName } from "../Services/SessionService";
+import { getLessonId } from "../Services/SessionService";
 import { mainTheme } from "../Utils";
 
 function TeacherLesson() {
@@ -132,14 +131,13 @@ function TeacherLesson() {
       })
     );
   };
-  const address = `ws://127.0.0.1:4560/${getUserName()}-notifications`;
-  initWebSocket(address, handleWebSocketMessage); // Initialize WebSocket with the message handler
+  // const address = `ws://127.0.0.1:4560/${getUserName()}-notifications`;
+  // initWebSocket(address, handleWebSocketMessage); // Initialize WebSocket with the message handler
   
 
   const handleEndLesson = () => {
     // Logic to handle ending the lesson
     serverEndLesson().then((message: string) => {
-      alert(message);
       navigate(pathTeacherDashBoard);
     }).catch((e) => alert(e))
   };

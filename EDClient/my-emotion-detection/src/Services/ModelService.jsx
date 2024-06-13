@@ -80,21 +80,21 @@ class ExpressionProcessor {
               expressionCount++;
             });
             
-            const highestExpression = Object.keys(this.expressionsData).reduce((a, b) => this.expressionsData[a] > this.expressionsData[b] ? a : b);
-            if (highestExpression === 'surprised') {
-                notify()
-                sleep(intervalTime - totalTime)
-                totalTime = 0;
-                this.expressionsData = {
-                  neutral: 0,
-                  happy: 0,
-                  sad: 0,
-                  angry: 0,
-                  surprised: 0,
-                  disgusted: 0,
-                  fearful: 0
-                };
-            }
+            // const highestExpression = Object.keys(this.expressionsData).reduce((a, b) => this.expressionsData[a] > this.expressionsData[b] ? a : b);
+            // if (highestExpression === 'surprised') {
+            //     notify()
+            //     sleep(intervalTime - totalTime)
+            //     totalTime = 0;
+            //     this.expressionsData = {
+            //       neutral: 0,
+            //       happy: 0,
+            //       sad: 0,
+            //       angry: 0,
+            //       surprised: 0,
+            //       disgusted: 0,
+            //       fearful: 0
+            //     };
+            // }
 
             totalTime += 100;
   
@@ -148,8 +148,35 @@ class ExpressionProcessor {
   }
 
   stopProcessing() {
-    clearInterval(this.intervalId);
+
+    // Clear the interval
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+
+    // Stop the video stream
+    const video = document.getElementById('video');
+    if (video && video.srcObject) {
+      const stream = video.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach(track => track.stop());
+      video.srcObject = null;
+    }
+
+    // Remove the video element from the DOM
+    if (video && video.parentNode) {
+      video.parentNode.removeChild(video);
+    }
+
+    // Clear the canvas
+    // const canvas = document.querySelector('canvas');
+    // if (canvas && canvas.parentNode) {
+    //   canvas.parentNode.removeChild(canvas);
+    // }
   }
+
+  
 }
 
 export default ExpressionProcessor;

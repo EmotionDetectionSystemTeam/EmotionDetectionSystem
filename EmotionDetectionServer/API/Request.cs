@@ -203,5 +203,20 @@ namespace EmotionDetectionServer.API
             Email = email;
         }
     }
+
+    public class LeaveLessonRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string Email { get; set; }
+        public string LessonId { get; set; }
+
+        public LeaveLessonRequest(string sessionId, string email, string lessonId)
+        {
+            SessionId = sessionId;
+            Email = email;
+            LessonId = lessonId;
+        }
+    }
+
 }
 

@@ -39,7 +39,6 @@ import { mainTheme, squaresColor } from "../Utils";
 
       const handleLogout = () => {
         serverLogout().then((message : string) => {
-            alert(message);
             navigate(pathHome);
         }).catch((e) => alert(e))
         

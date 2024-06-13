@@ -294,4 +294,19 @@ public class EdsService : IEdsService
             return new Response(e.Message);
         }
     }
+
+    public Response LeaveLesson(string sessionId, string email, string lessonId)
+    {
+        _logger.InfoFormat($"Leave lesson request for session: {sessionId} has been received");
+        try
+        {
+            _edsManager.LeaveLesson(sessionId, email, lessonId);
+            return new Response();
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error leaving lesson with session: {sessionId} - {e.Message}");
+            return new Response(e.Message);
+        }
+    }
 }

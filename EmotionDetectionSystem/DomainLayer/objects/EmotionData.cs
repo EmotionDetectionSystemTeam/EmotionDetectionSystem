@@ -12,6 +12,7 @@ public class EmotionData
     private double   _surprised;
     private double   _disgusted;
     private double   _fearful;
+    private bool     _seen;
 
     public EmotionData(DateTime time,      double neutral, double happy, double sad, double angry, double surprised,
                        double   disgusted, double fearful)
@@ -24,6 +25,7 @@ public class EmotionData
         _surprised = surprised;
         _disgusted = disgusted;
         _fearful   = fearful;
+        _seen      = false;
     }
 
     public DateTime Time
@@ -72,6 +74,12 @@ public class EmotionData
     {
         get => _fearful;
         set => _fearful = value;
+    }
+    
+    public bool Seen
+    {
+        get => _seen;
+        set => _seen = value;
     }
 
     public string GetWinningEmotion()

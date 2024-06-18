@@ -4,8 +4,7 @@ import {
   Grid,
   TextField,
   ThemeProvider,
-  Typography,
-  createTheme
+  Typography
 } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
@@ -13,28 +12,12 @@ import Navbar from "../Components/Navbar";
 import { Lesson } from "../Objects/Lesson";
 import { pathHome, pathStudentLesson } from "../Paths";
 import { serverJoinLesson, serverLogout } from "../Services/ClientService";
-import { setLessonId } from "../Services/SessionService";
-import { squaresColor } from "../Utils";
+import { setLessonId, setLessonTeacher } from "../Services/SessionService";
+import { mainTheme, squaresColor } from "../Utils";
 
 
     
     function StudentDashboard() {
-      const theme = createTheme({
-        typography: {
-          fontFamily: [
-            "-apple-system",
-            "BlinkMacSystemFont",
-            '"Segoe UI"',
-            "Roboto",
-            '"Helvetica Neue"',
-            "Arial",
-            "sans-serif",
-            '"Apple Color Emoji"',
-            '"Segoe UI Emoji"',
-            '"Segoe UI Symbol"',
-          ].join(","),
-        },
-      });
     
       const navigate = useNavigate();
     
@@ -48,6 +31,7 @@ import { squaresColor } from "../Utils";
         serverJoinLesson(classCode).then((lesson : Lesson) => {
           //Cookies.set('StudentLesson', JSON.stringify(lesson));
           setLessonId(lesson.LessonId)
+          setLessonTeacher(lesson.Teacher)
           navigate(pathStudentLesson);
           }).catch((e) => alert(e));
           
@@ -55,14 +39,13 @@ import { squaresColor } from "../Utils";
 
       const handleLogout = () => {
         serverLogout().then((message : string) => {
-            alert(message);
             navigate(pathHome);
         }).catch((e) => alert(e))
         
       }
     
       return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={mainTheme}>
           <Box>
             <Navbar />
           </Box>

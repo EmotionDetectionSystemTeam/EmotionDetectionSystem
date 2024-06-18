@@ -1,10 +1,10 @@
 class ClassDisplay {
-    public id: number;
+    public id: string;
     public name: string;
-    public date: string;
+    public date: Date;
     public description: string;
   
-    constructor(id: number, name: string, date: string, description: string) {
+    constructor(id: string, name: string, date: Date, description: string) {
       this.id = id;
       this.name = name;
       this.date = date;

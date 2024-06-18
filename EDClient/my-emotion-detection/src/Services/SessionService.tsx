@@ -14,6 +14,7 @@ const isGuest = "isGuest";
 const sessionId = "sessionId";
 const isAdmin = "isAdmin";
 const LessonId = "LessonId";
+const LessonTeacher = "teacher";
 
 
 export async function initSession() {
@@ -92,6 +93,14 @@ export function getLessonId(): string | null {
 
 export function setLessonId(value: string): void {
   storage.setItem(LessonId, value);
+}
+
+export function getLessonTeacher(): string | null {
+  return storage.getItem(LessonTeacher);
+}
+
+export function setLessonTeacher(value: string): void {
+  storage.setItem(LessonTeacher, value);
 }
 
 export const initializeCookie = (sessionId) => {

@@ -1,13 +1,15 @@
 import Emotion from "./Emotion";
 
 class Student {
-    public id: number;
+  public email: string;
     public name: string;
+    public className: string;
     public emotions: Emotion[];
   
-    constructor(id: number, name: string, emotions: Emotion[]) {
-      this.id = id;
+    constructor(email: string, name: string, classname: string, emotions: Emotion[]) {
+      this.email = email;
       this.name = name;
+      this.className = classname;
       this.emotions = emotions;
     }
   }

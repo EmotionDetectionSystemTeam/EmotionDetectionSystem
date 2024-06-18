@@ -1,6 +1,6 @@
 import { BarElement, CategoryScale, Chart, Legend, LinearScale, Tooltip } from 'chart.js';
 import moment, { Moment } from 'moment';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import Student from '../Objects/Student';
 
@@ -22,6 +22,7 @@ interface Emotion {
 
 interface StudentBarChartProps {
   student: Student;
+  intervalMinutes: number;
 }
 
 const emotionColors = {
@@ -30,8 +31,16 @@ const emotionColors = {
   'Neutral': '#9e9e9e', // Gray
 };
 
-const StudentBarChart: React.FC<StudentBarChartProps> = ({ student }) => {
-  const getStudentBarData = (): ChartData => {
+const StudentBarChart: React.FC<StudentBarChartProps> = ({ student, intervalMinutes  }) => {
+
+  const [chartData1, setChartData] = useState<ChartData | null>(null);
+  useEffect(() => {
+    // Update the chart data when the intervalMinutes or student.emotions changes
+    setChartData(getStudentBarData(intervalMinutes));
+  }, [intervalMinutes, student.emotions]);
+
+
+  const getStudentBarData = (intervalMinutes: number): ChartData => {
     const emotions: Emotion[] = student.emotions;
     const startTime = moment.min(emotions.map(e => moment(e.date))).startOf('minute');
     const endTime = moment.max(emotions.map(e => moment(e.date))).endOf('minute');
@@ -58,7 +67,7 @@ const StudentBarChart: React.FC<StudentBarChartProps> = ({ student }) => {
           const emotionTime = moment(emotion.date);
           if (
             emotionTime.isSameOrAfter(currentTime) &&
-            emotionTime.isBefore(currentTime.clone().add(5, 'minutes')) &&
+            emotionTime.isBefore(currentTime.clone().add(intervalMinutes, 'minutes')) &&
             emotion.emotion === dataset.label
           ) {
             emotionCounts[emotion.emotion] = (emotionCounts[emotion.emotion] || 0) + 1;
@@ -67,12 +76,12 @@ const StudentBarChart: React.FC<StudentBarChartProps> = ({ student }) => {
         dataset.data.push(emotionCounts[dataset.label] || 0);
       });
   
-      currentTime.add(5, 'minutes');
+      currentTime.add(intervalMinutes, 'minutes');
     }
   
     return data;
   };
-  const chartData = getStudentBarData();
+  const chartData = getStudentBarData(intervalMinutes);
 
   return <Bar data={chartData} />;
 };

@@ -3,45 +3,27 @@ import {
   Button,
   Grid,
   ThemeProvider,
-  Typography,
-  createTheme
+  Typography
 } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import { pathClassesDashboard, pathCreateClass, pathHome, pathStudentsHistory } from "../Paths";
 import { serverLogout } from "../Services/ClientService";
-import { squaresColor } from "../Utils";
+import { mainTheme, squaresColor } from "../Utils";
 
-const theme = createTheme({
-  typography: {
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-  },
-});
 
 function TeacherDashboard() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     serverLogout().then((message: string) => {
-      alert(message);
       navigate(pathHome);
     }).catch((e) => alert(e));
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mainTheme}>
       <Box>
         <Navbar />
       </Box>

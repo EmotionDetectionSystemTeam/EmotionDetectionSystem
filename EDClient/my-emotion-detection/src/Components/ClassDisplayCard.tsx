@@ -2,34 +2,34 @@ import { Card, CardContent, Typography } from "@mui/material";
 import React from 'react';
 import ClassDisplay from "../Objects/ClassDisplay";
 
-interface ClassDisplayCardProps extends ClassDisplay {
-  onClick: (id: number) => void;
+interface ClassDisplayCardProps {
+  Class: ClassDisplay;
+  onClick: (c: ClassDisplay) => void;
 }
 
-const ClassDisplayCard: React.FC<ClassDisplayCardProps> = ({ id, name, date, description, onClick }) => {
+const ClassDisplayCard: React.FC<ClassDisplayCardProps> = ({ Class, onClick }) => {
   return (
     <Card
       sx={{
         width: 200,
-        border: `5px solid #000`, // Adjust the color as needed
         borderRadius: 2,
         marginBottom: 10,
         background: "#ede5e5",
         cursor: "pointer" // Indicate that the card is clickable
 
       }}
-      onClick={() => onClick(id)} // Add onClick handler
+      onClick={() => onClick(Class)} // Add onClick handler
     >
       <CardContent>
         <div>
           <Typography variant="body1" gutterBottom>
-            Name: {name}
+            Name: {Class.name}
           </Typography>
           <Typography variant="body1" gutterBottom>
-            Date: {date}
+            Date: {String(Class.date)}
           </Typography>
           <Typography variant="body1" gutterBottom>
-            Description: {description}
+            Description: {Class.description}
           </Typography>
         </div>
       </CardContent>

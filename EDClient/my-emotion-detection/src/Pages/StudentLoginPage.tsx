@@ -5,36 +5,18 @@ import {
   Link,
   TextField,
   ThemeProvider,
-  Typography,
-  createTheme,
+  Typography
 } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { pathHome, pathStudentDashBoard } from "../Paths";
 import { serverLogin } from "../Services/ClientService";
-import { initWebSocket } from "../Services/NotificationService";
-import { squaresColor } from "../Utils";
+import { mainTheme, squaresColor } from "../Utils";
 
 
 
   
   function StudentLogin() {
-    const theme = createTheme({
-      typography: {
-        fontFamily: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          '"Segoe UI"',
-          "Roboto",
-          '"Helvetica Neue"',
-          "Arial",
-          "sans-serif",
-          '"Apple Color Emoji"',
-          '"Segoe UI Emoji"',
-          '"Segoe UI Symbol"',
-        ].join(","),
-      },
-    });
   
     const navigate = useNavigate();
   
@@ -51,15 +33,14 @@ import { squaresColor } from "../Utils";
       const password = data.get("password")?.toString();
 
       const serverResponse = await serverLogin(email, password).then(() => {
-        const address = `ws://127.0.0.1:4560/${email}-notifications`;
-        initWebSocket(address);
+        // const address = `ws://127.0.0.1:4560/${email}-notifications`;
+        //initWebSocket(address);
         navigate(pathStudentDashBoard);
-        alert(`${email} DashBoard is not ready yet!`);
         }).catch((e) => alert(e));
     };
   
     return (
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={mainTheme}>
         <Grid
           container
           component="main"

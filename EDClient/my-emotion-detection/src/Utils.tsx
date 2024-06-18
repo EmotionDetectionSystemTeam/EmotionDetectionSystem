@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material";
 
 export const textColor = "black";
-export const serverPort = "http://localhost:5156";
+export const serverPort = "https://localhost:7069";
 export const squaresColor = "#E8F0FE";
 
 
@@ -44,3 +44,10 @@ export const mainTheme = createTheme({
       ].join(","),
     },
   });
+
+  export const emotionColors = {
+    'Happy': '#4caf50', // Green
+    'Surprised': '#ffeb3b', // Yellow
+    'Neutral': '#9e9e9e', // Gray
+  };
+  

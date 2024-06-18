@@ -3,8 +3,7 @@ import {
   Button,
   TextField,
   ThemeProvider,
-  Typography,
-  createTheme
+  Typography
 } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
@@ -13,24 +12,9 @@ import { Lesson } from "../Objects/Lesson";
 import { pathTeacherDashBoard, pathTeacherLesson } from "../Paths";
 import { serverCreateLesson } from "../Services/ClientService";
 import { getSessionId, setCookie, setLessonId } from "../Services/SessionService";
-import { squaresColor } from "../Utils";
+import { mainTheme, squaresColor } from "../Utils";
 
-const theme = createTheme({
-  typography: {
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-  },
-});
+
 
 function CreateClass() {
   const navigate = useNavigate();
@@ -44,13 +28,12 @@ function CreateClass() {
     serverCreateLesson(title, description, []).then((lesson: Lesson) => { // TODO: tags implementation
       setLessonId(lesson.LessonId);
       setCookie(getSessionId(), 'lesson', lesson);
-      alert(lesson.EntryCode);
       navigate(pathTeacherLesson);
     }).catch((e) => alert(e));
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mainTheme}>
       <Box>
         <Navbar />
       </Box>

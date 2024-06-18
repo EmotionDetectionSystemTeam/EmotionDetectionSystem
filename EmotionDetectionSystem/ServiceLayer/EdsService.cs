@@ -16,6 +16,10 @@ public class EdsService : IEdsService
     {
         _edsManager = new EdsManager();
     }
+    public void Dispose()
+    {
+        _edsManager.StopProcessingTasks();
+    }
 
     public Response Register(string email, string firstName, string lastName, string password, string confirmPassword,
                              int    userType)

@@ -201,7 +201,7 @@ public class EdsService : IEdsService
                 .Select(enrollmentSummary => new ServiceRealTimeUser(
                             enrollmentSummary.Student,
                             enrollmentSummary.GetFirstNotSeenEmotionData().GetWinningEmotion(),
-                            enrollmentSummary.getPreviousEmotionData()
+                            enrollmentSummary.GetPreviousEmotionData()
                         )).ToList();
 
             return Response<List<ServiceRealTimeUser>>.FromValue(realTimeUsers);

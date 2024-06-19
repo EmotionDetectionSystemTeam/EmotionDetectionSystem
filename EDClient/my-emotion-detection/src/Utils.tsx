@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material";
 
 export const textColor = "black";
-export const serverPort = "https://localhost:7069";
+export const serverPort = "https://f85b-2a0d-6fc7-216-66ef-90d5-ca78-3eb4-b440.ngrok-free.app";
 export const squaresColor = "#E8F0FE";
 
 

@@ -1,46 +1,49 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, createTheme } from "@mui/material";
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import Navbar from "../Components/Navbar";
-import { pathStudentDashBoard } from "../Paths";
-import { serverLeaveLesson } from "../Services/ClientService";
 import ExpressionProcessor from "../Services/ModelService";
-import { setLessonId, setLessonTeacher } from "../Services/SessionService";
-import { mainTheme } from "../Utils";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+  },
+});
 
 
 function StudentLesson() {
 
-  const navigate = useNavigate();
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const processor = new ExpressionProcessor();
-
 
   React.useEffect(() => {
+    const processor = new ExpressionProcessor();
     processor.processExpressions();
 
     return () => {
+      processor.stopProcessing();
     };
   }, []);
 
   const handleExitLesson = () => {
     // Logic to handle exiting the lesson
     // You can add your logic here, such as redirecting to another page or displaying a confirmation dialog
-    serverLeaveLesson().then(() => {
-      // processor.stopProcessing();
-      processor.stopProcessing();
-      setLessonId("");
-      setLessonTeacher("");
-      navigate(pathStudentDashBoard);
-      }).catch((e) => alert(e));
-    
+    console.log("Exiting lesson...");
   };
 
-
   return (
-    <ThemeProvider theme={mainTheme}>
+    <ThemeProvider theme={theme}>
       <Box>
         <Navbar />
       </Box>

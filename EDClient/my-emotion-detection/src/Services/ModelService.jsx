@@ -154,26 +154,6 @@ class ExpressionProcessor {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
-
-    // Stop the video stream
-    const video = document.getElementById('video');
-    if (video && video.srcObject) {
-      const stream = video.srcObject;
-      const tracks = stream.getTracks();
-      tracks.forEach(track => track.stop());
-      video.srcObject = null;
-    }
-
-    // Remove the video element from the DOM
-    if (video && video.parentNode) {
-      video.parentNode.removeChild(video);
-    }
-
-    // Clear the canvas
-    // const canvas = document.querySelector('canvas');
-    // if (canvas && canvas.parentNode) {
-    //   canvas.parentNode.removeChild(canvas);
-    // }
   }
 
   

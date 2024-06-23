@@ -9,6 +9,7 @@ public class Emotions
     public const string SURPRISED = "Surprised";
     public const string DISGUSTED = "Disgusted";
     public const string FEARFUL   = "Fearful";
+    public const string NODATA    = "No Data";
     
     public static String CastEmotion(string emotion)
     {
@@ -28,6 +29,8 @@ public class Emotions
                 return DISGUSTED;
             case "fearful":
                 return FEARFUL;
+            case "nodata":
+                return NODATA;
             default:
                 return NEUTRAL;
         }

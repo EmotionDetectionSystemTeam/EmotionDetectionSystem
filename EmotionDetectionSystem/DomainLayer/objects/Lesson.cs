@@ -150,7 +150,6 @@ public class Lesson
     public void Leave(User user)
     {
         user.Leave(this);
-        // TODO: Add notification to teacher that student left
     }
 
     public void Leave(Student student)

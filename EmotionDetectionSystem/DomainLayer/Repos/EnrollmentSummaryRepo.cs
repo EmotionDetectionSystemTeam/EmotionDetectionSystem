@@ -26,7 +26,7 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
         foreach (var enrollmentSummary in _enrollmentSummaries)
         {
             string studentEmail = enrollmentSummary.Student.Email;
-            List<string> studentEmotions = enrollmentSummary.getAllWiningEmotionData();
+            List<string> studentEmotions = enrollmentSummary.GetAllWiningEmotionData();
 
             if (!studentWiningEmotions.ContainsKey(studentEmail))
             {

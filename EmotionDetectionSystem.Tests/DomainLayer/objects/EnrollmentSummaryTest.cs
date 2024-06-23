@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using EmotionDetectionServer;
 using EmotionDetectionSystem.DomainLayer.objects;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -42,9 +43,8 @@ public class EnrollmentSummaryTest
         var secondEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         _enrollmentSummary.AddEmotionData(firstEmotionData);
         _enrollmentSummary.AddEmotionData(secondEmotionData);
-        Assert.AreEqual(firstEmotionData,  _enrollmentSummary.GetFirstNotSeenEmotionData());
-        Assert.AreEqual(secondEmotionData, _enrollmentSummary.GetFirstNotSeenEmotionData());
-        Assert.AreEqual(0,                 _enrollmentSummary.NotSeenEmotionDataQueue.Count);
+        Assert.AreEqual(secondEmotionData,  _enrollmentSummary.GetFirstNotSeenEmotionData());
+        Assert.AreEqual(Emotions.NODATA, _enrollmentSummary.GetFirstNotSeenEmotionData().GetWinningEmotion());
         Assert.AreEqual(2,                 _enrollmentSummary.EmotionData.Count);
     }
 
@@ -54,7 +54,7 @@ public class EnrollmentSummaryTest
         var firstEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         _enrollmentSummary.AddEmotionData(firstEmotionData);
         Assert.AreEqual(firstEmotionData, _enrollmentSummary.GetFirstNotSeenEmotionData());
-        Assert.AreEqual(firstEmotionData, _enrollmentSummary.GetFirstNotSeenEmotionData());
+        Assert.AreEqual(Emotions.NODATA, _enrollmentSummary.GetFirstNotSeenEmotionData().GetWinningEmotion());
         Assert.AreEqual(1,                _enrollmentSummary.EmotionData.Count);
     }
 
@@ -72,11 +72,9 @@ public class EnrollmentSummaryTest
         _enrollmentSummary.AddEmotionData(secondEmotionData);
         _enrollmentSummary.AddEmotionData(thirdEmotionData);
         _enrollmentSummary.AddEmotionData(fourthEmotionData);
-        _enrollmentSummary.GetFirstNotSeenEmotionData();
-        _enrollmentSummary.GetFirstNotSeenEmotionData();
-        _enrollmentSummary.GetFirstNotSeenEmotionData();
-        _enrollmentSummary.GetFirstNotSeenEmotionData();
         var emotionsData = _enrollmentSummary.GetFirstNotSeenEmotionData();
+        var emotionsData1 = _enrollmentSummary.GetFirstNotSeenEmotionData();
         Assert.AreEqual(secondEmotionData, emotionsData);
+        Assert.AreEqual(emotionsData1.GetWinningEmotion(),  Emotions.NODATA);
     }
 }

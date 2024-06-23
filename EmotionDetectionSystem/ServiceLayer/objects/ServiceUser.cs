@@ -38,13 +38,6 @@ public class ServiceUser
         FirstName = user.FirstName;
         LastName  = user.LastName;
         Type      = user.Type;
-        Lessons   = new List<ServiceLesson>();
-
-        if (user is not Teacher teacher) return;
-        foreach (var lesson in teacher.Lessons)
-        {
-            Lessons.Add(new ServiceLesson(lesson));
-        }
     }
     
     public ServiceUser(Student student)

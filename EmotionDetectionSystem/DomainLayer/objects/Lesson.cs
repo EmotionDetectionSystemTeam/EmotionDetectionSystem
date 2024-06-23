@@ -160,4 +160,13 @@ public class Lesson
     {
         _viewers.Remove(viewer);
     }
+    
+    public void Leave(Teacher teacher)
+    {
+        foreach (EnrollmentSummary enrollment in _enrollmentSummaryRepo.GetAll())
+        {
+            var student = enrollment.Student;
+            student.Notify(new TeacherLeftLesson(teacher).GenerateMsg());
+        }
+    }
 }

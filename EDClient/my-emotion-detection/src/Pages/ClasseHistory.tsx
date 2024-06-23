@@ -7,7 +7,8 @@ import Navbar from "../Components/Navbar";
 import Class from "../Objects/Class";
 import ClassDisplay from "../Objects/ClassDisplay";
 import { pathTeacherDashBoard } from "../Paths";
-import { ServerMockGetClass, ServerMockGetClasses } from "../Services/MockService";
+import { serverGetEnrolledLessons } from "../Services/ClientService";
+import { ServerMockGetClass } from "../Services/MockService";
 import { mainTheme, squaresColor } from "../Utils";
 
 
@@ -20,10 +21,10 @@ function ClassesDashboard() {
 
 
   useEffect(() => {
-    // serverGetEnrolledLessons().then((classes : ClassDisplay[]) => {
-    //   setClasses(classes);
-    // }).catch((e) => alert(e));
-    ServerMockGetClasses().then((data: ClassDisplay[]) => setClasses(data));
+    serverGetEnrolledLessons().then((classes : ClassDisplay[]) => {
+      setClasses(classes);
+    }).catch((e) => alert(e));
+    //ServerMockGetClasses().then((data: ClassDisplay[]) => setClasses(data));
   }, []);
 
   const handleCardClick = async (SelectedClassDisplay: ClassDisplay) => {

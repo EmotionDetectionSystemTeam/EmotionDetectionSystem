@@ -14,7 +14,7 @@ import FailureSnackbar from "../Components/FailureSnackbar";
 import SuccessSnackbar from "../Components/SuccessSnackbar";
 import { pathHome, pathStudentLogin, pathTeacherLogin } from "../Paths";
 import { serverRegister } from "../Services/ClientService";
-import { getSessionId, setCookie, setUsername } from "../Services/SessionService";
+import { getSessionId, setCookie } from "../Services/SessionService";
 import { mainTheme, squaresColor } from "../Utils";
 
 
@@ -53,7 +53,6 @@ function Register() {
       //setSuccesstMsg(response);
       isStudent ? navigate(pathStudentLogin) : navigate(pathTeacherLogin);
 
-      setUsername(String(email));
       setCookie(getSessionId(), "email", email);
       })
       .catch((e) => {

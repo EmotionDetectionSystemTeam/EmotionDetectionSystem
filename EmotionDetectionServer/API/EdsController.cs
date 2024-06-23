@@ -380,7 +380,7 @@ namespace EmotionDetectionServer.API
             }
         }
         [HttpPost]
-        [Route("get-students-data")]
+        [Route("get-student-data")]
         public async Task<ObjectResult> GetStudentDataRequest([FromBody] GetStudentDataRequest request)
         {
             Response<List<StudentOverview>> response = await Task.Run(() => service.GetStudentData(request.SessionId, request.Email));

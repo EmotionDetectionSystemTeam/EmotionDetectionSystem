@@ -22,6 +22,8 @@ function TeacherLesson() {
   const [showPopup, setShowPopup] = React.useState(false);
   const [selectedStudent, setSelectedStudent] = React.useState<ClientStudent | null>(null);
   const [studentList, setStudentList] = React.useState<ClientStudent[]>([]);
+  const [activeStudentList, setActiveStudentList] = React.useState<ClientStudent[]>([]);
+
 
 
 
@@ -49,7 +51,10 @@ function TeacherLesson() {
       green: 3,
       gray: 4,
     };
-  
+    
+    
+
+
     const mappedStudents: ClientStudent[] = students.map((student: ServiceRealTimeUser) => {
       const color: string = emotionColorMap[student.winingEmotion];
   
@@ -65,12 +70,20 @@ function TeacherLesson() {
       return clientStudent;
     });
 
-    mappedStudents.sort((a: ClientStudent, b: ClientStudent) => {
-      return emotionSorMap[a.color] - emotionSorMap[b.color];
-    });
+
+    // mappedStudents.sort((a: ClientStudent, b: ClientStudent) => {
+    //   return emotionSorMap[a.color] - emotionSorMap[b.color];
+    // });
   
-    return mappedStudents;
-  };
+     return mappedStudents;
+   };
+
+   const filterInactiveStudents = (students: ClientStudent[]): ClientStudent[] =>{
+    const filtered = students.filter((student: ClientStudent) => 
+      student.emotion !== "No Data");
+    return filtered;
+    
+  }
 
   const handleStudentClick = (student) => {
     setSelectedStudent(student);
@@ -84,13 +97,14 @@ function TeacherLesson() {
       setDate(lesson.Date.toString());
       setTeacherName(lesson.Teacher);
       setStudentList(MapEmotionsToStudents(lesson.StudentsEmotions));
+      setActiveStudentList(filterInactiveStudents(studentList));
       
     })
     // Fetch or initialize class code
 
     const intervalId = setInterval(() => {
       HandleGetEmotions();
-    }, 12000); // Run HandleGetEmotions every 30 seconds
+    }, 5000); // Run HandleGetEmotions every 30 seconds
 
     // Clean up interval to avoid memory leaks
     return () => clearInterval(intervalId);
@@ -100,40 +114,13 @@ function TeacherLesson() {
     serverGetLastEmotionsData(getLessonId()).then((students : ServiceRealTimeUser[]) => {
       const clientStudents : ClientStudent[]=  MapEmotionsToStudents(students);
       setStudentList(clientStudents)
+      setActiveStudentList(filterInactiveStudents(clientStudents));
     });
     
     console.log("Getting emotions...");
   };
 
-  const handleWebSocketMessage = (data) => {
-    const email = data;
-    const emotion = 'surprised';
 
-    setStudentList((prevStudentList) =>
-      prevStudentList.map((student) => {
-        if (student.email === email) {
-          const emotionColorMap = {
-            Natural: 'gray',
-            Happy: 'green',
-            Surprised: 'yellow',
-            Angry: 'red',
-            Sad: 'red',
-            Disgusted: 'red',
-            Fearful: 'red',
-          };
-          return {
-            ...student,
-            emotion: emotion,
-            color: emotionColorMap[emotion] || 'gray',
-          };
-        }
-        return student;
-      })
-    );
-  };
-  // const address = `ws://127.0.0.1:4560/${getUserName()}-notifications`;
-  // initWebSocket(address, handleWebSocketMessage); // Initialize WebSocket with the message handler
-  
 
   const handleEndLesson = () => {
     // Logic to handle ending the lesson
@@ -179,7 +166,7 @@ function TeacherLesson() {
                 mt: 3,
               }}
             >
-              {studentList.map((student, index) => (
+              {activeStudentList.map((student, index) => (
                 <Card
                   key={index}
                   sx={{

@@ -112,6 +112,54 @@ public class ConfigurationFileHandler
                         throw new Exception("Failed to parse the JoinLesson " + res.ErrorMessage);
                     break;
                 }
+            case "PushEmotionData":
+                {
+                    var res = service.PushEmotionData(
+                        usecaseJson["sessionid"].ToString(),
+                        usecaseJson["email"].ToString(),
+                        entryCode,
+                        new EmotionDetectionSystem.ServiceLayer.objects.ServiceEmotionData(Convert.ToDouble(usecaseJson["neutral"].ToString()),
+                        Convert.ToDouble(usecaseJson["happy"].ToString()),
+                        Convert.ToDouble(usecaseJson["sad"].ToString()),
+                        Convert.ToDouble(usecaseJson["angry"].ToString()),
+                        Convert.ToDouble(usecaseJson["suprised"].ToString()),
+                        Convert.ToDouble(usecaseJson["disgusted"].ToString()),
+                        Convert.ToDouble(usecaseJson["fear"].ToString())));
+                    if (res.ErrorOccured)
+                        throw new Exception("Failed to parse the JoinLesson " + res.ErrorMessage);
+                    break;
+                }
+            case "PushEmotionData2":
+                {
+                    Random rand = new Random();
+                    for (int i = 0; i < Convert.ToInt32(usecaseJson["times"].ToString()); i++)
+                    {
+                        var res = service.PushEmotionData(
+                            usecaseJson["sessionid"].ToString(),
+                            usecaseJson["email"].ToString(),
+                            entryCode,
+                            new EmotionDetectionSystem.ServiceLayer.objects.ServiceEmotionData(rand.NextDouble(),
+                                rand.NextDouble(),
+                                rand.NextDouble(),
+                                rand.NextDouble(),
+                                rand.NextDouble(),
+                                rand.NextDouble(),
+                                rand.NextDouble()));
+                        if (res.ErrorOccured)
+                            throw new Exception("Failed to parse the JoinLesson " + res.ErrorMessage);
+                    }
+                    break;
+                }
+            case "EndLesson":
+                {
+                    var res = service.EndLesson(
+                        usecaseJson["sessionid"].ToString(),
+                        usecaseJson["email"].ToString());
+
+                    if (res.ErrorOccured)
+                        throw new Exception("Failed to parse the createlesson: " + res.ErrorMessage);
+                    break;
+                }
             default:
                 throw new Exception("Unsupported tag in the InitFile ");
         }

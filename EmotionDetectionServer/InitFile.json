@@ -232,6 +232,90 @@
       "sessionid": "11",
       "email": "student10@example.com",
       "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "PushEmotionData2",
+      "sessionid": "3",
+      "email": "student2@example.com",
+      "entryCode": "MathLessonCode",
+      "times": "10"
+    },
+    {
+      "Tag": "PushEmotionData2",
+      "sessionid": "4",
+      "email": "student3@example.com",
+      "entryCode": "MathLessonCode",
+      "times": "10"
+    },
+    {
+      "Tag": "PushEmotionData2",
+      "sessionid": "5",
+      "email": "student4@example.com",
+      "entryCode": "MathLessonCode",
+      "times": "10"
+    },
+    {
+      "Tag": "EndLesson",
+      "sessionid": "1",
+      "email": "teacher@example.com"
+    },
+    {
+      "Tag": "CreateLesson",
+      "sessionid": "1",
+      "email": "teacher@example.com",
+      "title": "History Lesson",
+      "description": "Introduction to Algebra",
+      "tags": [ "Math", "Algebra" ]
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "2",
+      "email": "student1@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "3",
+      "email": "student2@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "JoinLesson",
+      "sessionid": "4",
+      "email": "student3@example.com",
+      "entryCode": "MathLessonCode"
+    },
+    {
+      "Tag": "PushEmotionData2",
+      "sessionid": "2",
+      "email": "student1@example.com",
+      "entryCode": "MathLessonCode",
+      "times": "10"
+    },
+    {
+      "Tag": "PushEmotionData2",
+      "sessionid": "3",
+      "email": "student2@example.com",
+      "entryCode": "MathLessonCode",
+      "times": "10"
+    },
+    {
+      "Tag": "PushEmotionData2",
+      "sessionid": "4",
+      "email": "student3@example.com",
+      "entryCode": "MathLessonCode",
+      "times": "10"
+    },
+    {
+      "Tag": "EndLesson",
+      "sessionid": "1",
+      "email": "teacher@example.com"
+    },
+    {
+      "Tag": "Logout",
+      "sessionid": "1",
+      "email": "teacher@example.com"
     }
+
   ]
 }

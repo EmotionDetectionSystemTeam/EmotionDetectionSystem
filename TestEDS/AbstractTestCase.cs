@@ -14,7 +14,7 @@ namespace TestEDS
     public abstract class AbstractTestCase
     {
         protected EDS eds;
-        private string serverUri = "https://localhost:7069/";
+        private string serverUri = "https://fab7-2a0d-6fc2-5ce0-d00-8978-f9cc-e4b7-4a88.ngrok-free.app";
         CancellationTokenSource cancellationTokenSource;
         [SetUp]
         public void TestStarted()

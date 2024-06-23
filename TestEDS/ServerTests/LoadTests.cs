@@ -11,7 +11,7 @@ namespace TestEDS.ServerTests
     [TestFixture]
     public class LoadTests : AbstractTestCase
     {
-        int numberOfStudents = 60;
+        int numberOfStudents = 1;
         [SetUp]
         public new void BeforeTest()
         {

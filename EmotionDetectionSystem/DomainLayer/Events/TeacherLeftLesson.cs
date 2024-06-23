@@ -1,17 +1,17 @@
+using EmotionDetectionSystem.DomainLayer.objects;
+
 namespace EmotionDetectionSystem.DomainLayer.Events;
 
 public class TeacherLeftLesson: Event
 {
-    private string _firstName;
-    private string _lastName;
-    public TeacherLeftLesson(string firstName, string lastName) : base("Teacher Left Lesson Event")
+    private Teacher _teacher;
+    public TeacherLeftLesson(Teacher teacher) : base("Teacher Left Lesson Event")
     {
-        _firstName = firstName;
-        _lastName = lastName;
+        _teacher = teacher;
     }
 
     public override string GenerateMsg()
     {
-        return $"Teacher {Name} left the lesson.";
+        return $"Teacher {_teacher.FirstName} {_teacher.LastName} left the lesson.";
     }
 }

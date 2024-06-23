@@ -4,78 +4,45 @@ namespace EmotionDetectionSystem.DomainLayer.objects;
 
 public class EmotionData
 {
-    private DateTime _time;
-    private double   _neutral;
-    private double   _happy;
-    private double   _sad;
-    private double   _angry;
-    private double   _surprised;
-    private double   _disgusted;
-    private double   _fearful;
     private bool     _seen;
 
     public EmotionData(DateTime time,      double neutral, double happy, double sad, double angry, double surprised,
                        double   disgusted, double fearful)
     {
-        _time      = time;
-        _neutral   = neutral;
-        _happy     = happy;
-        _sad       = sad;
-        _angry     = angry;
-        _surprised = surprised;
-        _disgusted = disgusted;
-        _fearful   = fearful;
+        Time      = time;
+        Neutral   = neutral;
+        Happy     = happy;
+        Sad       = sad;
+        Angry     = angry;
+        Surprised = surprised;
+        Disgusted = disgusted;
+        Fearful   = fearful;
         _seen      = false;
     }
 
-    public DateTime Time
+    public EmotionData()
     {
-        get => _time;
-        set => _time = value;
+        Nodata = 1;
     }
 
-    public double Neutral
-    {
-        get => _neutral;
-        set => _neutral = value;
-    }
+    public DateTime Time { get; set; }
 
-    public double Happy
-    {
-        get => _happy;
-        set => _happy = value;
-    }
+    public double Neutral { get; set; }
 
-    public double Sad
-    {
-        get => _sad;
-        set => _sad = value;
-    }
+    public double Happy { get; set; }
 
-    public double Angry
-    {
-        get => _angry;
-        set => _angry = value;
-    }
+    public double Sad { get; set; }
 
-    public double Surprised
-    {
-        get => _surprised;
-        set => _surprised = value;
-    }
+    public double Angry { get; set; }
 
-    public double Disgusted
-    {
-        get => _disgusted;
-        set => _disgusted = value;
-    }
+    public double Surprised { get; set; }
 
-    public double Fearful
-    {
-        get => _fearful;
-        set => _fearful = value;
-    }
-    
+    public double Disgusted { get; set; }
+
+    public double Fearful { get; set; }
+
+    private double Nodata { get; set; }
+
     public bool Seen
     {
         get => _seen;
@@ -92,7 +59,8 @@ public class EmotionData
             { Emotions.ANGRY, 1 },
             { Emotions.SURPRISED, 1 },
             { Emotions.DISGUSTED, 1 },
-            { Emotions.FEARFUL, 1 }
+            { Emotions.FEARFUL, 1 },
+            { Emotions.NODATA, 1}
         };
 
         var emotions = new Dictionary<string, double>
@@ -103,10 +71,12 @@ public class EmotionData
             { Emotions.ANGRY, Angry         * weights[Emotions.ANGRY] },
             { Emotions.SURPRISED, Surprised * weights[Emotions.SURPRISED] },
             { Emotions.DISGUSTED, Disgusted * weights[Emotions.DISGUSTED] },
-            { Emotions.FEARFUL, Fearful     * weights[Emotions.FEARFUL] }
+            { Emotions.FEARFUL, Fearful     * weights[Emotions.FEARFUL] },
+            { Emotions.NODATA, Nodata       * weights[Emotions.NODATA]}
         };
 
         var max = emotions.MaxBy(kvp => kvp.Value).Key;
         return max;
     }
+    
 }

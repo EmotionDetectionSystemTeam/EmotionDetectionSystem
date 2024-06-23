@@ -150,7 +150,6 @@ public class Lesson
     public void Leave(User user)
     {
         user.Leave(this);
-        // TODO: Add notification to teacher that student left
     }
 
     public void Leave(Student student)
@@ -160,5 +159,14 @@ public class Lesson
     public void Leave(Viewer viewer)
     {
         _viewers.Remove(viewer);
+    }
+    
+    public void Leave(Teacher teacher)
+    {
+        foreach (EnrollmentSummary enrollment in _enrollmentSummaryRepo.GetAll())
+        {
+            var student = enrollment.Student;
+            student.Notify(new TeacherLeftLesson(teacher).GenerateMsg());
+        }
     }
 }

@@ -1,109 +1,64 @@
+using EmotionDetectionServer;
 using EmotionDetectionSystem.DomainLayer.objects;
 
 public class EnrollmentSummary
 {
-    private Student                      _student;
-    private Lesson                       _lesson;
-    private List<EmotionData>            _emotionData;
-    private object                       _lock = new object();
-    private Queue<EmotionData> _notSeenEmotionDataQueue;
+    private object _lock = new object();
 
     public EnrollmentSummary(Student student, Lesson lesson, List<EmotionData> emotionData)
     {
-        _student     = student;
-        _lesson      = lesson;
-        _emotionData = emotionData;
-        _notSeenEmotionDataQueue = new Queue<EmotionData>();
+        Student                 = student;
+        Lesson                  = lesson;
+        EmotionData             = emotionData;
     }
 
     public EnrollmentSummary(Student student, Lesson lesson)
     {
-        _student                 = student;
-        _lesson                  = lesson;
-        _emotionData             = new List<EmotionData>();
-        _notSeenEmotionDataQueue = new Queue<EmotionData>();
+        Student                 = student;
+        Lesson                  = lesson;
+        EmotionData             = new List<EmotionData>();
     }
-    
+
     public void AddEmotionData(EmotionData emotionData)
     {
         lock (_lock)
         {
-            _notSeenEmotionDataQueue.Enqueue(emotionData);
+            EmotionData.Add(emotionData);
         }
     }
 
     public List<EmotionData> GetAllEmotionData()
     {
-        lock (_lock)
+        foreach (var emotionData in EmotionData)
         {
-            while (_notSeenEmotionDataQueue.TryDequeue(out var emotionData))
-            {
-                _emotionData.Add(emotionData);
-            }
+            emotionData.Seen = true;
         }
 
-        return _emotionData;
+        return EmotionData;
     }
-    public List<string> getAllWiningEmotionData()
+
+    public List<string> GetAllWiningEmotionData()
     {
-        List<string> WinningEmotions = new List<String>();
-        foreach(EmotionData emotionData in _emotionData)
-        {
-            WinningEmotions.Add(emotionData.GetWinningEmotion());
-        }
-        return WinningEmotions;
-
+        return EmotionData.Select(emotionData => emotionData.GetWinningEmotion()).ToList();
     }
 
-    public Student Student
-    {
-        get { return _student; }
-        set { _student = value; }
-    }
+    public Student Student { get; set; }
 
-    public Lesson Lesson
-    {
-        get { return _lesson; }
-        set { _lesson = value; }
-    }
-
-    public Queue<EmotionData> NotSeenEmotionDataQueue
-    {
-        get => _notSeenEmotionDataQueue;
-        set { _notSeenEmotionDataQueue = value; }
-    }
-
-    public List<EmotionData> EmotionData
-    {
-        get
-        {
-            lock (_lock)
-            {
-                while (_notSeenEmotionDataQueue.TryDequeue(out var emotionData))
-                {
-                    _emotionData.Add(emotionData);
-                }
-            }
-
-            return _emotionData;
-        }
-        set { _emotionData = value; }
-    }
+    public Lesson Lesson { get; set; }
+    
+    public List<EmotionData> EmotionData { get; set; }
 
     public EmotionData GetFirstNotSeenEmotionData()
     {
         lock (_lock)
         {
-            EmotionData emotionData;
-            if (_notSeenEmotionDataQueue.Count > 0)
+            var emotionData = EmotionData.FindLast(ed => ed.Time == EmotionData.Max(ed => ed.Time));
+            if (emotionData == null || emotionData.Seen)
             {
-                emotionData = _notSeenEmotionDataQueue.Dequeue();
-                _emotionData.Add(emotionData);
+                return new EmotionData();
             }
-            else
-            {
-                emotionData = _emotionData.FindLast(ed => ed.Time == _emotionData.Max(ed => ed.Time));
-            }
+
+            emotionData.Seen = true;
             return emotionData!;
         }
     }
@@ -112,30 +67,27 @@ public class EnrollmentSummary
     {
         lock (_lock)
         {
-            EmotionData emotionData;
-            if (_notSeenEmotionDataQueue.Count > 0)
+            var emotionData = EmotionData.FindLast(ed => ed.Time == EmotionData.Max(ed => ed.Time));
+            if (emotionData == null || emotionData.Seen)
             {
-                emotionData = _notSeenEmotionDataQueue.Peek();
+                return new EmotionData();
             }
-            else
-            {
-                emotionData = _emotionData.FindLast(ed => ed.Time == _emotionData.Max(ed => ed.Time));
-            }
-            return emotionData!;
+            return emotionData;
         }
     }
 
     public List<string> GetPreviousEmotionData()
     {
         var winningEmotions = new List<string>();
-        foreach(var emotionData in _emotionData)
+        foreach (var emotionData in EmotionData)
         {
             var winningEmotion = emotionData.GetWinningEmotion();
-            if (winningEmotion != null)
+            if (winningEmotion != null && winningEmotion != Emotions.NODATA)
             {
                 winningEmotions.Add(winningEmotion);
             }
         }
+
         return winningEmotions;
     }
 }

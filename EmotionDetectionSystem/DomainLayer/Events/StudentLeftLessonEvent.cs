@@ -1,13 +1,17 @@
+using EmotionDetectionSystem.DomainLayer.objects;
+
 namespace EmotionDetectionSystem.DomainLayer.Events;
 
 public class StudentLeftLessonEvent: Event
 {
-    public StudentLeftLessonEvent(string name) : base(name)
+    private Student student;
+    public StudentLeftLessonEvent(Student student) : base("Student Left Lesson Event")
     {
+        this.student = student;
     }
 
     public override string GenerateMsg()
     {
-        throw new NotImplementedException();
+        return $"Student {student.FirstName} {student.LastName} left the lesson.";
     }
 }

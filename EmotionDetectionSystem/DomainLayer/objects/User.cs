@@ -1,7 +1,11 @@
+using EmotionDetectionSystem.DomainLayer.Managers;
+
 namespace EmotionDetectionSystem.DomainLayer.objects;
 
 public abstract class User
 {
+    protected NotificationManager _notificationManager = NotificationManager.GetInstance();
+
     protected User(string email, string firstName, string lastName, string password)
     {
         _email = email;
@@ -47,5 +51,11 @@ public abstract class User
     {
         return _firstName + " " + _lastName;
     }
+
+    public abstract void Leave(Lesson lesson);
     
+    public void Notify(string msg)
+    {
+        _notificationManager.SendNotification(msg, Email);
+    }
 }

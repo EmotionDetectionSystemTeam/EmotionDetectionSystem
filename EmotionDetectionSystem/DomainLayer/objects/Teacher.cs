@@ -6,7 +6,6 @@ public class Teacher: User, Viewer
 {
     private List<Lesson>        _lessons;
     public  List<Lesson>        Lessons { get => _lessons; set => _lessons = value; }
-    private NotificationManager _notificationManager = NotificationManager.GetInstance();
     
     public Teacher(string email, string firstName, string lastName, string password, List<Lesson> lessons)
         : base(email, firstName, lastName, password)
@@ -27,14 +26,13 @@ public class Teacher: User, Viewer
         lesson.AddViewer(this);
     }
 
+    public override void Leave(Lesson lesson)
+    {
+        lesson.Leave(this as Viewer);
+    }
+
     public void AddLesson(Lesson newLesson)
     {
         _lessons.Add(newLesson);
-    }
-    public NotificationManager NotificationManager { get => _notificationManager; set => _notificationManager = value; }
-    
-    public void Notify(string msg)
-    {
-        NotificationManager.SendNotification(msg, Email);
     }
 }

@@ -1,13 +1,17 @@
+using EmotionDetectionSystem.DomainLayer.objects;
+
 namespace EmotionDetectionSystem.DomainLayer.Events;
 
 public class StudentJoinLessonEvent: Event
 {
-    public StudentJoinLessonEvent(string name) : base(name)
+    private readonly Student _student;
+    public StudentJoinLessonEvent(Student student) : base("Student Join Lesson Event")
     {
+        _student = student;
     }
 
     public override string GenerateMsg()
     {
-        throw new NotImplementedException();
+        return $"Student {_student.FirstName} {_student.LastName} joined the lesson.";
     }
 }

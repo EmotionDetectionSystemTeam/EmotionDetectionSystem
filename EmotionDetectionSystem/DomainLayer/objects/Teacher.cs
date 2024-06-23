@@ -27,6 +27,11 @@ public class Teacher: User, Viewer
         lesson.AddViewer(this);
     }
 
+    public override void Leave(Lesson lesson)
+    {
+        lesson.Leave(this as Viewer);
+    }
+
     public void AddLesson(Lesson newLesson)
     {
         _lessons.Add(newLesson);

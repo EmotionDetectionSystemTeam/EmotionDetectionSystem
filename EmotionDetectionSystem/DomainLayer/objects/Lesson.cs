@@ -96,9 +96,12 @@ public class Lesson
 
     public void AddStudent(Student student)
     {
+        if (ContainStudent(student))
+        {
+            return;
+        }
         var enrollmentSummary = new EnrollmentSummary(student, this);
         _enrollmentSummaryRepo.Add(enrollmentSummary);
-        // TODO: Add notification to teacher that student joined
     }
 
     public bool IsAllowedToViewStudentsData(Viewer viewer)
@@ -144,10 +147,16 @@ public class Lesson
 
     public void Leave(User user)
     {
-        if (user is Viewer viewer)
-        {
-            _viewers.Remove(viewer);
-        }
+        user.Leave(this);
         // TODO: Add notification to teacher that student left
+    }
+
+    public void Leave(Student student)
+    {
+        _enrollmentSummaryRepo.Delete(student.Email);
+    }
+    public void Leave(Viewer viewer)
+    {
+        _viewers.Remove(viewer);
     }
 }

@@ -47,5 +47,6 @@ public abstract class User
     {
         return _firstName + " " + _lastName;
     }
-    
+
+    public abstract void Leave(Lesson lesson);
 }

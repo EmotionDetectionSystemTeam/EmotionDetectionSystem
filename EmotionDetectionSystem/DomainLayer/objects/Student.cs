@@ -12,4 +12,9 @@ public class Student : User
     {
         lesson.AddStudent(this);
     }
+
+    public override void Leave(Lesson lesson)
+    {
+        lesson.Leave(this);
+    }
 }

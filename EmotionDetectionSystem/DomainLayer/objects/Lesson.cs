@@ -1,3 +1,4 @@
+using EmotionDetectionSystem.DomainLayer.Events;
 using EmotionDetectionSystem.DomainLayer.Repos;
 
 namespace EmotionDetectionSystem.DomainLayer.objects;
@@ -96,9 +97,13 @@ public class Lesson
 
     public void AddStudent(Student student)
     {
+        if (ContainStudent(student))
+        {
+            return;
+        }
         var enrollmentSummary = new EnrollmentSummary(student, this);
         _enrollmentSummaryRepo.Add(enrollmentSummary);
-        // TODO: Add notification to teacher that student joined
+        _teacher.Notify(new StudentJoinLessonEvent(student).GenerateMsg());
     }
 
     public bool IsAllowedToViewStudentsData(Viewer viewer)
@@ -144,10 +149,16 @@ public class Lesson
 
     public void Leave(User user)
     {
-        if (user is Viewer viewer)
-        {
-            _viewers.Remove(viewer);
-        }
+        user.Leave(this);
         // TODO: Add notification to teacher that student left
+    }
+
+    public void Leave(Student student)
+    {
+        _teacher.Notify(new StudentLeftLessonEvent(student).GenerateMsg());
+    }
+    public void Leave(Viewer viewer)
+    {
+        _viewers.Remove(viewer);
     }
 }

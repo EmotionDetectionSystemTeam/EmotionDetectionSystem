@@ -358,7 +358,7 @@ namespace EmotionDetectionServer.API
             }
         }
         [HttpPost]
-        [Route("get-students-data")]
+        [Route("get-students-data-by-lesson")]
         public async Task<ObjectResult> GetStudentDataByLessonRequest([FromBody] GetStudentDataByLessonRequest request)
         {
             Response<List<StudentInClassOverview>> response = await Task.Run(() => service.GetStudentDataByLesson(request.SessionId, request.Email, request.LessonId));
@@ -380,8 +380,8 @@ namespace EmotionDetectionServer.API
             }
         }
         [HttpPost]
-        [Route("get-student-data")]
-        public async Task<ObjectResult> GetStudentDataRequest([FromBody] GetStudentDataRequest request)
+        [Route("get-all-student-data")]
+        public async Task<ObjectResult> GetAllStudentDataRequest([FromBody] GetAllStudentDataRequest request)
         {
             Response<List<StudentOverview>> response = await Task.Run(() => service.GetAllStudentsData(request.SessionId, request.Email));
             if (response.ErrorOccured)
@@ -401,6 +401,33 @@ namespace EmotionDetectionServer.API
                 return Ok(GetStudentDataRespnse);
             }
         }
+
+
+
+        [HttpPost]
+        [Route("get-student-data")]
+        public async Task<ObjectResult> GetStudentDataRequest([FromBody] GetStudentDataRequest request)
+        {
+            Response<StudentOverview> response = await Task.Run(() => service.GetStudentData(request.SessionId, request.TeacherEmail, request.StudentEmail));
+            if (response.ErrorOccured)
+            {
+                var GetStudentDataRespnse = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(GetStudentDataRespnse);
+            }
+            else
+            {
+                var GetStudentDataRespnse = new ServerResponse<StudentOverview>
+                {
+                    value = response.Value,
+                };
+                return Ok(GetStudentDataRespnse);
+            }
+        }
+
+
         [HttpPost]
         [Route("leave-lesson")]
         public async Task<ObjectResult> LeaveLessonRequest([FromBody] LeaveLessonRequest request)

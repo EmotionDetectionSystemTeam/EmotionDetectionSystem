@@ -192,15 +192,31 @@ namespace EmotionDetectionServer.API
         }
     }
 
-    public class GetStudentDataRequest : IRequest
+    public class GetAllStudentDataRequest : IRequest
     {
         public string SessionId { get; set; }
         public string Email { get; set; }
 
-        public GetStudentDataRequest(string sessionId, string email)
+        public GetAllStudentDataRequest(string sessionId, string email)
         {
             SessionId = sessionId;
             Email = email;
+        }
+    }
+
+    public class GetStudentDataRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string TeacherEmail { get; set; }
+        public string StudentEmail { get; set; }
+
+
+        public GetStudentDataRequest(string sessionId, string teacherEmail, string studentEmail)
+        {
+            SessionId = sessionId;
+            StudentEmail = studentEmail;
+            TeacherEmail = teacherEmail;
+
         }
     }
 

@@ -6,9 +6,9 @@ import ClassPopup from "../Components/ClassPopup";
 import Navbar from "../Components/Navbar";
 import Class from "../Objects/Class";
 import ClassDisplay from "../Objects/ClassDisplay";
+import Student from "../Objects/Student";
 import { pathTeacherDashBoard } from "../Paths";
-import { serverGetEnrolledLessons } from "../Services/ClientService";
-import { ServerMockGetClass } from "../Services/MockService";
+import { serverGetEnrolledLessons, serverGetStudentDataByLesson } from "../Services/ClientService";
 import { mainTheme, squaresColor } from "../Utils";
 
 
@@ -28,20 +28,20 @@ function ClassesDashboard() {
   }, []);
 
   const handleCardClick = async (SelectedClassDisplay: ClassDisplay) => {
-    // serverGetStudentDataByLesson(SelectedClassDisplay.id).then((students : Student[]) => {
-    //   setSelectedClass(new Class(
-    //     SelectedClassDisplay.id,
-    //     SelectedClassDisplay.name,
-    //     SelectedClassDisplay.description,
-    //     SelectedClassDisplay.date,
-    //     students
-    //   ))
-    // }).catch((e) => alert(e));
+    serverGetStudentDataByLesson(SelectedClassDisplay.id).then((students : Student[]) => {
+      setSelectedClass(new Class(
+        SelectedClassDisplay.id,
+        SelectedClassDisplay.name,
+        SelectedClassDisplay.description,
+        SelectedClassDisplay.date,
+        students
+      ))
+    }).catch((e) => alert(e));
 
     
   
-    const classData = await ServerMockGetClass(SelectedClassDisplay.id);
-    setSelectedClass(classData);
+    // const classData = await ServerMockGetClass(SelectedClassDisplay.id);
+    // setSelectedClass(classData);
     setPopupOpen(true);
   };
 

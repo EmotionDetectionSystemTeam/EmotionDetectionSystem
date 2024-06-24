@@ -500,8 +500,8 @@ export async function serverGetEnrolledLessons(
 
     const myClasses: ClassDisplay[] = response.value.map((lesson: any) => {
       return new ClassDisplay(
-        lesson.id,
-        lesson.name,
+        lesson.lessonId,
+        lesson.lessonName,
         lesson.description,
         lesson.date,
 

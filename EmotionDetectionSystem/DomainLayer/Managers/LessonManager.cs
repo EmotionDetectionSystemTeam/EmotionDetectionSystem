@@ -10,9 +10,9 @@ namespace EmotionDetectionSystem.DomainLayer.Managers;
 
 public class LessonManager
 {
-    private LessonRepo _lessonRepo;
-    private long _lessonIdFactory = 1;
-    private static readonly ILog Log = LogManager.GetLogger(typeof(LessonManager));
+    private                 LessonRepo _lessonRepo;
+    private                 long       _lessonIdFactory = 1;
+    private static readonly ILog       Log              = LogManager.GetLogger(typeof(LessonManager));
 
     public LessonManager()
     {
@@ -26,7 +26,7 @@ public class LessonManager
             throw new Exception("Teacher already has an active lesson");
         }
 
-        var newLesson = new Lesson(_lessonIdFactory++.ToString(),teacher, title, description, GenerateEntryCode(),
+        var newLesson = new Lesson(_lessonIdFactory++.ToString(), teacher, title, description, GenerateEntryCode(),
                                    tags.ToList());
         _lessonRepo.Add(newLesson);
         teacher.AddLesson(newLesson);
@@ -60,6 +60,7 @@ public class LessonManager
         {
             throw new Exception("Invalid entry code");
         }
+
         user.JoinLesson(lesson);
         return lesson;
     }
@@ -101,11 +102,26 @@ public class LessonManager
     {
         return _lessonRepo.GetById(lessonId);
     }
-    
+
     public void AddViewer(string lessonId, Viewer viewer)
     {
         var lesson = _lessonRepo.GetById(lessonId);
         lesson.AddViewer(viewer);
         _lessonRepo.Update(lesson);
+    }
+
+    public List<EnrollmentSummary> GetLessonByStudentEmail(Teacher teacher, string studentEmail)
+    {
+        var studentLessons = new List<EnrollmentSummary>();
+        foreach (var lesson in teacher.Lessons)
+        {
+            var enrollmentSummary = lesson.GetEnrollmentSummaries().Find(x => x.Student.Email.Equals(studentEmail));
+            if (enrollmentSummary != null)
+            {
+                studentLessons.Add(enrollmentSummary);
+            }
+        }
+
+        return studentLessons;
     }
 }

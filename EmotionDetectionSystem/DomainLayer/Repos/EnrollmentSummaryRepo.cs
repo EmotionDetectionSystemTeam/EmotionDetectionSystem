@@ -16,9 +16,9 @@ public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
     {
         return _enrollmentSummaries;
     }
-    public EnrollmentSummary GetById(string id)
+    public EnrollmentSummary GetById(string email)
     {
-        throw new NotImplementedException();
+        return _enrollmentSummaries.Find(x => x.Student.Email.Equals(email));
     }
     public Dictionary<string, List<string>> GetStudentWiningEmotions()
     {

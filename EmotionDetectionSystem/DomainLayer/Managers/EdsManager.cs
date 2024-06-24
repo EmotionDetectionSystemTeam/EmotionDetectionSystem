@@ -215,7 +215,7 @@ public class EdsManager
         return lesson.GetEnrollmentSummariesWithData().ToList();
     }
 
-    public Dictionary<Student, List<EnrollmentSummary>> GetStudentData(string sessionId, string teacherEmail)
+    public Dictionary<Student, List<EnrollmentSummary>> GetAllStudentsData(string sessionId, string teacherEmail)
     {
         IsValidSession(sessionId, teacherEmail);
         var teacher     = _userManager.GetTeacher(teacherEmail);
@@ -253,5 +253,13 @@ public class EdsManager
 
         var lesson = _lessonManager.GetLesson(lessonId);
         lesson.Leave(user);
+    }
+
+    public (Student,List<EnrollmentSummary>) GetStudentData(string sessionId, string teacherEmail, string studentEmail)
+    {
+        IsValidSession(sessionId, teacherEmail);
+        var teacher     = _userManager.GetTeacher(teacherEmail);
+        var enrollments = _lessonManager.GetLessonByStudentEmail(teacher, studentEmail);
+        return (_userManager.GetStudent(studentEmail), enrollments);
     }
 }

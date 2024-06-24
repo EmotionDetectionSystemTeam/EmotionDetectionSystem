@@ -383,7 +383,7 @@ namespace EmotionDetectionServer.API
         [Route("get-students-data")]
         public async Task<ObjectResult> GetStudentDataRequest([FromBody] GetStudentDataRequest request)
         {
-            Response<List<StudentOverview>> response = await Task.Run(() => service.GetStudentData(request.SessionId, request.Email));
+            Response<List<StudentOverview>> response = await Task.Run(() => service.GetAllStudentsData(request.SessionId, request.Email));
             if (response.ErrorOccured)
             {
                 var GetStudentDataRespnse = new ServerResponse<string>

@@ -42,7 +42,7 @@ function Register() {
     const confirmPassword = data.get("confirmPassword")?.toString();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      alert("•At least 8 characters\n•Include 1 uppercase letter (A-Z)\n•Include 1 lowercase letter (a-z)\n•Include 1 special character (e.g.,!@#$%^&*)");
       return; // Exit the function if passwords don't match
   }
   
@@ -58,7 +58,7 @@ function Register() {
       .catch((e) => {
         setOpenFailSnack(true);
         setFailuretMsg(String(e));
-        alert(e);
+        alert("•At least 8 characters\n•Include 1 uppercase letter (A-Z)\n•Include 1 lowercase letter (a-z)\n•Include 1 special character (e.g.,!@#$%^&*)");
       })
 
   };

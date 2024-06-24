@@ -52,7 +52,6 @@ function StudentLesson() {
     }
 
     serverLeaveLesson().then((response: string) => {
-      alert(response);
       navigate(pathStudentDashBoard);
     }).catch((e) => alert(e));
   };

@@ -8,7 +8,7 @@ import StudentEmotionChart from "../Components/StudentEmotionChart";
 import StudentDisplay from "../Objects/StudentDisplay";
 import StudentOverview from "../Objects/StudentOverview";
 import { pathTeacherDashBoard } from "../Paths";
-import { serverGetStudentData } from "../Services/ClientService";
+import { serverGetAllStudentData, serverGetStudentData } from "../Services/ClientService";
 import { ServerMockStudentOverview } from "../Services/MockService";
 import { mainTheme, squaresColor } from "../Utils";
 
@@ -25,13 +25,8 @@ function StudentsHistory() {
   const [students, setStudentsData] = useState<StudentDisplay[]>([]);
 
   useEffect(() => {
-    serverGetStudentData().then((studentsOverview : StudentOverview[]) => {
-      setStudentsData(studentsOverview.map((student : StudentOverview) =>{
-        return new StudentDisplay(
-          student.email,
-          student.name,
-        )
-      }))
+    serverGetAllStudentData().then((students : StudentDisplay[]) => {
+      setStudentsData(students);
     }).catch((e) =>alert(e));
 
     //ServerMockGetStudentsData().then((students :StudentDisplay[]) =>
@@ -45,12 +40,12 @@ function StudentsHistory() {
   );
 
   const handleStudentClick = async (student: StudentDisplay) => {
-    serverGetStudentData()
+    serverGetStudentData(student.email).then((studentOverview : StudentOverview) => {
+      setDialogOpen(true);
+      setSelectedStudent(studentOverview);
+      setFetchedOverview(studentOverview);
 
-
-    //serverGetStudent....
-    setDialogOpen(true);
-    setSelectedStudent(student);
+    }).catch((e) => alert(e));
 
     try {
       const overview = await ServerMockStudentOverview(student.email);

@@ -88,6 +88,10 @@ public class Lesson
     public void EndLesson()
     {
         _isActive = false;
+        foreach (var student in _enrollmentSummaryRepo.GetAll().Select(enrollment => enrollment.Student))
+        {
+            student.Notify(new LessonEndedEvent(this).GenerateMsg());
+        }
     }
 
     public bool ContainStudent(Student student)
@@ -163,10 +167,14 @@ public class Lesson
     
     public void Leave(Teacher teacher)
     {
-        foreach (EnrollmentSummary enrollment in _enrollmentSummaryRepo.GetAll())
+        foreach (var student in _enrollmentSummaryRepo.GetAll().Select(enrollment => enrollment.Student))
         {
-            var student = enrollment.Student;
             student.Notify(new TeacherLeftLesson(teacher).GenerateMsg());
         }
+    }
+    
+    public EnrollmentSummary GetEnrollmentSummaryByEmail(string studentEmail)
+    {
+        return _enrollmentSummaryRepo.GetById(studentEmail);
     }
 }

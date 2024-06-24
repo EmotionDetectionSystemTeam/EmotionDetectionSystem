@@ -266,12 +266,12 @@ public class EdsService : IEdsService
         }
     }
 
-    public Response<List<StudentOverview>> GetStudentData(string sessionId, string teacherEmail)
+    public Response<List<StudentOverview>> GetAllStudentsData(string sessionId, string teacherEmail)
     {
         _logger.InfoFormat($"Get student data request for session: {sessionId} has been received");
         try
         {
-            var enrollmentSummariesDict = _edsManager.GetStudentData(sessionId, teacherEmail);
+            var enrollmentSummariesDict = _edsManager.GetAllStudentsData(sessionId, teacherEmail);
             var response = enrollmentSummariesDict
                 .Select(enrollmentSummary => new StudentOverview(enrollmentSummary.Key, enrollmentSummary.Value))
                 .ToList();
@@ -281,6 +281,22 @@ public class EdsService : IEdsService
         {
             _logger.ErrorFormat($"Error getting student data with session: {sessionId} - {e.Message}");
             return Response<List<StudentOverview>>.FromError(e.Message);
+        }
+    }
+
+    public Response<StudentOverview> GetStudentData(string sessionId, string teacherEmail, string studentEmail)
+    {
+        _logger.InfoFormat($"Get student data request for session: {sessionId} has been received");
+        try
+        {
+            var enrollmentSummaries = _edsManager.GetStudentData(sessionId, teacherEmail, studentEmail);
+            var studentOverview     = new StudentOverview(enrollmentSummaries.Item1, enrollmentSummaries.Item2);
+            return Response<StudentOverview>.FromValue(studentOverview);
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error getting student data with session: {sessionId} - {e.Message}");
+            return Response<StudentOverview>.FromError(e.Message);
         }
     }
 

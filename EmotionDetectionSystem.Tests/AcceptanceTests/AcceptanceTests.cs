@@ -193,7 +193,7 @@ namespace EmotionDetectionSystem.Tests.AcceptanceTests
         {
             _edsService.Register(Email, FirstName, LastName, Password, Password, UserType);
             _edsService.Login(SessionId, Email, Password);
-            var response = _edsService.GetStudentData(SessionId, Email);
+            var response = _edsService.GetAllStudentsData(SessionId, Email);
             Assert.IsFalse(response.ErrorOccured, response.ErrorMessage);
             Assert.IsNotNull(response.Value);
         }

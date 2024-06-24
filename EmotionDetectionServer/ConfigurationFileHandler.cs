@@ -169,7 +169,7 @@ public class ConfigurationFileHandler
                 }
             case "GetStudentData":
                 {
-                    var res = service.GetStudentData(
+                    var res = service.GetAllStudentsData(
                         usecaseJson["sessionid"].ToString(),
                         usecaseJson["email"].ToString());
 

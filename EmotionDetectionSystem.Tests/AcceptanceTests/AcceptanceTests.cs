@@ -3,6 +3,8 @@ using EmotionDetectionSystem.ServiceLayer;
 using EmotionDetectionSystem.ServiceLayer.objects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EmotionDetectionSystem.Tests.AcceptanceTests
 {
@@ -49,7 +51,11 @@ namespace EmotionDetectionSystem.Tests.AcceptanceTests
             _emotionData = new ServiceEmotionData( rand.NextDouble(), rand.NextDouble(), rand.NextDouble(), rand.NextDouble(),
                 rand.NextDouble(), rand.NextDouble(), rand.NextDouble());
         }
-
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _edsService.Dispose();
+        }
         [TestMethod]
         public void Register_ShouldReturnSuccess_WhenValidInput()
         {
@@ -297,6 +303,150 @@ namespace EmotionDetectionSystem.Tests.AcceptanceTests
             var emotionalDataResponse = _edsService.GetLastEmotionsData("2", StudentEmails[0], LessonTitle);
             Assert.IsTrue(emotionalDataResponse.ErrorOccured, "Student should not be able to access emotional data.");
         }
+        
+        [TestMethod]
+        public void CreateUsers_CreateClass_LogInAndSendEmotionData()
+        {
+            // Register Teacher
+            var registerTeacherResponse = _edsService.Register(TeacherEmail, "John", "Doe", TeacherPassword, TeacherPassword, 1);
+            Assert.IsFalse(registerTeacherResponse.ErrorOccured, registerTeacherResponse.ErrorMessage);
+
+            // Teacher Login
+            var loginTeacherResponse = _edsService.Login("1", TeacherEmail, TeacherPassword);
+            Assert.IsFalse(loginTeacherResponse.ErrorOccured, loginTeacherResponse.ErrorMessage);
+
+            // Create Lesson
+            var createLessonResponse = _edsService.CreateLesson("1", TeacherEmail, LessonTitle, LessonDescription, new[] { "Math", "Algebra" });
+            Assert.IsFalse(createLessonResponse.ErrorOccured, createLessonResponse.ErrorMessage);
+
+            // Register 5 Students
+            for (int i = 0; i < 5; i++)
+            {
+                var studentEmail = $"student{i + 1}@example.com";
+                var registerStudentResponse = _edsService.Register(studentEmail, $"Student{i + 1}", $"User{i + 1}", StudentPassword.Replace("#Pass2024", $"{i + 1}#Pass2024"), StudentPassword.Replace("#Pass2024", $"{i + 1}#Pass2024"), 0);
+                Assert.IsFalse(registerStudentResponse.ErrorOccured, registerStudentResponse.ErrorMessage);
+            }
+
+            // Students Login
+            for (int i = 0; i < 5; i++)
+            {
+                var studentEmail = $"student{i + 1}@example.com";
+                var loginStudentResponse = _edsService.Login((i + 2).ToString(), studentEmail, StudentPassword.Replace("#Pass2024", $"{i + 1}#Pass2024"));
+                Assert.IsFalse(loginStudentResponse.ErrorOccured, loginStudentResponse.ErrorMessage);
+            }
+
+            // Students Join Lesson
+            var lessonEntryCode = createLessonResponse.Value.EntryCode;
+            for (int i = 0; i < 5; i++)
+            {
+                var studentEmail = $"student{i + 1}@example.com";
+                var joinLessonResponse = _edsService.JoinLesson((i + 2).ToString(), studentEmail, lessonEntryCode);
+                Assert.IsFalse(joinLessonResponse.ErrorOccured, joinLessonResponse.ErrorMessage);
+            }
+
+            // Push Emotion Data for each student
+            var lessonId = createLessonResponse.Value.LessonId;
+            foreach (var studentEmail in StudentEmails.Take(5))
+            {
+                var pushEmotionResponse = _edsService.PushEmotionData("2", studentEmail, lessonId, _emotionData);
+                Assert.IsFalse(pushEmotionResponse.ErrorOccured, pushEmotionResponse.ErrorMessage);
+            }
+        } 
+        
+        [TestMethod]
+        public async Task CreateUsers_Concurrently_CreateClass_LogInAndSendEmotionData()
+        {
+            // Register Teacher
+            var registerTeacherResponse = _edsService.Register(TeacherEmail, "John", "Doe", TeacherPassword, TeacherPassword, 1);
+            Assert.IsFalse(registerTeacherResponse.ErrorOccured, registerTeacherResponse.ErrorMessage);
+
+            // Teacher Login
+            var loginTeacherResponse = _edsService.Login("1", TeacherEmail, TeacherPassword);
+            Assert.IsFalse(loginTeacherResponse.ErrorOccured, loginTeacherResponse.ErrorMessage);
+
+            // Create Lesson
+            var createLessonResponse = _edsService.CreateLesson("1", TeacherEmail, LessonTitle, LessonDescription, new[] { "Math", "Algebra" });
+            Assert.IsFalse(createLessonResponse.ErrorOccured, createLessonResponse.ErrorMessage);
+
+            // Concurrently register 5 students
+            var registerStudentTasks = Enumerable.Range(0, 5).Select(i =>
+            {
+                var studentEmail = $"student{i + 1}@example.com";
+                return Task.Run(() =>
+                {
+                    var registerStudentResponse = _edsService.Register(studentEmail, $"Student{i + 1}", $"User{i + 1}", StudentPassword.Replace("#Pass2024", $"{i + 1}#Pass2024"), StudentPassword.Replace("#Pass2024", $"{i + 1}#Pass2024"), 0);
+                    Assert.IsFalse(registerStudentResponse.ErrorOccured, registerStudentResponse.ErrorMessage);
+                });
+            }).ToArray();
+
+            await Task.WhenAll(registerStudentTasks);
+
+            // Concurrently log in 5 students
+            var loginStudentTasks = Enumerable.Range(0, 5).Select(i =>
+            {
+                var studentEmail = $"student{i + 1}@example.com";
+                return Task.Run(() =>
+                {
+                    var loginStudentResponse = _edsService.Login((i + 2).ToString(), studentEmail, StudentPassword.Replace("#Pass2024", $"{i + 1}#Pass2024"));
+                    Assert.IsFalse(loginStudentResponse.ErrorOccured, loginStudentResponse.ErrorMessage);
+                });
+            }).ToArray();
+
+            await Task.WhenAll(loginStudentTasks);
+
+            // Concurrently join 5 students to the lesson
+            var lessonEntryCode = createLessonResponse.Value.EntryCode;
+            var joinLessonTasks = Enumerable.Range(0, 5).Select(i =>
+            {
+                var studentEmail = $"student{i + 1}@example.com";
+                return Task.Run(() =>
+                {
+                    var joinLessonResponse = _edsService.JoinLesson((i + 2).ToString(), studentEmail, lessonEntryCode);
+                    Assert.IsFalse(joinLessonResponse.ErrorOccured, joinLessonResponse.ErrorMessage);
+                });
+            }).ToArray();
+
+            await Task.WhenAll(joinLessonTasks);
+
+            // Concurrently push emotion data for each student
+            var lessonId = createLessonResponse.Value.LessonId;
+            var pushEmotionTasks = StudentEmails.Take(5).Select(studentEmail =>
+            {
+                return Task.Run(() =>
+                {
+                    var pushEmotionResponse = _edsService.PushEmotionData("2", studentEmail, lessonId, _emotionData);
+                    Assert.IsFalse(pushEmotionResponse.ErrorOccured, pushEmotionResponse.ErrorMessage);
+                });
+            }).ToArray();
+
+            await Task.WhenAll(pushEmotionTasks);
+        }
+        [TestMethod]
+        public void PushEmotionData_ShouldSucceed_WhenValidData()
+        {
+            _edsService.Register(TeacherEmail, "John", "Doe", TeacherPassword, TeacherPassword, 1);
+            _edsService.Login(SessionId, TeacherEmail, TeacherPassword);
+            var createLessonResponse = _edsService.CreateLesson(SessionId, TeacherEmail, LessonTitle, LessonDescription, new[] { "tag1", "tag2" });
+            Assert.IsFalse(createLessonResponse.ErrorOccured, createLessonResponse.ErrorMessage);
+            var lessonId = createLessonResponse.Value.LessonId;
+            var emotionData = new ServiceEmotionData(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7);
+            var response = _edsService.PushEmotionData(SessionId, TeacherEmail, lessonId, emotionData);
+            Assert.IsFalse(response.ErrorOccured, response.ErrorMessage);
+        }
+
+        [TestMethod]
+        public void GetLesson_ShouldReturnActiveLesson_WhenValidLessonId()
+        {
+            _edsService.Register(TeacherEmail, "John", "Doe", TeacherPassword, TeacherPassword, 1);
+            _edsService.Login(SessionId, TeacherEmail, TeacherPassword);
+            var createLessonResponse = _edsService.CreateLesson(SessionId, TeacherEmail, LessonTitle, LessonDescription, new[] { "tag1", "tag2" });
+            Assert.IsFalse(createLessonResponse.ErrorOccured, createLessonResponse.ErrorMessage);
+            var lessonId = createLessonResponse.Value.LessonId;
+            var response = _edsService.GetLesson(SessionId, TeacherEmail, lessonId);
+            Assert.IsFalse(response.ErrorOccured, response.ErrorMessage);
+            Assert.IsNotNull(response.Value);
+        }
+
 
     }
 }

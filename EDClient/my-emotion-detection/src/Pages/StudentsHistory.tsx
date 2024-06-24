@@ -9,7 +9,7 @@ import StudentDisplay from "../Objects/StudentDisplay";
 import StudentOverview from "../Objects/StudentOverview";
 import { pathTeacherDashBoard } from "../Paths";
 import { serverGetStudentData } from "../Services/ClientService";
-import { ServerMockGetStudentsData, ServerMockStudentOverview } from "../Services/MockService";
+import { ServerMockStudentOverview } from "../Services/MockService";
 import { mainTheme, squaresColor } from "../Utils";
 
 
@@ -25,17 +25,17 @@ function StudentsHistory() {
   const [students, setStudentsData] = useState<StudentDisplay[]>([]);
 
   useEffect(() => {
-    // serverGetStudentData().then((studentsOverview : StudentOverview[]) => {
-    //   setStudentsData(studentsOverview.map((student : StudentOverview) =>{
-    //     return new StudentDisplay(
-    //       student.email,
-    //       student.name,
-    //     )
-    //   }))
-    // }).catch((e) =>alert(e));
+    serverGetStudentData().then((studentsOverview : StudentOverview[]) => {
+      setStudentsData(studentsOverview.map((student : StudentOverview) =>{
+        return new StudentDisplay(
+          student.email,
+          student.name,
+        )
+      }))
+    }).catch((e) =>alert(e));
 
-    ServerMockGetStudentsData().then((students :StudentDisplay[]) =>
-    setStudentsData(students));
+    //ServerMockGetStudentsData().then((students :StudentDisplay[]) =>
+    //setStudentsData(students));
 
   },[]);
 

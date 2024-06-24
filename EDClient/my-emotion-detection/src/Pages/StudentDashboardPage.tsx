@@ -18,6 +18,7 @@ import { mainTheme, squaresColor } from "../Utils";
 
     
     function StudentDashboard() {
+
     
       const navigate = useNavigate();
     

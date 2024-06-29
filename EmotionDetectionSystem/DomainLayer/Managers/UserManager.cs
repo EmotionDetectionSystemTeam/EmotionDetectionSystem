@@ -64,12 +64,12 @@ public class UserManager
         {
             throw new Exception("Email is not valid");
         }
-
+        
         if (_userRepo.ContainsEmail(email))
         {
             throw new Exception("Email is already in use");
         }
-
+        
         if (!_passwordSecurity.IsValidPassword(password))
         {
             throw new Exception("Password is not valid");

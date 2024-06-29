@@ -27,7 +27,7 @@ interface StudentBarChartProps {
 
 const emotionColors = {
   'Happy': '#4caf50', // Green
-  'Surprised': '#ffeb3b', // Yellow
+  'Surprised': '#f9a201', // Yellow
   'Neutral': '#9e9e9e', // Gray
 };
 

@@ -19,7 +19,7 @@ interface ClassPopupProps {
 
 const emotionColors = {
   'Happy': '#4caf50', // Green
-  'Surprised': '#ffeb3b', // Yellow
+  'Surprised': '#f9a201', // Yellow
   'Neutral': '#9e9e9e', // Gray
 };
 
@@ -91,20 +91,55 @@ const ClassPopup: React.FC<ClassPopupProps> = ({ open, onClose, classLesson }) =
   return (
     <ThemeProvider theme={mainTheme}>
     <Box>
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>{classLesson.name}</DialogTitle>
+    <Dialog open={open} onClose={onClose} fullScreen={true} fullWidth={true}>
+      <DialogTitle>{}</DialogTitle>
       <DialogContent>
         <Box>
+        <Typography align="center" variant="h4" > {classLesson.name + ' - ' + classLesson.description}</Typography>
+        <Typography align="center" variant="h6" gutterBottom> Class Date: {classLesson.date.toString()}</Typography>
+
+
 
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            {classLesson.students.map(student => (
+          <Typography align="center" variant="h6">Students Attendants</Typography>
+
+          <Box
+          
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "flex-start",
+                gap: 2,
+                mt: 3,
+              }}
+            >
+
+                          {classLesson.students.map(student => (
               <StudentCard key={student.email} student={student} onClick={() => handleStudentClick(student)} />
             ))}
+            </Box>
+
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="h6">Emotions Summary</Typography>
-            <Pie id="chart-id" data={pieData} options={pieOptions} />
+
+          <Box
+          
+              sx={{
+                overflow: "false",
+                width: "75%",
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "flex-start",
+                gap: 2,
+                mt: 3,
+              }}
+            >          <Pie id="chart-id" data={pieData} options={pieOptions} />
+
+
+            </Box>
+
           </Grid>
         </Grid>
         </Box>
@@ -114,7 +149,7 @@ const ClassPopup: React.FC<ClassPopupProps> = ({ open, onClose, classLesson }) =
         </DialogActions>
 
     </Dialog>
-          <Dialog open={openStudentDialog} onClose={handleCloseStudentDialog} fullWidth maxWidth="sm">
+          <Dialog open={openStudentDialog} onClose={handleCloseStudentDialog} fullWidth maxWidth="lg">
           <DialogContent>
             {selectedStudent && (
               <>

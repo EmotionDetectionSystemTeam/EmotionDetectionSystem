@@ -113,7 +113,7 @@ function StudentsHistory() {
           Back to Dashboard
         </Button>
       </Box>
-      <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="md">
+      <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="lg">
         <DialogTitle>{selectedStudent ? `${selectedStudent.name}'s Profile` : ''}</DialogTitle>
         <DialogContent>
           {fetchedOverview && (

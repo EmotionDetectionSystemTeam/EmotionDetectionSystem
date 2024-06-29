@@ -24,21 +24,22 @@ public class UserManager
     public void Register(string email, string firstName, string lastName, string password, int userType)
     {
         email = email.ToLower();
+        /*
         if (!IsValidEmail(email))
         {
             throw new Exception("Email is not valid");
         }
-
+        */
         if (_userRepo.ContainsEmail(email))
         {
             throw new Exception("Email is already in use");
         }
-
+        /*
         if (!_passwordSecurity.IsValidPassword(password))
         {
             throw new Exception("Password is not valid");
         }
-
+        */
         var type = (UserType)userType;
         var user = CreateUser(email, firstName, lastName, password, type);
         _userRepo.Add(user);

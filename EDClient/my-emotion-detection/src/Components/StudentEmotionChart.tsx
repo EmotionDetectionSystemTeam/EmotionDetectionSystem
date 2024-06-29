@@ -24,9 +24,10 @@ const StudentEmotionChart: React.FC<StudentEmotionChartProps> = ({ studentOvervi
   const chartOptions = {
     scales: {
       x: {
+        
         title: {
           display: true,
-          text: 'Time of the Emotion',
+          text: "Classes Timeline",
         },
       },
       y: {

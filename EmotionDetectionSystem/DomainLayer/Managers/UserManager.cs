@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using EmotionDetectionSystem.DomainLayer.objects;
 using EmotionDetectionSystem.DomainLayer.Repos;
 using log4net;
-using Microsoft.Extensions.Logging;
 
 namespace EmotionDetectionSystem.DomainLayer.Managers;
 
@@ -12,7 +11,7 @@ public class UserManager
     private readonly        UserRepo                           _userRepo;
     private static          ConcurrentDictionary<string, User> _userBySession = null!;
     private readonly        Security                           _passwordSecurity;
-    private static readonly ILog                               Logger = LogManager.GetLogger(typeof(UserManager));
+    private static readonly ILog                               Log = LogManager.GetLogger(typeof(UserManager));
     private readonly string _notValidEmail = "Invalid Password:\\n•At least 8 characters\\n•Include 1 uppercase letter (A-Z)\\n•Include 1 lowercase letter (a-z)\\n•Include 1 special character (e.g.,!@#$%^&*)\"";
 
     public UserManager()
@@ -22,8 +21,18 @@ public class UserManager
         _userBySession    = new ConcurrentDictionary<string, User>();
     }
 
-    public void Register(string email, string firstName, string lastName, string password, int userType)
+    /// <summary>
+    /// Registers a new user in the system.
+    /// </summary>
+    /// <param name="correlationId">The correlation ID for logging.</param>
+    /// <param name="email">The email address of the user.</param>
+    /// <param name="firstName">The first name of the user.</param>
+    /// <param name="lastName">The last name of the user.</param>
+    /// <param name="password">The password of the user.</param>
+    /// <param name="userType">The type of the user, represented as an integer.</param>
+    public void Register(string correlationId, string email, string firstName, string lastName, string password, int userType)
     {
+        Log.Info($"[{correlationId}] Validating input for user: {email}");
         ValidateInput(email, firstName, lastName, password);
 
         email = email.ToLower();
@@ -31,12 +40,15 @@ public class UserManager
 
         if (type is UserType.Teacher or UserType.Admin)
         {
+            Log.Info($"[{correlationId}] Validating teacher or admin: {email}");
             ValidateTeacherOrAdmin(email, password);
         }
 
         var user = CreateUser(email, firstName, lastName, password, type);
         _userRepo.Add(user);
+        Log.Info($"[{correlationId}] User registered: {email}");
     }
+
 
     private void ValidateInput(string email, string firstName, string lastName, string password)
     {
@@ -76,28 +88,43 @@ public class UserManager
         };
     }
 
-    public User Login(string sessionId, string email, string password)
+    /// <summary>
+    /// Logs in a user in the system.
+    /// </summary>
+    /// <param name="correlationId">The correlation ID for logging.</param>
+    /// <param name="sessionId">The session ID of the user.</param>
+    /// <param name="email">The email address of the user.</param>
+    /// <param name="password">The password of the user.</param>
+    /// <returns>The logged-in user object.</returns>
+    public User Login(string correlationId, string sessionId, string email, string password)
     {
+        Log.Info($"[{correlationId}] Attempting to log in user: {email}");
+
         email = email.ToLower();
         if (IsLoggedIn(sessionId, email))
         {
+            Log.Error($"[{correlationId}] User {email} is already logged in with session {sessionId}");
             throw new Exception("User is already logged in");
         }
 
         if (!_userRepo.ContainsEmail(email))
         {
+            Log.Error($"[{correlationId}] User {email} does not exist");
             throw new Exception("User does not exist");
         }
 
         var user = _userRepo.GetByEmail(email);
         if (!_passwordSecurity.VerifyPassword(password, user.Password))
         {
+            Log.Error($"[{correlationId}] Incorrect password or username for user {email}");
             throw new Exception("Password or username are incorrect");
         }
 
         _userBySession?.TryAdd(sessionId, user);
+        Log.Info($"[{correlationId}] User {email} logged in successfully with session {sessionId}");
         return user;
     }
+
 
     private bool IsLoggedIn(string sessionId, string email)
     {
@@ -109,26 +136,32 @@ public class UserManager
     {
         if (!_userBySession.ContainsKey(sessionId))
         {
-            Logger.ErrorFormat($"Session: {sessionId} is not valid");
+            Log.ErrorFormat($"Session: {sessionId} is not valid");
             return false;
         }
 
         if (_userBySession[sessionId].Email.Equals(email)) return true;
-        Logger.ErrorFormat($"Session: {sessionId} is not valid for user with email: {email}");
+        Log.ErrorFormat($"Session: {sessionId} is not valid for user with email: {email}");
         return false;
     }
 
-    public void Logout(string sessionId)
+    /// <summary>
+    /// Logs out a user from the system.
+    /// </summary>
+    /// <param name="correlationId">The correlation ID for logging.</param>
+    /// <param name="sessionId">The session ID of the user.</param>
+    public void Logout(string correlationId, string sessionId)
     {
         if (!_userBySession.ContainsKey(sessionId))
         {
+            Log.Warn($"[{correlationId}] Session {sessionId} does not exist.");
             throw new Exception("Session does not exist");
         }
 
         _userBySession.TryRemove(sessionId, out var user);
         if (user != null)
         {
-            Logger.InfoFormat($"User with email: {user.Email} and sessionId {sessionId} has been logged out");
+            Log.Info($"[{correlationId}] User with email: {user.Email} and sessionId {sessionId} has been logged out");
         }
     }
 

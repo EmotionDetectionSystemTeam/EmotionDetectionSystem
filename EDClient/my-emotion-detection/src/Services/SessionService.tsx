@@ -1,6 +1,4 @@
 import Cookies from 'js-cookie';
-import { serverEnterAsGuest } from "./ClientService";
-import { fetchResponse } from "./GeneralService";
 
 
 interface Iuser {
@@ -17,18 +15,10 @@ const LessonId = "LessonId";
 const LessonTeacher = "teacher";
 
 
-export async function initSession() {
+export async function initSession(sessionId: string) {
   if (storage.getItem(isInitOccured) === null) {
     storage.setItem(isInitOccured, "true");
-    fetchResponse(serverEnterAsGuest())
-      .then((sessionId: string) => {
-        initFields(sessionId);
-        //initializeCookie(sessionId);
-        alert(sessionId);
-      })
-      .catch((e) => {
-        alert("Sorry, Could not enter the server");
-      });
+    initFields(sessionId);
   }
 }
 

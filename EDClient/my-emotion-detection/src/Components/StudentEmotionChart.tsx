@@ -21,8 +21,45 @@ const StudentEmotionChart: React.FC<StudentEmotionChartProps> = ({ studentOvervi
       backgroundColor: emotionColors[emotion] || "#ff6384", // Use the color map or fall back to red
     })),
   };
+  const chartOptions = {
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Time of the Emotion',
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Amount of Emotion',
+        },
+        ticks: {
+          stepSize: 1, // Ensure the y-axis shows only natural numbers
+        },
 
-  return <Bar data={chartData} />;
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) {
+              label += ': ';
+            }
+            label += context.raw;
+            return label;
+          }
+        }
+      },
+      legend: {
+        display: true,
+      },
+    },
+  };
+
+  return <Bar data={chartData} options={chartOptions} />;
 };
 
 

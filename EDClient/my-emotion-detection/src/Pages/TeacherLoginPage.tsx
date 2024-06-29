@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Dialog,
   Grid,
   Link,
   TextField,
@@ -11,13 +10,12 @@ import {
 import Cookies from 'js-cookie';
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import FailureSnackbar from "../Components/FailureSnackbar";
-import SuccessSnackbar from "../Components/SuccessSnackbar";
+import { NotificationMessage } from "../Components/NotificationMessage";
 import { Lesson } from "../Objects/Lesson";
 import { pathHome, pathTeacherDashBoard } from "../Paths";
 import { serverLogin } from "../Services/ClientService";
 import { setUsername } from "../Services/SessionService";
-import { mainTheme, squaresColor } from "../Utils";
+import { formatMessage, mainTheme, squaresColor } from "../Utils";
 
 
 
@@ -25,17 +23,28 @@ import { mainTheme, squaresColor } from "../Utils";
 
   
   function TeacherLogin() {
-
-    const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false);
-    const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false);
-    const [failuretMsg, setFailuretMsg] = React.useState<string>("");
-    const [successtMsg, setSuccesstMsg] = React.useState<string>("");
+    const [showMessage, setShowMessage] = React.useState(false);
+    const [messageContent, setMessageContent] = React.useState('');
+    const [messageType, setMessageType] = React.useState<'error' | 'success'>('error');
+  
+  
+    const handleClose = () => {
+      setShowMessage(false);
+    };
+  
+    const displayMessage = (message: string, type: 'error' | 'success') => {
+      setMessageContent(formatMessage(message));
+      setMessageType(type);
+      setShowMessage(true);
+    };
 
     const lessonCookie = Cookies.get('TeacherLesson');
     const lesson : Lesson = lessonCookie ? JSON.parse(lessonCookie) : null;
     //alert(lesson.LessonId);
   
     const navigate = useNavigate();
+
+
   
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         /*
@@ -54,7 +63,7 @@ import { mainTheme, squaresColor } from "../Utils";
         //initWebSocket(address);
         setUsername(String(email));
         navigate(pathTeacherDashBoard);
-        }).catch((e) => alert(e));
+        }).catch((e) => displayMessage(e,'error'));
     };
   
     return (
@@ -151,16 +160,13 @@ import { mainTheme, squaresColor } from "../Utils";
             </Box>
           </Grid>
         </Grid>
-        <Dialog open={openFailSnack}>
-        {FailureSnackbar(failuretMsg, openFailSnack, () =>
-          setOpenFailSnack(false)
-        )}
-      </Dialog>
-      <Dialog open={openSuccSnack}>
-        {SuccessSnackbar(successtMsg, openSuccSnack, () =>
-        setOpenSuccSnack(false)
-        )}
-      </Dialog>
+        {showMessage && (
+        <NotificationMessage
+          message={messageContent}
+          onClose={handleClose}
+          type={messageType}
+        />
+      )}
       </ThemeProvider>
     );
   }

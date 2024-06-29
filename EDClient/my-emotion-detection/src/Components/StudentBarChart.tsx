@@ -31,14 +31,13 @@ const emotionColors = {
   'Neutral': '#9e9e9e', // Gray
 };
 
-const StudentBarChart: React.FC<StudentBarChartProps> = ({ student, intervalMinutes  }) => {
+const StudentBarChart: React.FC<StudentBarChartProps> = ({ student, intervalMinutes }) => {
 
-  const [chartData1, setChartData] = useState<ChartData | null>(null);
+  const [chartData, setChartData] = useState<ChartData | null>(null);
   useEffect(() => {
     // Update the chart data when the intervalMinutes or student.emotions changes
     setChartData(getStudentBarData(intervalMinutes));
   }, [intervalMinutes, student.emotions]);
-
 
   const getStudentBarData = (intervalMinutes: number): ChartData => {
     const emotions: Emotion[] = student.emotions;
@@ -46,7 +45,6 @@ const StudentBarChart: React.FC<StudentBarChartProps> = ({ student, intervalMinu
     const endTime = moment.max(emotions.map(e => moment(e.date))).endOf('minute');
 
     const uniqueEmotions = Array.from(new Set(emotions.map(e => e.emotion)));
-
 
     const data: ChartData = {
       labels: [],
@@ -60,7 +58,7 @@ const StudentBarChart: React.FC<StudentBarChartProps> = ({ student, intervalMinu
     let currentTime: Moment = startTime.clone();
     while (currentTime.isBefore(endTime)) {
       data.labels.push(currentTime.format('HH:mm'));
-  
+
       data.datasets.forEach(dataset => {
         const emotionCounts: Record<string, number> = {};
         emotions.forEach(emotion => {
@@ -75,15 +73,52 @@ const StudentBarChart: React.FC<StudentBarChartProps> = ({ student, intervalMinu
         });
         dataset.data.push(emotionCounts[dataset.label] || 0);
       });
-  
+
       currentTime.add(intervalMinutes, 'minutes');
     }
-  
+
     return data;
   };
-  const chartData = getStudentBarData(intervalMinutes);
 
-  return <Bar data={chartData} />;
+  const chartOptions = {
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Time of the Emotion',
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Amount of Emotion',
+        },
+        ticks: {
+          stepSize: 1, // Ensure the y-axis shows only natural numbers
+        },
+
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) {
+              label += ': ';
+            }
+            label += context.raw;
+            return label;
+          }
+        }
+      },
+      legend: {
+        display: true,
+      },
+    },
+  };
+
+  return chartData ? <Bar data={chartData} options={chartOptions} /> : null;
 };
 
 export default StudentBarChart;

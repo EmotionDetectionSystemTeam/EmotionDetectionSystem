@@ -80,7 +80,7 @@ function TeacherLesson() {
 
    const filterInactiveStudents = (students: ClientStudent[]): ClientStudent[] =>{
     const filtered = students.filter((student: ClientStudent) => 
-      student.emotion !== "No Data");
+      student.emotion !== "No Data" && student.emotion !== "Natural" && student.emotion !== "Happy");
     return filtered;
     
   }

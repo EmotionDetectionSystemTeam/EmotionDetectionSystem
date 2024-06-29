@@ -9,7 +9,7 @@ import checkInput, { serverPort } from "../Utils";
 import ClientResponse from "./Response";
 import { getLessonId, getSessionId, getUserName, setIsGuest } from "./SessionService";
 
-export async function serverEnterAsGuest(): Promise<ClientResponse<string>> {
+export async function serverEnterAsGuest(): Promise<string> {
     const uri = serverPort + "/api/eds/enter-as-guest";
     try {
       const jsonResponse = await fetch(uri, {
@@ -29,15 +29,13 @@ export async function serverEnterAsGuest(): Promise<ClientResponse<string>> {
         alert(errorResponse.errorMessage);
       }
   
-      const response = await jsonResponse.json();
-  
+      const response: ClientResponse<string> = await jsonResponse.json();
       // Handle empty response
       if (!response) {
         throw new Error("Empty response received");
       }
-  
-      //const response = JSON.parse(responseText);
-      return response;
+
+      return response.value;
     } catch (e) {
       return Promise.reject(e);
     }

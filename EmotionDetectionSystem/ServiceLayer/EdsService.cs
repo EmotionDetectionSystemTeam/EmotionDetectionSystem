@@ -27,7 +27,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Registering user with email: {email} has been received");
         try
         {
-            _edsManager.Register(email, firstName, lastName, password, userType);
+            var correlationId = Guid.NewGuid().ToString();
+            _edsManager.Register(correlationId, email, firstName, lastName, password, userType);
             return new Response();
         }
         catch (Exception e)
@@ -42,7 +43,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Login request for user with email: {email} has been received");
         try
         {
-            var user = _edsManager.Login(sessionId, email, password);
+            var correlationId = Guid.NewGuid().ToString();
+            var user = _edsManager.Login(correlationId,sessionId, email, password);
             _logger.InfoFormat(user.Type.Equals("Student")
                                    ? $"Student with email: {email} has been logged in"
                                    : $"Teacher with email: {email} has been logged in");
@@ -60,7 +62,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Logout request for session: {sessionId} has been received");
         try
         {
-            _edsManager.Logout(sessionId, email);
+            var correlationId = Guid.NewGuid().ToString();
+            _edsManager.Logout(correlationId,sessionId, email);
             _logger.InfoFormat($"Session: {sessionId} has been logged out");
             return new Response();
         }
@@ -77,7 +80,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Create lesson request for session: {sessionId} has been received");
         try
         {
-            var lesson = _edsManager.CreateLesson(sessionId, email, title, description, tags);
+            var correlationId = Guid.NewGuid().ToString();
+            var lesson = _edsManager.CreateLesson(correlationId,sessionId, email, title, description, tags);
             _logger.InfoFormat($"Lesson with title: {title} has been created");
             return Response<SActiveLesson>.FromValue(new SActiveLesson(lesson));
         }
@@ -93,7 +97,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"End lesson request for session: {sessionId} has been received");
         try
         {
-            _edsManager.EndLesson(sessionId, email);
+            var correlationId = Guid.NewGuid().ToString();
+            _edsManager.EndLesson(correlationId,sessionId, email);
             _logger.InfoFormat($"Lesson with session: {sessionId} has been ended");
             return new Response();
         }
@@ -109,7 +114,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Join lesson request for session: {sessionId} has been received");
         try
         {
-            var lesson = _edsManager.JoinLesson(sessionId, email, entryCode);
+            var correlationId = Guid.NewGuid().ToString();
+            var lesson = _edsManager.JoinLesson(correlationId,sessionId, email, entryCode);
             _logger.InfoFormat($"User with session: {sessionId} has joined the lesson");
             return Response<SActiveLesson>.FromValue(new SActiveLesson(lesson));
         }
@@ -126,7 +132,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"View students during lesson request for session: {sessionId} has been received");
         try
         {
-            var enrollmentSummaries = _edsManager.ViewStudentsDuringLesson(sessionId, email, lessonId);
+            var correlationId = Guid.NewGuid().ToString();
+            var enrollmentSummaries = _edsManager.ViewStudentsDuringLesson(correlationId,sessionId, email, lessonId);
             var enrollmentSummariesService = enrollmentSummaries
                 .Select(enrollmentSummary => new ServiceEnrollmentSummary(enrollmentSummary)).ToList();
             _logger.InfoFormat($"View students during lesson request for session: {sessionId} has been completed");
@@ -144,7 +151,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"View lesson dashboard request for session: {sessionId} has been received");
         try
         {
-            var lessons        = _edsManager.ViewTeacherDashboard(sessionId, email);
+            var correlationId = Guid.NewGuid().ToString();
+            var lessons        = _edsManager.ViewTeacherDashboard(correlationId,sessionId, email);
             var lessonsService = lessons.Select(lesson => new ServiceLesson(lesson)).ToList();
             _logger.InfoFormat($"View lesson dashboard request for session: {sessionId} has been completed");
             return Response<List<ServiceLesson>>.FromValue(lessonsService);
@@ -161,7 +169,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"View student request for session: {sessionId} has been received");
         try
         {
-            var student = _edsManager.ViewStudent(sessionId, email, studentEmail);
+            var correlationId = Guid.NewGuid().ToString();
+            var student = _edsManager.ViewStudent(correlationId,sessionId, email, studentEmail);
             _logger.InfoFormat($"View student request for session: {sessionId} has been completed");
             return Response<ServiceUser>.FromValue(new ServiceUser(student));
         }
@@ -177,7 +186,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Push emotion data request for session: {sessionId} has been received");
         try
         {
-            _edsManager.PushEmotionData(sessionId, email, lessonId, emotionData.ToDomainObject());
+            var correlationId = Guid.NewGuid().ToString();
+            _edsManager.PushEmotionData(correlationId,sessionId, email, lessonId, emotionData.ToDomainObject());
             _logger.InfoFormat($"Push emotion data request for session: {sessionId} has been completed");
             return new Response();
         }
@@ -199,7 +209,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Get last emotion data request for session: {sessionId} has been received");
         try
         {
-            var enrollmentSummaries = _edsManager.GetLastEmotionsData(sessionId, email, lessonId);
+            var correlationId = Guid.NewGuid().ToString();
+            var enrollmentSummaries = _edsManager.GetLastEmotionsData(correlationId,sessionId, email, lessonId);
 
             var realTimeUsers = enrollmentSummaries
                 .Select(enrollmentSummary => new ServiceRealTimeUser(
@@ -254,7 +265,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Get student data by lesson request for session: {sessionId} has been received");
         try
         {
-            var enrollmentSummaries = _edsManager.GetStudentDataByLesson(sessionId, teacherEmail, lessonId);
+            var correlationId = Guid.NewGuid().ToString();
+            var enrollmentSummaries = _edsManager.GetStudentDataByLesson(correlationId,sessionId, teacherEmail, lessonId);
             var studentInClassOverviews = enrollmentSummaries
                 .Select(enrollmentSummary => new StudentInClassOverview(enrollmentSummary)).ToList();
             return Response<List<StudentInClassOverview>>.FromValue(studentInClassOverviews);
@@ -271,7 +283,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Get student data request for session: {sessionId} has been received");
         try
         {
-            var enrollmentSummariesDict = _edsManager.GetAllStudentsData(sessionId, teacherEmail);
+            var correlationId = Guid.NewGuid().ToString();
+            var enrollmentSummariesDict = _edsManager.GetAllStudentsData(correlationId,sessionId, teacherEmail);
             var response = enrollmentSummariesDict
                 .Select(enrollmentSummary => new StudentOverview(enrollmentSummary.Key, enrollmentSummary.Value))
                 .ToList();
@@ -289,7 +302,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Get student data request for session: {sessionId} has been received");
         try
         {
-            var enrollmentSummaries = _edsManager.GetStudentData(sessionId, teacherEmail, studentEmail);
+            var correlationId = Guid.NewGuid().ToString();
+            var enrollmentSummaries = _edsManager.GetStudentData(correlationId,sessionId, teacherEmail, studentEmail);
             var studentOverview     = new StudentOverview(enrollmentSummaries.Item1, enrollmentSummaries.Item2);
             return Response<StudentOverview>.FromValue(studentOverview);
         }
@@ -305,7 +319,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Notify surprise student request for session: {sessionId} has been received");
         try
         {
-            _edsManager.NotifySurpriseStudent(sessionId, teacherEmail, studentEmail);
+            var correlationId = Guid.NewGuid().ToString();
+            _edsManager.NotifySurpriseStudent(correlationId,sessionId, teacherEmail, studentEmail);
             return new Response();
         }
         catch (Exception e)
@@ -320,7 +335,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Leave lesson request for session: {sessionId} has been received");
         try
         {
-            _edsManager.LeaveLesson(sessionId, email, lessonId);
+            var correlationId = Guid.NewGuid().ToString();
+            _edsManager.LeaveLesson(correlationId,sessionId, email, lessonId);
             return new Response();
         }
         catch (Exception e)
@@ -334,7 +350,8 @@ public class EdsService : IEdsService
         _logger.InfoFormat($"Add teacher approach request for session: {sessionId} has been received");
         try
         {
-            _edsManager.AddTeacherApproach(sessionId, teacherEmail, lessonId, studentUsername);
+            var correlationId = Guid.NewGuid().ToString();
+            _edsManager.AddTeacherApproach(correlationId,sessionId, teacherEmail, lessonId, studentUsername);
             return new Response();
         }
         catch (Exception e)

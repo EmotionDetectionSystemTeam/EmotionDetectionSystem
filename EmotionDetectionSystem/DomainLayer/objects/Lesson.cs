@@ -177,4 +177,10 @@ public class Lesson
     {
         return _enrollmentSummaryRepo.GetById(studentEmail);
     }
+
+    public void AddTeacherApproach(Teacher teacher, Student student)
+    {
+        var enrollmentSummary = GetEnrollmentSummaryByEmail(student.Email);
+        enrollmentSummary.AddTeacherApproach(teacher);
+    }
 }

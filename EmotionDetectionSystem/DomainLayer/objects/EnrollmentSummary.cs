@@ -1,4 +1,5 @@
 using EmotionDetectionServer;
+using EmotionDetectionSystem.DomainLayer.Events;
 using EmotionDetectionSystem.DomainLayer.objects;
 
 public class EnrollmentSummary
@@ -47,6 +48,7 @@ public class EnrollmentSummary
     public Lesson Lesson { get; set; }
     
     public List<EmotionData> EmotionData { get; set; }
+    public List<string> TeacherApproach { get; set; }
 
     public EmotionData GetFirstNotSeenEmotionData()
     {
@@ -89,5 +91,10 @@ public class EnrollmentSummary
         }
 
         return winningEmotions;
+    }
+
+    public void AddTeacherApproach(Teacher teacher)
+    {
+        TeacherApproach.Add(new TeacherApproachEvent(Student, teacher).GenerateMsg());
     }
 }

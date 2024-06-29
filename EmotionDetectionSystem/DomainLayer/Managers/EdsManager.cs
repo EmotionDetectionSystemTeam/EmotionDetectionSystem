@@ -222,9 +222,6 @@ public class EdsManager
     {
         var pushTaskInfo = new PushEmotionDataTask(correlationId, sessionId, email, lessonId, emotionData);
         _emotionDataTasks.Enqueue(pushTaskInfo);
-
-        Log.Info($"[{correlationId}] Emotion data pushed for processing: LessonId={lessonId}, StudentEmail={email}");
-
         _taskEvent.Set(); // Signal the event to unblock the background thread
     }
 
@@ -257,9 +254,6 @@ public class EdsManager
 
             var lesson = _lessonManager.GetLesson(emotionDataTask.LessonId);
             lesson.PushEmotionData(user.Email, emotionDataTask.EmotionData);
-
-            Log.Info(
-                $"[{emotionDataTask.CorrelationId}] Processed emotion data task for LessonId={emotionDataTask.LessonId}, StudentEmail={emotionDataTask.Email}");
         }
         catch (Exception e)
         {

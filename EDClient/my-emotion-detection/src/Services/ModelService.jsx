@@ -1,13 +1,11 @@
 import { ServiceEmotionData } from "../Objects/EmotionData";
-import { serverNotifyEmotion, serverPushEmotionData } from "./ClientService";
+import { serverPushEmotionData } from "./ClientService";
 import { getLessonId } from "./SessionService";
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
 const intervalTime = 5000;
 
 class ExpressionProcessor {
   constructor() {
-    this.intervalId = null;
     this.expressionsData = {
       neutral: 0,
       happy: 0,
@@ -19,6 +17,12 @@ class ExpressionProcessor {
     };
     this.video = null;
     this.canvas = null; // Store the canvas element reference
+    this.processing = false;
+    this.lastProcessTime = 0;
+    this.timer = null; // Background timer to periodically send data to server
+
+    // Bind methods to the instance to maintain correct context
+    this.processLoop = this.processLoop.bind(this);
   }
 
   async startVideo() {
@@ -60,88 +64,82 @@ class ExpressionProcessor {
     this.canvas = faceapi.createCanvasFromMedia(this.video);
     document.body.append(this.canvas);
 
-    let displaySize = { width: this.video.videoWidth, height: this.video.videoHeight };
+    // Start the processing loop
+    this.processing = true;
+    this.processLoop();
 
-    faceapi.matchDimensions(this.canvas, displaySize);
+    // Start background timer to periodically send data to server
+    this.timer = setInterval(() => {
+      this.sendResultToServer();
+    }, intervalTime);
+  }
 
-    let totalTime = 0;
-    let expressionCount = 0;
+  async processLoop() {
+    if (!this.processing) return;
 
-    this.intervalId = setInterval(async () => {
-      try {
-        const detections = await faceapi
+    try {
+      const detections = await faceapi
           .detectAllFaces(this.video, new faceapi.TinyFaceDetectorOptions())
           .withFaceLandmarks()
           .withFaceDescriptors()
           .withFaceExpressions();
 
-        displaySize = { width: this.video.videoWidth, height: this.video.videoHeight };
+      // Update display size
+      let displaySize = { width: this.video.videoWidth, height: this.video.videoHeight };
 
-        const resizedDetections = faceapi.resizeResults(detections, displaySize);
-        this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-        detections.forEach((detection) => {
-          const expressions = detection.expressions;
-          for (const expression in this.expressionsData) {
-            this.expressionsData[expression] += expressions[expression];
-          }
-          expressionCount++;
-        });
+      const resizedDetections = faceapi.resizeResults(detections, displaySize);
+      this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        totalTime += 100;
+      // Reset expressions data for accurate accumulation
+      Object.keys(this.expressionsData).forEach((expression) => {
+        this.expressionsData[expression] = 0;
+      });
 
-        if (totalTime >= intervalTime) {
-          const averageExpressions = {};
-          for (const expression in this.expressionsData) {
-            averageExpressions[expression] =
-              this.expressionsData[expression] / expressionCount;
-          }
-          console.log('Average Expressions:', averageExpressions);
-
-          this.sendResultToServer(averageExpressions);
-
-          // Clear expressions data for the next calculation
-          this.expressionsData = {
-            neutral: 0,
-            happy: 0,
-            sad: 0,
-            angry: 0,
-            surprised: 0,
-            disgusted: 0,
-            fearful: 0
-          };
-          totalTime = 0;
-          expressionCount = 0;
+      // Accumulate expressions data from detections
+      detections.forEach((detection) => {
+        const expressions = detection.expressions;
+        for (const expression in expressions) {
+          this.expressionsData[expression] += expressions[expression];
         }
-      } catch (error) {
-        console.error(error);
+      });
+
+      // Check visibility state to decide animation frame or timeout
+      if (document.visibilityState === 'visible') {
+        requestAnimationFrame(() => this.processLoop());
+      } else {
+        setTimeout(() => this.processLoop(), 1000); // Adjust timeout as needed
       }
-    }, 100);
+
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  notify() {
-    serverNotifyEmotion("a");
-  }
 
-  sendResultToServer(data) {
+  async sendResultToServer() {
     const emotionData = new ServiceEmotionData(
-      data.neutral,
-      data.happy,
-      data.sad,
-      data.angry,
-      data.surprised,
-      data.disgusted,
-      data.fearful
+        this.expressionsData.neutral,
+        this.expressionsData.happy,
+        this.expressionsData.sad,
+        this.expressionsData.angry,
+        this.expressionsData.surprised,
+        this.expressionsData.disgusted,
+        this.expressionsData.fearful
     );
+
+    // Send data to server
     serverPushEmotionData(getLessonId(), emotionData)
-      .catch((e) => alert(e));
+        .then(() => {
+          // Clear expressions data after successful send
+          Object.keys(this.expressionsData).forEach((expression) => {
+            this.expressionsData[expression] = 0;
+          });
+        })
+        .catch((e) => console.error("Error sending data to server:", e));
   }
 
   stopProcessing() {
-    // Clear the interval
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
+    this.processing = false;
 
     // Stop the video stream
     if (this.video && this.video.srcObject) {
@@ -161,6 +159,12 @@ class ExpressionProcessor {
     if (this.canvas) {
       this.canvas.remove();
       this.canvas = null;
+    }
+
+    // Clear the background timer
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
     }
   }
 }

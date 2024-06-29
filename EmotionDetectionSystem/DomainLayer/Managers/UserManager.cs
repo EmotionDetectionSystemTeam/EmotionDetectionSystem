@@ -13,6 +13,7 @@ public class UserManager
     private static          ConcurrentDictionary<string, User> _userBySession = null!;
     private readonly        Security                           _passwordSecurity;
     private static readonly ILog                               Logger = LogManager.GetLogger(typeof(UserManager));
+    private readonly string _notValidEmail = "Invalid Password:\\n•At least 8 characters\\n•Include 1 uppercase letter (A-Z)\\n•Include 1 lowercase letter (a-z)\\n•Include 1 special character (e.g.,!@#$%^&*)\"";
 
     public UserManager()
     {
@@ -23,7 +24,30 @@ public class UserManager
 
     public void Register(string email, string firstName, string lastName, string password, int userType)
     {
+        ValidateInput(email, firstName, lastName, password);
+
         email = email.ToLower();
+        var type = (UserType)userType;
+
+        if (type is UserType.Teacher or UserType.Admin)
+        {
+            ValidateTeacherOrAdmin(email, password);
+        }
+
+        var user = CreateUser(email, firstName, lastName, password, type);
+        _userRepo.Add(user);
+    }
+
+    private void ValidateInput(string email, string firstName, string lastName, string password)
+    {
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || string.IsNullOrEmpty(password))
+        {
+            throw new Exception("One or more fields are empty");
+        }
+    }
+
+    private void ValidateTeacherOrAdmin(string email, string password)
+    {
         if (!IsValidEmail(email))
         {
             throw new Exception("Email is not valid");
@@ -38,10 +62,6 @@ public class UserManager
         {
             throw new Exception("Password is not valid");
         }
-
-        var type = (UserType)userType;
-        var user = CreateUser(email, firstName, lastName, password, type);
-        _userRepo.Add(user);
     }
 
     private User CreateUser(string email, string firstName, string lastName, string password, UserType userType)
@@ -134,15 +154,13 @@ public class UserManager
         return student as Student ?? throw new Exception($"There is no student with email: {studentEmail}");
     }
 
-    public static bool IsValidEmail(string email)
+    private static bool IsValidEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
             return false;
 
-        // Regular expression pattern for basic email validation
-        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+        const string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
 
-        // Check if the email matches the pattern
         return Regex.IsMatch(email, pattern);
     }
 }

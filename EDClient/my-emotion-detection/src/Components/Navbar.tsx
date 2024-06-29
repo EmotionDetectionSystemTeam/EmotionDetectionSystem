@@ -16,8 +16,7 @@ import { pathHome } from "../Paths";
 import { serverLogout } from "../Services/ClientService";
 import {
   clearSession,
-  getIsGuest,
-  initSession,
+  getIsGuest
 } from "../Services/SessionService";
 import { mainTheme } from "../Utils";
 import logo from "../assets/Logo.png";
@@ -103,7 +102,6 @@ export default function Navbar() {
     if (!getIsGuest()) {
       serverLogout();
       clearSession();
-      initSession();
       navigate(pathHome);
     }
   };

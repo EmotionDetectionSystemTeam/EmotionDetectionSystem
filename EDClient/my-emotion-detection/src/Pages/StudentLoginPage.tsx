@@ -9,15 +9,30 @@ import {
 } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { NotificationMessage } from "../Components/NotificationMessage";
 import { pathHome, pathStudentDashBoard } from "../Paths";
 import { serverLogin } from "../Services/ClientService";
 import { setUsername } from "../Services/SessionService";
-import { mainTheme, squaresColor } from "../Utils";
+import { formatMessage, mainTheme, squaresColor } from "../Utils";
 
 
 
   
   function StudentLogin() {
+    const [showMessage, setShowMessage] = React.useState(false);
+    const [messageContent, setMessageContent] = React.useState('');
+    const [messageType, setMessageType] = React.useState<'error' | 'success'>('error');
+  
+  
+    const handleClose = () => {
+      setShowMessage(false);
+    };
+  
+    const displayMessage = (message: string, type: 'error' | 'success') => {
+      setMessageContent(formatMessage(message));
+      setMessageType(type);
+      setShowMessage(true);
+    };
   
     const navigate = useNavigate();
   
@@ -39,7 +54,7 @@ import { mainTheme, squaresColor } from "../Utils";
         setUsername(String(email));
 
         navigate(pathStudentDashBoard);
-        }).catch((e) => alert(e));
+        }).catch((e) => displayMessage(e,'error'));
     };
   
     return (
@@ -136,6 +151,13 @@ import { mainTheme, squaresColor } from "../Utils";
             </Box>
           </Grid>
         </Grid>
+        {showMessage && (
+        <NotificationMessage
+          message={messageContent}
+          onClose={handleClose}
+          type={messageType}
+        />
+      )}
       </ThemeProvider>
     );
   }

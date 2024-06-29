@@ -1,4 +1,3 @@
-import { Dialog } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
@@ -10,12 +9,11 @@ import Typography from "@mui/material/Typography";
 import { ThemeProvider } from "@mui/material/styles";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import FailureSnackbar from "../Components/FailureSnackbar";
-import SuccessSnackbar from "../Components/SuccessSnackbar";
+import { NotificationMessage } from "../Components/NotificationMessage";
 import { pathHome, pathStudentLogin, pathTeacherLogin } from "../Paths";
 import { serverRegister } from "../Services/ClientService";
 import { getSessionId, setCookie } from "../Services/SessionService";
-import { mainTheme, squaresColor } from "../Utils";
+import { formatMessage, mainTheme, squaresColor } from "../Utils";
 
 
 
@@ -23,10 +21,20 @@ function Register() {
   const navigate = useNavigate();
 
   const [isStudent, setIsStudent] = React.useState(false);
-  const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false);
-  const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false);
-  const [failuretMsg, setFailuretMsg] = React.useState<string>("");
-  const [successtMsg, setSuccesstMsg] = React.useState<string>("");
+  const [showMessage, setShowMessage] = React.useState(false);
+  const [messageContent, setMessageContent] = React.useState('');
+  const [messageType, setMessageType] = React.useState<'error' | 'success'>('error');
+
+
+  const handleClose = () => {
+    setShowMessage(false);
+  };
+
+  const displayMessage = (message: string, type: 'error' | 'success') => {
+    setMessageContent(formatMessage(message));
+    setMessageType(type);
+    setShowMessage(true);
+  };
 
 
 
@@ -42,7 +50,7 @@ function Register() {
     const confirmPassword = data.get("confirmPassword")?.toString();
 
     if (password !== confirmPassword) {
-      alert("•At least 8 characters\n•Include 1 uppercase letter (A-Z)\n•Include 1 lowercase letter (a-z)\n•Include 1 special character (e.g.,!@#$%^&*)");
+      displayMessage("Passwords do not match!",'error')
       return; // Exit the function if passwords don't match
   }
   
@@ -56,17 +64,7 @@ function Register() {
       setCookie(getSessionId(), "email", email);
       })
       .catch((e) => {
-        setOpenFailSnack(true);
-        setFailuretMsg(String(e));
-        alert("•At least 8 characters\n•Include 1 uppercase letter (A-Z)\n•Include 1 lowercase letter (a-z)\n•Include 1 special character (e.g.,!@#$%^&*)");
-      })
-
-  };
-
-  const handleCloseSuccessSnack = () => {
-    setOpenSuccSnack(false);
-    isStudent ? navigate(pathStudentLogin) : navigate(pathTeacherLogin);
-  };
+       displayMessage(e,'error')})};
   
 
   return (
@@ -200,16 +198,13 @@ function Register() {
           </Box>
         </Grid>
       </Grid>
-      <Dialog open={openFailSnack}>
-      {FailureSnackbar(failuretMsg, openFailSnack, () =>
-          setOpenFailSnack(false)
-        )}
-      </Dialog>
-      <Dialog open={openSuccSnack}>
-      {SuccessSnackbar(successtMsg, openSuccSnack, handleCloseSuccessSnack)}
-      </Dialog>
-
-
+      {showMessage && (
+        <NotificationMessage
+          message={messageContent}
+          onClose={handleClose}
+          type={messageType}
+        />
+      )}
     </ThemeProvider>
   );
 }

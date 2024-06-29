@@ -5,6 +5,19 @@ export const serverPort = "https://emotilink.cs.bgu.ac.il";
 export const squaresColor = "#E8F0FE";
 
 
+export const formatMessage = (error: any) : string => {
+  let message = '';
+  if (error instanceof Error) {
+    message = error.message;
+  } else if (typeof error === 'string') {
+    message = error;
+  } else {
+    message = 'An unknown error occurred';
+  }
+
+  return message;
+};
+
 export const makeSetStateFromEvent = (setState: any) => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
       setState(event.target.value);

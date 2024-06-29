@@ -1,7 +1,10 @@
 import { Button, ButtonGroup, ThemeProvider, createTheme } from "@mui/material";
 import React from 'react';
+import { NotificationMessage } from "../Components/NotificationMessage";
 import * as Paths from "../Paths";
-import { textColor } from "../Utils";
+import { serverEnterAsGuest } from "../Services/ClientService";
+import { getIsInitOccured, initSession } from "../Services/SessionService";
+import { formatMessage, textColor } from "../Utils";
 import logo from "../assets/FrontLogo.png";
 
 const createButton = (name: string, path: string) => {
@@ -58,6 +61,32 @@ const buttons = [
 ];
 
 function HomePage() {
+  const [showMessage, setShowMessage] = React.useState(false);
+  const [messageContent, setMessageContent] = React.useState('');
+  const [messageType, setMessageType] = React.useState<'error' | 'success'>('error');
+
+
+  const handleClose = () => {
+    setShowMessage(false);
+  };
+
+  const displayMessage = (message: string, type: 'error' | 'success') => {
+    setMessageContent(formatMessage(message));
+    setMessageType(type);
+    setShowMessage(true);
+  };
+
+
+  getIsInitOccured() ? null : serverEnterAsGuest().then((sessionId: string) => {
+    initSession(sessionId);
+    //initializeCookie(sessionId);
+    displayMessage("Connected to server successfuly!", 'success');
+  })
+  .catch((e) => {
+    displayMessage(e, 'error');
+  });
+
+
   return (
     <ThemeProvider theme={mainTheme}>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -70,6 +99,13 @@ function HomePage() {
             {buttons}
           </ButtonGroup>
         </div>
+        {showMessage && (
+        <NotificationMessage
+          message={messageContent}
+          onClose={handleClose}
+          type={messageType}
+        />
+      )}
     </ThemeProvider>
 
   );

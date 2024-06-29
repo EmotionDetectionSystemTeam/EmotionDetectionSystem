@@ -9,7 +9,6 @@ import StudentDisplay from "../Objects/StudentDisplay";
 import StudentOverview from "../Objects/StudentOverview";
 import { pathTeacherDashBoard } from "../Paths";
 import { serverGetAllStudentData, serverGetStudentData } from "../Services/ClientService";
-import { ServerMockStudentOverview } from "../Services/MockService";
 import { mainTheme, squaresColor } from "../Utils";
 
 
@@ -47,14 +46,14 @@ function StudentsHistory() {
 
     }).catch((e) => alert(e));
 
-    try {
-      const overview = await ServerMockStudentOverview(student.email);
-      // Handle the fetched overview data
-      setFetchedOverview(overview);
-      console.log(overview);
-    } catch (error) {
-      console.error("Failed to fetch student overview:", error);
-    }
+    // try {
+    //   const overview = await ServerMockStudentOverview(student.email);
+    //   // Handle the fetched overview data
+    //   setFetchedOverview(overview);
+    //   console.log(overview);
+    // } catch (error) {
+    //   console.error("Failed to fetch student overview:", error);
+    // }
   };
 
   const handleCloseDialog = () => {

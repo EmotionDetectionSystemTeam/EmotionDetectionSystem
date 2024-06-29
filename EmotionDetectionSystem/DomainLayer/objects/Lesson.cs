@@ -1,186 +1,302 @@
 using EmotionDetectionSystem.DomainLayer.Events;
 using EmotionDetectionSystem.DomainLayer.Repos;
+using log4net;
 
-namespace EmotionDetectionSystem.DomainLayer.objects;
-
-public class Lesson
+namespace EmotionDetectionSystem.DomainLayer.objects
 {
-    private string                _lessonId;
-    private string                _lessonName;
-    private string                _description;
-    private Teacher               _teacher;
-    private List<Viewer>          _viewers;
-    private DateTime              _date;
-    private bool                  _isActive;
-    private string                _entryCode;
-    private List<string>          _tags;
-    private EnrollmentSummaryRepo _enrollmentSummaryRepo;
-
-    public Lesson(string       lessonId, Teacher teacher, string lessonName, string description, string entryCode,
-                  List<string> tags)
+    /// <summary>
+    /// Represents a lesson in the Emotion Detection System.
+    /// </summary>
+    public class Lesson
     {
-        _lessonId              = lessonId;
-        _teacher               = teacher;
-        _lessonName            = lessonName;
-        _description           = description;
-        _date                  = DateTime.Now;
-        _isActive              = true;
-        _entryCode             = entryCode;
-        _tags                  = tags;
-        _enrollmentSummaryRepo = new EnrollmentSummaryRepo(lessonId);
-        _viewers               = new List<Viewer>();
-    }
+        private string _lessonId;
+        private string _lessonName;
+        private string _description;
+        private Teacher _teacher;
+        private List<Viewer> _viewers;
+        private DateTime _date;
+        private bool _isActive;
+        private string _entryCode;
+        private List<string> _tags;
+        private EnrollmentSummaryRepo _enrollmentSummaryRepo;
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Lesson));
 
-    public string LessonName
-    {
-        get => _lessonName;
-        set => _lessonName = value;
-    }
-
-    public Teacher Teacher
-    {
-        get => _teacher;
-        set => _teacher = value;
-    }
-
-    public DateTime Date
-    {
-        get => _date;
-        set => _date = value;
-    }
-
-    public bool IsActive
-    {
-        get => _isActive;
-        set => _isActive = value;
-    }
-
-    public string EntryCode
-    {
-        get => _entryCode;
-        set => _entryCode = value;
-    }
-
-    public List<string> Tags
-    {
-        get => _tags;
-        set => _tags = value;
-    }
-
-    public List<Viewer> Viewers
-    {
-        get => _viewers;
-        set => _viewers = value;
-    }
-
-    public string Description
-    {
-        get => _description;
-        set => _description = value;
-    }
-
-    public string LessonId
-    {
-        get => _lessonId;
-        set => _lessonId = value;
-    }
-
-    public void EndLesson()
-    {
-        _isActive = false;
-        foreach (var student in _enrollmentSummaryRepo.GetAll().Select(enrollment => enrollment.Student))
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Lesson"/> class.
+        /// </summary>
+        /// <param name="lessonId">The lesson identifier.</param>
+        /// <param name="teacher">The teacher for the lesson.</param>
+        /// <param name="lessonName">The name of the lesson.</param>
+        /// <param name="description">The description of the lesson.</param>
+        /// <param name="entryCode">The entry code for accessing the lesson.</param>
+        /// <param name="tags">The tags associated with the lesson.</param>
+        public Lesson(string lessonId, Teacher teacher, string lessonName, string description, string entryCode, List<string> tags)
         {
-            student.Notify(new LessonEndedEvent(this).GenerateMsg());
+            _lessonId = lessonId;
+            _teacher = teacher;
+            _lessonName = lessonName;
+            _description = description;
+            _date = DateTime.Now;
+            _isActive = true;
+            _entryCode = entryCode;
+            _tags = tags;
+            _enrollmentSummaryRepo = new EnrollmentSummaryRepo(lessonId);
+            _viewers = new List<Viewer>();
         }
-    }
 
-    public bool ContainStudent(Student student)
-    {
-        return _enrollmentSummaryRepo.ContainStudent(student);
-    }
-
-    public void AddStudent(Student student)
-    {
-        if (ContainStudent(student))
+        /// <summary>
+        /// Gets or sets the name of the lesson.
+        /// </summary>
+        public string LessonName
         {
-            return;
+            get => _lessonName;
+            set => _lessonName = value;
         }
-        var enrollmentSummary = new EnrollmentSummary(student, this);
-        _enrollmentSummaryRepo.Add(enrollmentSummary);
-        _teacher.Notify(new StudentJoinLessonEvent(student).GenerateMsg());
-    }
 
-    public bool IsAllowedToViewStudentsData(Viewer viewer)
-    {
-        return _viewers.Contains(viewer) || viewer == _teacher;
-    }
-
-    public List<EnrollmentSummary> GetEnrollmentSummaries()
-    {
-        return _enrollmentSummaryRepo.GetAll();
-    }
-
-    public void PushEmotionData(string userEmail, EmotionData emotionData)
-    {
-        _enrollmentSummaryRepo.PutEmotionData(userEmail, emotionData);
-    }
-
-    public void AddViewer(Viewer viewer)
-    {
-        if (!_viewers.Contains(viewer) || viewer != _teacher)
+        /// <summary>
+        /// Gets or sets the teacher of the lesson.
+        /// </summary>
+        public Teacher Teacher
         {
-            _viewers.Add(viewer);
+            get => _teacher;
+            set => _teacher = value;
         }
-    }
 
-    public IEnumerable<EmotionData> GetEmotionDataEntries()
-    {
-        var entries = new List<EmotionData>();
-        entries.AddRange(_enrollmentSummaryRepo.GetEmotionDataEntries());
-        return entries;
-    }
-
-    public IEnumerable<EnrollmentSummary> GetEnrollmentSummariesWithData()
-    {
-        return _enrollmentSummaryRepo.GetEnrollmentSummariesWithData();
-    }
-    public Dictionary<string, List<string>> GetStudentWiningEmotions() { 
-        return _enrollmentSummaryRepo.GetStudentWiningEmotions();
-    }
-    public Dictionary<Student,EnrollmentSummary> GetStudentsEmotions() {
-        return _enrollmentSummaryRepo.GetStudentsEmotions();
-    }
-
-    public void Leave(User user)
-    {
-        user.Leave(this);
-    }
-
-    public void Leave(Student student)
-    {
-        _teacher.Notify(new StudentLeftLessonEvent(student).GenerateMsg());
-    }
-    public void Leave(Viewer viewer)
-    {
-        _viewers.Remove(viewer);
-    }
-    
-    public void Leave(Teacher teacher)
-    {
-        foreach (var student in _enrollmentSummaryRepo.GetAll().Select(enrollment => enrollment.Student))
+        /// <summary>
+        /// Gets or sets the date of the lesson.
+        /// </summary>
+        public DateTime Date
         {
-            student.Notify(new TeacherLeftLesson(teacher).GenerateMsg());
+            get => _date;
+            set => _date = value;
         }
-    }
-    
-    public EnrollmentSummary GetEnrollmentSummaryByEmail(string studentEmail)
-    {
-        return _enrollmentSummaryRepo.GetById(studentEmail);
-    }
 
-    public void AddTeacherApproach(Teacher teacher, Student student)
-    {
-        var enrollmentSummary = GetEnrollmentSummaryByEmail(student.Email);
-        enrollmentSummary.AddTeacherApproach(teacher);
+        /// <summary>
+        /// Gets or sets whether the lesson is active.
+        /// </summary>
+        public bool IsActive
+        {
+            get => _isActive;
+            set => _isActive = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the entry code for accessing the lesson.
+        /// </summary>
+        public string EntryCode
+        {
+            get => _entryCode;
+            set => _entryCode = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the tags associated with the lesson.
+        /// </summary>
+        public List<string> Tags
+        {
+            get => _tags;
+            set => _tags = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the list of viewers enrolled in the lesson.
+        /// </summary>
+        public List<Viewer> Viewers
+        {
+            get => _viewers;
+            set => _viewers = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the description of the lesson.
+        /// </summary>
+        public string Description
+        {
+            get => _description;
+            set => _description = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the identifier of the lesson.
+        /// </summary>
+        public string LessonId
+        {
+            get => _lessonId;
+            set => _lessonId = value;
+        }
+
+        /// <summary>
+        /// Ends the lesson and notifies all enrolled students.
+        /// </summary>
+        public void EndLesson()
+        {
+            _isActive = false;
+            foreach (var student in _enrollmentSummaryRepo.GetAll().Select(enrollment => enrollment.Student))
+            {
+                student.Notify(new LessonEndedEvent(this).GenerateMsg());
+            }
+        }
+
+        /// <summary>
+        /// Checks if a student is enrolled in the lesson.
+        /// </summary>
+        /// <param name="student">The student to check.</param>
+        /// <returns><c>true</c> if the student is enrolled; otherwise, <c>false</c>.</returns>
+        public bool ContainStudent(Student student)
+        {
+            return _enrollmentSummaryRepo.ContainStudent(student);
+        }
+
+        /// <summary>
+        /// Adds a student to the lesson if not already enrolled.
+        /// </summary>
+        /// <param name="student">The student to add.</param>
+        public void AddStudent(Student student)
+        {
+            if (ContainStudent(student))
+            {
+                return;
+            }
+            var enrollmentSummary = new EnrollmentSummary(student, this);
+            _enrollmentSummaryRepo.Add(enrollmentSummary);
+            _teacher.Notify(new StudentJoinLessonEvent(student).GenerateMsg());
+        }
+
+        /// <summary>
+        /// Checks if a viewer is allowed to view student data.
+        /// </summary>
+        /// <param name="viewer">The viewer to check.</param>
+        /// <returns><c>true</c> if the viewer is allowed; otherwise, <c>false</c>.</returns>
+        public bool IsAllowedToViewStudentsData(Viewer viewer)
+        {
+            return _viewers.Contains(viewer) || viewer == _teacher;
+        }
+
+        /// <summary>
+        /// Retrieves all enrollment summaries for the lesson.
+        /// </summary>
+        /// <returns>The list of enrollment summaries.</returns>
+        public List<EnrollmentSummary> GetEnrollmentSummaries()
+        {
+            return _enrollmentSummaryRepo.GetAll();
+        }
+
+        /// <summary>
+        /// Pushes emotion data for a user to the lesson's repository.
+        /// </summary>
+        /// <param name="userEmail">The email of the user.</param>
+        /// <param name="emotionData">The emotion data to push.</param>
+        public void PushEmotionData(string userEmail, EmotionData emotionData)
+        {
+            _enrollmentSummaryRepo.PutEmotionData(userEmail, emotionData);
+        }
+
+        /// <summary>
+        /// Adds a viewer to the lesson if not already added.
+        /// </summary>
+        /// <param name="viewer">The viewer to add.</param>
+        public void AddViewer(Viewer viewer)
+        {
+            if (!_viewers.Contains(viewer) || viewer != _teacher)
+            {
+                _viewers.Add(viewer);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves all emotion data entries associated with the lesson.
+        /// </summary>
+        /// <returns>The list of emotion data entries.</returns>
+        public IEnumerable<EmotionData> GetEmotionDataEntries()
+        {
+            var entries = new List<EmotionData>();
+            entries.AddRange(_enrollmentSummaryRepo.GetEmotionDataEntries());
+            return entries;
+        }
+
+        /// <summary>
+        /// Retrieves enrollment summaries with associated data for the lesson.
+        /// </summary>
+        /// <param name="correlationId">The correlation ID for logging purposes.</param>
+        /// <returns>The list of enrollment summaries with associated data.</returns>
+        public IEnumerable<EnrollmentSummary> GetEnrollmentSummariesWithData(string correlationId)
+        {
+            Log.Info($"[{correlationId}] Getting enrollment summaries with data for lesson {_lessonId}");
+            return _enrollmentSummaryRepo.GetEnrollmentSummariesWithData();
+        }
+
+        /// <summary>
+        /// Retrieves winning emotions for students in the lesson.
+        /// </summary>
+        /// <returns>The dictionary mapping student IDs to winning emotions.</returns>
+        public Dictionary<string, List<string>> GetStudentWiningEmotions()
+        {
+            return _enrollmentSummaryRepo.GetStudentWiningEmotions();
+        }
+
+        /// <summary>
+        /// Retrieves emotions data for students in the lesson.
+        /// </summary>
+        /// <returns>The dictionary mapping students to their enrollment summaries containing emotions data.</returns>
+        public Dictionary<Student, EnrollmentSummary> GetStudentsEmotions()
+        {
+            return _enrollmentSummaryRepo.GetStudentsEmotions();
+        }
+
+        /// <summary>
+        /// Notifies the teacher that a student has left the lesson.
+        /// </summary>
+        /// <param name="student">The student who left.</param>
+        public void Leave(Student student)
+        {
+            _teacher.Notify(new StudentLeftLessonEvent(student).GenerateMsg());
+        }
+
+        /// <summary>
+        /// Removes a viewer from the lesson.
+        /// </summary>
+        /// <param name="viewer">The viewer to remove.</param>
+        public void Leave(Viewer viewer)
+        {
+            _viewers.Remove(viewer);
+        }
+
+        /// <summary>
+        /// Notifies all students that the lesson teacher has left.
+        /// </summary>
+        /// <param name="teacher">The teacher who left.</param>
+        public void Leave(Teacher teacher)
+        {
+            foreach (var student in _enrollmentSummaryRepo.GetAll().Select(enrollment => enrollment.Student))
+            {
+                student.Notify(new TeacherLeftLesson(teacher).GenerateMsg());
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the enrollment summary for a student by email.
+        /// </summary>
+        /// <param name="studentEmail">The email of the student.</param>
+        /// <returns>The enrollment summary for the student.</returns>
+        public EnrollmentSummary GetEnrollmentSummaryByEmail(string studentEmail)
+        {
+            return _enrollmentSummaryRepo.GetById(studentEmail);
+        }
+
+        /// <summary>
+        /// Adds a teacher's approach to a student's enrollment summary.
+        /// </summary>
+        /// <param name="teacher">The teacher who approached.</param>
+        /// <param name="student">The student who received the approach.</param>
+        public void AddTeacherApproach(Teacher teacher, Student student)
+        {
+            var enrollmentSummary = GetEnrollmentSummaryByEmail(student.Email);
+            enrollmentSummary.AddTeacherApproach(teacher);
+        }
+        
+        public void Leave(User user)
+        {
+            user.Leave(this);
+        }
     }
 }

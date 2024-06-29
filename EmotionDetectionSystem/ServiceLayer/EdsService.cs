@@ -329,4 +329,18 @@ public class EdsService : IEdsService
             return new Response(e.Message);
         }
     }
+    
+    public Response AddTeacherApproach(string sessionId, string teacherEmail, string lessonId, string studentUsername){
+        _logger.InfoFormat($"Add teacher approach request for session: {sessionId} has been received");
+        try
+        {
+            _edsManager.AddTeacherApproach(sessionId, teacherEmail, lessonId, studentUsername);
+            return new Response();
+        }
+        catch (Exception e)
+        {
+            _logger.ErrorFormat($"Error adding teacher approach with session: {sessionId} - {e.Message}");
+            return new Response(e.Message);
+        }
+    }
 }

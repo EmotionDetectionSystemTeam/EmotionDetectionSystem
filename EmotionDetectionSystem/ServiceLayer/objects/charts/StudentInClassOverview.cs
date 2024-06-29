@@ -9,6 +9,7 @@ public class StudentInClassOverview
     public string                 FirstName { get; set; }
     public string                 LastName  { get; set; }
     public List<EmotionDataChart> Emotions  { get; set; }
+    public List<string>           TeacherApproach { get; set; }
 
     public StudentInClassOverview(EnrollmentSummary enrollmentSummary)
     {
@@ -21,6 +22,7 @@ public class StudentInClassOverview
         {
             Emotions.Add(new EmotionDataChart(emotionData));
         }
+        TeacherApproach = enrollmentSummary.TeacherApproach;
     }
 }
 

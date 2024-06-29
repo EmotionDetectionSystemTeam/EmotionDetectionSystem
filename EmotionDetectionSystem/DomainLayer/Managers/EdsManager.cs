@@ -262,4 +262,13 @@ public class EdsManager
         var enrollments = _lessonManager.GetLessonByStudentEmail(teacher, studentEmail);
         return (_userManager.GetStudent(studentEmail), enrollments);
     }
+
+    public void AddTeacherApproach(string sessionId, string teacherEmail, string lessonId, string studentUsername)
+    {
+IsValidSession(sessionId, teacherEmail);
+        var teacher = _userManager.GetTeacher(teacherEmail);
+        var lesson  = _lessonManager.GetLesson(lessonId);
+        var student = _userManager.GetStudent(studentUsername);
+        lesson.AddTeacherApproach(teacher, student);
+    }
 }

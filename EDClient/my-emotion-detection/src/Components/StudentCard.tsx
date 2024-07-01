@@ -9,7 +9,10 @@ interface StudentCardProps {
   onClick: () => void;
 }
 
+
+
 const StudentCard: React.FC<StudentCardProps> = ({ student, onClick }) => {
+
   return (
     <Card sx={{
       width: 220,

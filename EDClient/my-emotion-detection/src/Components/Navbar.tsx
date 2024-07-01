@@ -1,5 +1,6 @@
 import { Logout } from "@mui/icons-material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import InfoIcon from '@mui/icons-material/Info';
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import { BadgeProps, Tooltip } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
@@ -8,12 +9,12 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import { ThemeProvider, styled } from "@mui/material/styles";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { pathHome } from "../Paths";
 import { serverLogout } from "../Services/ClientService";
+
 import {
   clearSession,
   getIsGuest
@@ -31,10 +32,12 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   },
 }));
 
-export default function Navbar() {
+export default function Navbar(classLesson?) {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [numOfNotifications, setNumOfNotifications] = React.useState<number>(0);
+  const [infoDialogOpen, setInfoDialogOpen] = React.useState(false);
+
 
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -97,6 +100,13 @@ export default function Navbar() {
   }, []);
   */
 
+  const handleInfoClick = () => {
+    setInfoDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setInfoDialogOpen(false);
+  };
 
   const handleLogout = () => {
     if (!getIsGuest()) {
@@ -130,21 +140,6 @@ export default function Navbar() {
                   marginBottom: "5px", // Adjust margin if necessary
                   marginRight: "10px", // Adjust margin if necessary
              }} />
-              <Typography
-                onClick={handleClickDashboard}
-                variant="h6"
-                noWrap
-                component="div"
-                sx={{
-                  color: "black",
-                  display: { xs: "none", sm: "block" },
-                  "&:hover": {
-                    cursor: "pointer",
-                  },
-                }}
-              >
-                Emotion Detection Beta v1
-              </Typography>
             </Stack>
 
             <Box sx={{}} />
@@ -160,6 +155,12 @@ export default function Navbar() {
           </div> */}
           <div>
             <Box marginRight={5} sx={{ display: { xs: "none", md: "flex" } }}>
+              {classLesson == null ? null  :
+                    <IconButton  onClick={handleInfoClick}>
+                      <InfoIcon                     
+ />
+                    </IconButton>
+              }
               {getIsGuest() ? null : (
                 <Tooltip title="Notifications">
                   <IconButton
@@ -208,6 +209,7 @@ export default function Navbar() {
           </div>
         </Toolbar>
       </AppBar>
+      
     </ThemeProvider>
   );
 }

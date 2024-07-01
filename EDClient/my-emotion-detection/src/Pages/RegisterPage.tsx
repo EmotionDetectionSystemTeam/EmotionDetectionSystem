@@ -1,7 +1,6 @@
+import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
@@ -20,7 +19,8 @@ import { formatMessage, mainTheme, squaresColor } from "../Utils";
 function Register() {
   const navigate = useNavigate();
 
-  const [isStudent, setIsStudent] = React.useState(false);
+  const [isStudent, setIsStudent] = React.useState(true);
+  const [isTeacher, setIsTeacher] = React.useState(false);
   const [showMessage, setShowMessage] = React.useState(false);
   const [messageContent, setMessageContent] = React.useState('');
   const [messageType, setMessageType] = React.useState<'error' | 'success'>('error');
@@ -34,6 +34,20 @@ function Register() {
     setMessageContent(formatMessage(message));
     setMessageType(type);
     setShowMessage(true);
+  };
+
+  const handleStudentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setIsStudent(true);
+      setIsTeacher(false);
+    }
+  };
+
+  const handleTeacherChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setIsTeacher(true);
+      setIsStudent(false);
+    }
   };
 
 
@@ -50,22 +64,24 @@ function Register() {
     const confirmPassword = data.get("confirmPassword")?.toString();
 
     if (password !== confirmPassword) {
-      displayMessage("Passwords do not match!",'error')
+      displayMessage("Passwords do not match!", 'error')
       return; // Exit the function if passwords don't match
-  }
-  
-    const isStudentValue = isStudent ? 0 : 1;
-    serverRegister(email, firstName, lastName, password, confirmPassword,isStudentValue)
-    .then((response : string) => {
-      //setOpenSuccSnack(true);
-      //setSuccesstMsg(response);
-      isStudent ? navigate(pathStudentLogin) : navigate(pathTeacherLogin);
+    }
 
-      setCookie(getSessionId(), "email", email);
+    const isStudentValue = isStudent ? 0 : 1;
+    serverRegister(email, firstName, lastName, password, confirmPassword, isStudentValue)
+      .then((response: string) => {
+        //setOpenSuccSnack(true);
+        //setSuccesstMsg(response);
+        isStudent ? navigate(pathStudentLogin) : navigate(pathTeacherLogin);
+
+        setCookie(getSessionId(), "email", email);
       })
       .catch((e) => {
-       displayMessage(e,'error')})};
-  
+        displayMessage(e, 'error')
+      })
+  };
+
 
   return (
     <ThemeProvider theme={mainTheme}>
@@ -102,19 +118,43 @@ function Register() {
                 mt: 1,
               }}
             >
+              <FormGroup row>
+                <FormControlLabel
+                  control={
+                    <Checkbox 
+                      checked={isStudent} 
+                      onChange={handleStudentChange} 
+                      color="primary" 
+                      name="isStudent" 
+                    />
+                  }
+                  label="Are you a student?"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox 
+                      checked={!isStudent} 
+                      onChange={handleTeacherChange} 
+                      color="primary" 
+                      name="isTeacher" 
+                    />
+                  }
+                  label="Are you a teacher?"
+                />
+              </FormGroup>
               <TextField
                 margin="normal"
                 required
                 fullWidth
                 id="email"
-                label="Email"
+                label={isStudent ? "UserName" : "Email"}
                 name="email"
                 autoComplete="email"
                 autoFocus
                 variant="outlined"
                 type="email"
               />
-                <TextField
+              <TextField
                 margin="normal"
                 required
                 fullWidth
@@ -135,7 +175,7 @@ function Register() {
                 autoComplete="current-password"
                 variant="outlined"
               />
-                <TextField
+              <TextField
                 margin="normal"
                 required
                 fullWidth
@@ -146,7 +186,7 @@ function Register() {
                 autoComplete="current-password"
                 variant="outlined"
               />
-                <TextField
+              <TextField
                 margin="normal"
                 required
                 fullWidth
@@ -156,10 +196,6 @@ function Register() {
                 id="confirmPassword"
                 autoComplete="current-password"
                 variant="outlined"
-              />
-              <FormControlLabel
-                control={<Checkbox checked={isStudent} onChange={(e) => setIsStudent(e.target.checked)} color="primary" name="isStudent" />}
-                label="Are you a student?"
               />
               <Button
                 type="submit"

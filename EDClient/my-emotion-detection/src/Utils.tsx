@@ -60,7 +60,18 @@ export const mainTheme = createTheme({
 
   export const emotionColors = {
     'Happy': '#4caf50', // Green
-    'Surprised': '#ffeb3b', // Yellow
+    'Surprised': '#f9a201', // Yellow
     'Neutral': '#9e9e9e', // Gray
+  };
+
+  export const getEmotionEmoji = (emotion: string): string => {
+    switch (emotion.toLowerCase()) {
+      case 'happy':
+        return '😊';
+      case 'surprised':
+        return '😮';
+      default:
+        return '😔';
+    }
   };
   

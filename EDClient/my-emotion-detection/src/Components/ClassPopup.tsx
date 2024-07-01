@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Slider, ThemeProvider, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Slider, TextField, ThemeProvider, Typography } from "@mui/material";
 import { ArcElement, Chart, Legend, Tooltip } from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import React, { useEffect, useRef, useState } from 'react';
@@ -27,12 +27,18 @@ const ClassPopup: React.FC<ClassPopupProps> = ({ open, onClose, classLesson }) =
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [openStudentDialog, setOpenStudentDialog] = useState(false);
   const [intervalMinutes, setIntervalMinutes] = useState(5);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
 
 
 
 
   const chartRef = useRef<any>(null);
 
+  const filteredStudents = classLesson !== null ? classLesson.students.filter((student) =>
+    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.email.toLowerCase().includes(searchTerm.toLowerCase())
+  ) : null;
 
   useEffect(() => {
     return () => {
@@ -61,20 +67,20 @@ const ClassPopup: React.FC<ClassPopupProps> = ({ open, onClose, classLesson }) =
       return acc;
     }, {} as Record<string, number>);
 
-    const pieData = {
-      labels: Object.keys(emotionCounts),
-      datasets: [
-        {
-          data: Object.values(emotionCounts),
-          backgroundColor: Object.keys(emotionCounts).map(
-            (emotion) => emotionColors[emotion] || '#ff6384'
-          ),
-          hoverBackgroundColor: Object.keys(emotionCounts).map(
-            (emotion) => emotionColors[emotion] || '#ff6384'
-          ),
-        },
-      ],
-    };
+  const pieData = {
+    labels: Object.keys(emotionCounts),
+    datasets: [
+      {
+        data: Object.values(emotionCounts),
+        backgroundColor: Object.keys(emotionCounts).map(
+          (emotion) => emotionColors[emotion] || '#ff6384'
+        ),
+        hoverBackgroundColor: Object.keys(emotionCounts).map(
+          (emotion) => emotionColors[emotion] || '#ff6384'
+        ),
+      },
+    ],
+  };
 
   const pieOptions = {
     plugins: {
@@ -90,86 +96,108 @@ const ClassPopup: React.FC<ClassPopupProps> = ({ open, onClose, classLesson }) =
 
   return (
     <ThemeProvider theme={mainTheme}>
-    <Box>
-    <Dialog open={open} onClose={onClose} fullScreen={true} fullWidth={true}>
-      <DialogTitle>{}</DialogTitle>
-      <DialogContent>
-        <Box>
-        <Typography align="center" variant="h4" > {classLesson.name + ' - ' + classLesson.description}</Typography>
-        <Typography align="center" variant="h6" gutterBottom> Class Date: {classLesson.date.toString()}</Typography>
+      <Box>
+        <Dialog open={open} onClose={onClose} fullScreen={true} fullWidth={true}>
+          <DialogTitle>{ }</DialogTitle>
+          <DialogContent>
+            <Box>
+              <Typography align="center" variant="h4" > {classLesson.name + ' - ' + classLesson.description}</Typography>
+              <Typography align="center" variant="h6" gutterBottom> Class Date: {classLesson.date.toString()}</Typography>
 
 
 
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-          <Typography align="center" variant="h6">Students Attendants</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography align="center" variant="h5">Students Attendants</Typography>
 
-          <Box
-          
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "flex-start",
-                gap: 2,
-                mt: 3,
-              }}
-            >
+                  <Box
 
-                          {classLesson.students.map(student => (
-              <StudentCard key={student.email} student={student} onClick={() => handleStudentClick(student)} />
-            ))}
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      justifyContent: "flex-start",
+                      gap: 2,
+                      mt: 3,
+                    }}
+                  >
+                    <TextField
+                      label="Search Students"
+                      variant="outlined"
+                      fullWidth
+                      sx={{ mb: 3 }}
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+
+                    {filteredStudents?.map(student => (
+                      <StudentCard key={student.name} student={student} onClick={() => handleStudentClick(student)} />
+                    ))}
+                  </Box>
+
+                </Grid>
+                <Grid item xs={6}>
+
+
+                  <Box
+
+                    sx={{
+                      overflow: "false",
+                      width: "75%",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      justifyContent: "flex-start",
+                      gap: 2,
+                      mt: 3,
+                    }}
+                  >
+
+                    <Pie id="chart-id" data={pieData} options={pieOptions} />
+
+
+                  </Box>
+
+                </Grid>
+              </Grid>
             </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button sx={{
+              position: 'fixed',
+              left: 20,
+              bottom: 20,
+            }} variant="contained" color="primary" onClick={onClose}>Close</Button>
+          </DialogActions>
 
-          </Grid>
-          <Grid item xs={6}>
-
-          <Box
-          
-              sx={{
-                overflow: "false",
-                width: "75%",
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "flex-start",
-                gap: 2,
-                mt: 3,
-              }}
-            >          <Pie id="chart-id" data={pieData} options={pieOptions} />
-
-
-            </Box>
-
-          </Grid>
-        </Grid>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-          <Button variant="contained" color="primary" onClick={onClose}>Close</Button>
-        </DialogActions>
-
-    </Dialog>
-          <Dialog open={openStudentDialog} onClose={handleCloseStudentDialog} fullWidth maxWidth="lg">
+        </Dialog>
+        <Dialog open={openStudentDialog} onClose={handleCloseStudentDialog} fullWidth maxWidth="lg">
           <DialogContent>
             {selectedStudent && (
               <>
                 {/* Add your content related to the selected student here */}
                 <Typography variant="h6" sx={{ mt: 4 }}>{selectedStudent.name}'s Emotions Over Time</Typography>
                 <Typography gutterBottom>Interval Duration (minutes):</Typography>
-        {/* Range Slider */}
-        <Slider
-          value={intervalMinutes}
-          onChange={(e, newValue) => setIntervalMinutes(newValue as number)}
-          valueLabelDisplay="auto"
-          min={1}
-          max={60}
-          step={1}
-        />
+                {/* Range Slider */}
+                <Slider
+                  value={intervalMinutes}
+                  onChange={(e, newValue) => setIntervalMinutes(newValue as number)}
+                  valueLabelDisplay="auto"
+                  min={1}
+                  max={60}
+                  step={1}
+                />
                 <StudentBarChart student={selectedStudent} intervalMinutes={intervalMinutes} />
+                <Typography variant="h6" sx={{ mt: 4 }}>Teacher Approaches to {selectedStudent.name}  </Typography>
+
 
               </>
-            )}
-            <Button variant="contained" color="primary" onClick={handleCloseStudentDialog}>
+            )}{selectedStudent?.emotions != null ? selectedStudent?.emotions.map(approach => (
+              <Typography fontSize="h6"> {approach.emotion}  </Typography>
+
+            ))
+
+              : null}
+            <Button variant="contained" sx={{ mt: 4 }} color="primary" onClick={handleCloseStudentDialog}>
               Close
             </Button>
           </DialogContent>
@@ -177,7 +205,7 @@ const ClassPopup: React.FC<ClassPopupProps> = ({ open, onClose, classLesson }) =
 
 
       </Box>
-      </ThemeProvider> 
+    </ThemeProvider>
   );
 };
 

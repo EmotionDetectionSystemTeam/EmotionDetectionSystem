@@ -34,6 +34,6 @@ namespace EmotionDetectionSystem.ServiceLayer
 
         Response NotifySurpriseStudent(string sessionId, string teacherEmail, string studentEmail);
         Response LeaveLesson(string sessionId, string email, string lessonId);
-        Response AddTeacherApproach(string sessionId, string email, string lessonId, string approach);
+        Response AddTeacherApproach(string sessionId, string email, string lessonId, string studentUsername);
     }
 }

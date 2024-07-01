@@ -232,6 +232,25 @@ namespace EmotionDetectionServer.API
             Email = email;
             LessonId = lessonId;
         }
+
+
+    }
+    public class AddTeacherApproachRequest : IRequest
+    {
+        public string SessionId { get; set; }
+        public string TeacherEmail { get; set; }
+        public string LessonId { get; set; }
+        public string StudentEmail { get; set; }
+
+        public AddTeacherApproachRequest(string sessionId, string teacherEmail, string lessonId, string studentEmail)
+        {
+            SessionId = sessionId;
+            TeacherEmail = teacherEmail;
+            LessonId = lessonId;
+            StudentEmail = studentEmail;
+        }
+
+
     }
 
 }

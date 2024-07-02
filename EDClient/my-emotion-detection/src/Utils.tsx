@@ -62,6 +62,10 @@ export const mainTheme = createTheme({
     'Happy': '#4caf50', // Green
     'Surprised': '#f9a201', // Yellow
     'Neutral': '#9e9e9e', // Gray
+    'Sad' : '#ff6384',
+    'Angry' : '#ff6384',
+    'Fearful' : '#ff6384',
+    'Disgusted' : '#ff6384',
   };
 
   export const getEmotionEmoji = (emotion: string): string => {

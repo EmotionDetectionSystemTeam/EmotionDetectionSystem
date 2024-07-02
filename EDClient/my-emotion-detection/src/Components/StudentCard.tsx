@@ -1,4 +1,3 @@
-// StudentCard.tsx
 import { Avatar, Box, Card, CardActionArea, CardContent, Typography } from "@mui/material";
 import React from 'react';
 import Student from "../Objects/Student";

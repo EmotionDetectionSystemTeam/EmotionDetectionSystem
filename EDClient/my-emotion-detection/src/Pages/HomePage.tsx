@@ -1,115 +1,148 @@
-import { Button, ButtonGroup, ThemeProvider, createTheme } from "@mui/material";
-import React from 'react';
+import { Box, Button, Container, Paper, ThemeProvider, Typography, createTheme } from "@mui/material";
+import React, { useEffect, useState } from 'react';
 import { NotificationMessage } from "../Components/NotificationMessage";
 import * as Paths from "../Paths";
 import { serverEnterAsGuest } from "../Services/ClientService";
 import { getIsInitOccured, initSession } from "../Services/SessionService";
-import { formatMessage, textColor } from "../Utils";
+import { formatMessage } from "../Utils";
 import logo from "../assets/FrontLogo.png";
-
-const createButton = (name: string, path: string) => {
-  return (
-    <Button
-      href={path}
-      style={{ height: 100, width: 500 }}
-      key="name"
-      variant="outlined"
-      size="large"
-      color="primary"
-      sx={{
-        background: "#E8F0FE",
-        m: 1,
-        color: textColor,
-        "&:hover": {
-          borderRadius: 5,
-          color: textColor,
-        },
-      }}
-    >
-      {name}
-    </Button>
-  );
-};
 
 const mainTheme = createTheme({
   palette: {
-    mode: "dark",
+    
+    primary: {
+      main: '#1976d2',
+    },
     background: {
-      default: '"#E8F0FE"', // Set the default background color
+      default: '#f5f5f5',
     },
   },
+  
   typography: {
     fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
+      'Roboto',
+      'Arial',
+      'sans-serif',
+    ].join(','),
   },
 });
 
-const buttons = [
-    createButton("Enter as Teacher", Paths.pathTeacherLogin),
-    createButton("Enter as Student", Paths.pathStudentLogin),
-    createButton("Register", Paths.pathRegister),
-];
+const buttonStyle = {
+  width: '100%',
+  py: 2,
+  mb: 2,
+  fontSize: '1.1rem',
+  fontWeight: 'bold',
+  borderRadius: 2,
+  textTransform: 'none',
+};
 
 function HomePage() {
-  const [showMessage, setShowMessage] = React.useState(false);
-  const [messageContent, setMessageContent] = React.useState('');
-  const [messageType, setMessageType] = React.useState<'error' | 'success'>('error');
+  const [showMessage, setShowMessage] = useState(false);
+  const [messageContent, setMessageContent] = useState('');
+  const [messageType, setMessageType] = useState('error');
 
+  useEffect(() => {
+    if (!getIsInitOccured()) {
+      serverEnterAsGuest()
+        .then((sessionId) => {
+          initSession(sessionId);
+          displayMessage("Connected to server successfully!", 'success');
+        })
+        .catch((e) => {
+          displayMessage(e, 'error');
+        });
+    }
+  }, []);
 
-  const handleClose = () => {
-    setShowMessage(false);
-  };
+  const handleClose = () => setShowMessage(false);
 
-  const displayMessage = (message: string, type: 'error' | 'success') => {
+  const displayMessage = (message, type) => {
     setMessageContent(formatMessage(message));
     setMessageType(type);
     setShowMessage(true);
   };
 
-
-  getIsInitOccured() ? null : serverEnterAsGuest().then((sessionId: string) => {
-    initSession(sessionId);
-    //initializeCookie(sessionId);
-    displayMessage("Connected to server successfuly!", 'success');
-  })
-  .catch((e) => {
-    displayMessage(e, 'error');
-  });
-
-
   return (
     <ThemeProvider theme={mainTheme}>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <img src={logo} alt="Logo" style={{ marginBottom: 40 }} />
-          <ButtonGroup
-            orientation="vertical"
-            aria-label="vertical contained button group"
-            variant="text"
+      
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        <Container maxWidth="sm">
+          <Paper
+            elevation={3}
+            sx={{
+              p: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              bgcolor: 'white',
+              borderRadius: 4,
+            }}
           >
-            {buttons}
-          </ButtonGroup>
-        </div>
+            <Box
+              component="img"
+              src={logo}
+              alt="Logo"
+              sx={{
+                width: '70%',
+                maxWidth: 300,
+                mb: 4,
+                bgcolor: 'white',
+                p: 2,
+                borderRadius: 2,
+              }}
+            />
+            <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+              Welcome to Our Platform
+            </Typography>
+            <Typography variant="body1" gutterBottom sx={{ mb: 3, textAlign: 'center' }}>
+              Choose your role to get started with our class management system.
+            </Typography>
+            <Box sx={{ width: '100%' }}>
+              <Button
+                href={Paths.pathTeacherLogin}
+                variant="outlined"
+                color="primary"
+                sx={buttonStyle}
+              >
+                Enter as Teacher
+              </Button>
+              <Button
+                href={Paths.pathStudentLogin}
+                variant="outlined"
+                color="primary"
+                sx={buttonStyle}
+              >
+                Enter as Student
+              </Button>
+              <Button
+                href={Paths.pathRegister}
+                variant="outlined"
+                color="primary"
+                sx={buttonStyle}
+              >
+                Register
+              </Button>
+            </Box>
+          </Paper>
+        </Container>
         {showMessage && (
-        <NotificationMessage
-          message={messageContent}
-          onClose={handleClose}
-          type={messageType}
-        />
-      )}
+          <NotificationMessage
+            message={messageContent}
+            onClose={handleClose}
+            type={messageType}
+          />
+        )}
+      </Box>
     </ThemeProvider>
-
   );
 }
-
 
 export default HomePage;

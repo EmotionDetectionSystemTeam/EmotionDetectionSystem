@@ -21,6 +21,11 @@ const emotionColors = {
   'Happy': '#4caf50', // Green
   'Surprised': '#f9a201', // Yellow
   'Neutral': '#9e9e9e', // Gray
+  'Sad' : '#ff6384',
+  'Angry' : '#ff6384',
+  'Fearful' : '#ff6384',
+  'Disgusted' : '#ff6384',
+
 };
 
 const ClassPopup: React.FC<ClassPopupProps> = ({ open, onClose, classLesson }) => {
@@ -191,12 +196,13 @@ const ClassPopup: React.FC<ClassPopupProps> = ({ open, onClose, classLesson }) =
 
 
               </>
-            )}{selectedStudent?.emotions != null ? selectedStudent?.emotions.map(approach => (
+            )}
+            {/* { selectedStudent?.emotions != null ? selectedStudent?.emotions.map(approach => (
               <Typography fontSize="h6"> {approach.emotion}  </Typography>
 
             ))
 
-              : null}
+              : null} */}
             <Button variant="contained" sx={{ mt: 4 }} color="primary" onClick={handleCloseStudentDialog}>
               Close
             </Button>

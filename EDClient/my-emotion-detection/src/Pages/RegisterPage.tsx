@@ -14,8 +14,6 @@ import { serverRegister } from "../Services/ClientService";
 import { getSessionId, setCookie } from "../Services/SessionService";
 import { formatMessage, mainTheme, squaresColor } from "../Utils";
 
-
-
 function Register() {
   const navigate = useNavigate();
 
@@ -24,7 +22,6 @@ function Register() {
   const [showMessage, setShowMessage] = React.useState(false);
   const [messageContent, setMessageContent] = React.useState('');
   const [messageType, setMessageType] = React.useState<'error' | 'success'>('error');
-
 
   const handleClose = () => {
     setShowMessage(false);
@@ -50,10 +47,6 @@ function Register() {
     }
   };
 
-
-
-
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -64,175 +57,183 @@ function Register() {
     const confirmPassword = data.get("confirmPassword")?.toString();
 
     if (password !== confirmPassword) {
-      displayMessage("Passwords do not match!", 'error')
+      displayMessage("Passwords do not match!", 'error');
       return; // Exit the function if passwords don't match
     }
 
     const isStudentValue = isStudent ? 0 : 1;
     serverRegister(email, firstName, lastName, password, confirmPassword, isStudentValue)
       .then((response: string) => {
-        //setOpenSuccSnack(true);
-        //setSuccesstMsg(response);
         isStudent ? navigate(pathStudentLogin) : navigate(pathTeacherLogin);
 
         setCookie(getSessionId(), "email", email);
       })
       .catch((e) => {
-        displayMessage(e, 'error')
-      })
+        displayMessage(e, 'error');
+      });
   };
-
 
   return (
     <ThemeProvider theme={mainTheme}>
+
       <Grid
-        container
-        component="main"
+        item
+        xs={false}
+        sm={6}
+        md={7}
+      />
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={5}
+        component={Box}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
         sx={{
           height: "90vh",
+          p: 4,
         }}
       >
-        <Grid item xs={false} sm={6} md={7} />
-        <Grid
+        <Box
           sx={{
-            height: "90vh",
+            width: "100%",
+            maxWidth: 400,
+            my: 8,
+            mx: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxShadow: 3,
+            p: 4,
+            backgroundColor: "white",
+            borderRadius: 2,
           }}
         >
+          <Typography component="h1" variant="h5" gutterBottom>
+            Register
+          </Typography>
           <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmit}
             sx={{
-              my: 8,
-              mx: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              mt: 1,
             }}
           >
-            <Typography component="h1" variant="h5">
-              Register
-            </Typography>
-            <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
+            <FormGroup row sx={{ mb: 2 }}>
+              <Typography variant="body1" sx={{ mr: 2, alignSelf: 'center' }}>I am a</Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isStudent}
+                    onChange={handleStudentChange}
+                    color="primary"
+                    name="isStudent"
+                  />
+                }
+                label="Student"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isTeacher}
+                    onChange={handleTeacherChange}
+                    color="primary"
+                    name="isTeacher"
+                  />
+                }
+                label="Teacher"
+              />
+            </FormGroup>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label={isStudent ? "User Name" : "Email"}
+              name="email"
+              autoComplete="email"
+              autoFocus
+              variant="outlined"
+              type="email"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="firstName"
+              label="First Name"
+              name="firstName"
+              autoComplete="firstName"
+              variant="outlined"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="lastName"
+              label="Last Name"
+              type="lastName"
+              id="lastName"
+              autoComplete="current-password"
+              variant="outlined"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              variant="outlined"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="confirmPassword"
+              label="Confirm Password"
+              type="password"
+              id="confirmPassword"
+              autoComplete="current-password"
+              variant="outlined"
+            />
+            <Button
+              type="submit"
+              fullWidth
               sx={{
-                mt: 1,
+                mt: 3,
+                mb: 2,
+                color: "white",
+                backgroundColor: "#1976d2",
+                "&:hover": { backgroundColor: "#1565c0" },
               }}
             >
-              <FormGroup row>
-                <FormControlLabel
-                  control={
-                    <Checkbox 
-                      checked={isStudent} 
-                      onChange={handleStudentChange} 
-                      color="primary" 
-                      name="isStudent" 
-                    />
-                  }
-                  label="Are you a student?"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox 
-                      checked={!isStudent} 
-                      onChange={handleTeacherChange} 
-                      color="primary" 
-                      name="isTeacher" 
-                    />
-                  }
-                  label="Are you a teacher?"
-                />
-              </FormGroup>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label={isStudent ? "UserName" : "Email"}
-                name="email"
-                autoComplete="email"
-                autoFocus
-                variant="outlined"
-                type="email"
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                name="firstName"
-                autoComplete="firstName"
-                variant="outlined"
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="lastName"
-                label="Last Name"
-                type="lastName"
-                id="lastName"
-                autoComplete="current-password"
-                variant="outlined"
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                variant="outlined"
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirm Password"
-                type="confirmPassword"
-                id="confirmPassword"
-                autoComplete="current-password"
-                variant="outlined"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  color: "black",
-                  backgroundColor: "#fff",
-                  "&:hover": { backgroundColor: "#E8F0FE" },
-                }}
-              >
-                Register
-              </Button>
-              <Button
-                fullWidth
-                variant="contained"
-                href={pathHome}
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  color: "black",
-                  backgroundColor: "#fff",
-                  "&:hover": { backgroundColor: squaresColor },
-                }}
-              >
-                Back
-              </Button>
-              <Grid item>
-                <Link href="/" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Box>
+              Register
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              href={pathHome}
+              sx={{
+                mt: 3,
+                mb: 2,
+                color: "black",
+                backgroundColor: "#fff",
+                "&:hover": { backgroundColor: squaresColor },
+              }}
+            >
+              Back
+            </Button>
+            <Link href="/" align="center" variant="body2">
+              Already have an account? Sign in
+            </Link>
           </Box>
-        </Grid>
+        </Box>
       </Grid>
       {showMessage && (
         <NotificationMessage

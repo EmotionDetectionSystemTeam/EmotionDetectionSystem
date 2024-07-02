@@ -1,68 +1,55 @@
-import {
-  Box,
-  Button,
-  Grid,
-  ThemeProvider,
-  Typography
-} from "@mui/material";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ClassIcon from '@mui/icons-material/Class';
+import PeopleIcon from '@mui/icons-material/People';
+import { Box, Button, Container, Paper, ThemeProvider, Typography } from "@mui/material";
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import Navbar from "../Components/Navbar";
+import Navbar from '../Components/Navbar';
 import { pathClassesDashboard, pathCreateClass, pathHome, pathStudentsHistory } from "../Paths";
 import { serverLogout } from "../Services/ClientService";
 import { mainTheme, squaresColor } from "../Utils";
 
-
 function TeacherDashboard() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    serverLogout().then((message: string) => {
+  const handleLogout = async () => {
+    try {
+      await serverLogout();
       navigate(pathHome);
-    }).catch((e) => alert(e));
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  const buttonStyle = {
+
+    mt: 2,
+    py: 1.5,
+    color: "black",
+    backgroundColor: "#fff",
+    "&:hover": { backgroundColor: squaresColor },
   };
 
   return (
     <ThemeProvider theme={mainTheme}>
-      <Box>
+            <Box>
         <Navbar />
       </Box>
-      <Grid
-        container
-        component="main"
-        sx={{
-          height: "90vh",
-        }}
-      >
-        <Grid item xs={false} sm={6} md={7} />
-        <Grid
-          sx={{
-            height: "90vh",
-          }}
-        >
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Typography component="h1" variant="h5">
-              Teacher Dashboard
-            </Typography>
+      <Container component="main" maxWidth="sm" sx={{ mt: 8 }}>
+        <Paper elevation={3} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Typography component="h1" variant="h4" gutterBottom>
+            Welcome, Teacher!
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 3 }}>
+            What would you like to do today?
+          </Typography>
+          <Box sx={{ width: '100%' }}>
             <Button
               fullWidth
               variant="contained"
               onClick={() => navigate(pathCreateClass)}
-              sx={{
-                mt: 3,
-                mb: 2,
-                color: "black",
-                backgroundColor: "#fff",
-                "&:hover": { backgroundColor: squaresColor },
-              }}
+              startIcon={<AddCircleOutlineIcon />}
+              sx={buttonStyle}
             >
               Create Class
             </Button>
@@ -70,13 +57,8 @@ function TeacherDashboard() {
               fullWidth
               variant="contained"
               onClick={() => navigate(pathStudentsHistory)}
-              sx={{
-                mt: 3,
-                mb: 2,
-                color: "black",
-                backgroundColor: "#fff",
-                "&:hover": { backgroundColor: squaresColor },
-              }}
+              startIcon={<PeopleIcon />}
+              sx={buttonStyle}
             >
               Students Dashboard
             </Button>
@@ -84,33 +66,14 @@ function TeacherDashboard() {
               fullWidth
               variant="contained"
               onClick={() => navigate(pathClassesDashboard)}
-              sx={{
-                mt: 3,
-                mb: 2,
-                color: "black",
-                backgroundColor: "#fff",
-                "&:hover": { backgroundColor: squaresColor },
-              }}
+              startIcon={<ClassIcon />}
+              sx={buttonStyle}
             >
               Classes Dashboard
             </Button>
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={() => handleLogout()}
-              sx={{
-                mt: 3,
-                mb: 2,
-                color: "black",
-                backgroundColor: "#fff",
-                "&:hover": { backgroundColor: squaresColor },
-              }}
-            >
-              Log Out
-            </Button>
           </Box>
-        </Grid>
-      </Grid>
+        </Paper>
+      </Container>
     </ThemeProvider>
   );
 }

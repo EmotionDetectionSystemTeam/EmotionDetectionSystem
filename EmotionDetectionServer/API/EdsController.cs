@@ -451,5 +451,28 @@ namespace EmotionDetectionServer.API
             }
         }
 
+        [HttpPost]
+        [Route("teacher-approach")]
+        public async Task<ObjectResult> AddTeacherApproachRequest([FromBody] AddTeacherApproachRequest request)
+        {
+            Response response = await Task.Run(() => service.AddTeacherApproach(request.SessionId, request.TeacherEmail, request.LessonId, request.StudentEmail));
+            if (response.ErrorOccured)
+            {
+                var AddTeacherApproach = new ServerResponse<string>
+                {
+                    errorMessage = response.ErrorMessage,
+                };
+                return BadRequest(AddTeacherApproach);
+            }
+            else
+            {
+                var AddTeacherApproach = new ServerResponse<string>
+                {
+                    value = "Leaved Lesson Successfully",
+                };
+                return Ok(AddTeacherApproach);
+            }
+        }
+
     }
 }

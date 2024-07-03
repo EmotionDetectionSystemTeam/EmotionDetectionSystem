@@ -2,7 +2,7 @@ import { ServiceEmotionData } from "../Objects/EmotionData";
 import { serverPushEmotionData } from "./ClientService";
 import { getLessonId } from "./SessionService";
 
-const intervalTime = 5000;
+const intervalTime = 4000;
 
 class ExpressionProcessor {
   constructor() {

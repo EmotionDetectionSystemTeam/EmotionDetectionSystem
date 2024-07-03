@@ -22,6 +22,7 @@ public class EnrollmentSummary
         Student = student;
         Lesson = lesson;
         EmotionData = emotionData;
+        TeacherApproach = new List<string>();
     }
 
     /// <summary>
@@ -34,6 +35,7 @@ public class EnrollmentSummary
         Student = student;
         Lesson = lesson;
         EmotionData = new List<EmotionData>();
+        TeacherApproach = new List<string>();
     }
 
     /// <summary>
@@ -154,4 +156,5 @@ public class EnrollmentSummary
     /// Gets or sets the list of teacher approach messages.
     /// </summary>
     public List<string> TeacherApproach { get; set; }
+    public List<EmotionData> NegativeEmotionData { get; set; }
 }

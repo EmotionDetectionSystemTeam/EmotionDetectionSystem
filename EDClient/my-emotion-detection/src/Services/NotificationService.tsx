@@ -15,7 +15,7 @@ const f = (onMessage) => {
     addEventListener(newWs, "open", function (event: any) {
     });
 
-    addEventListener(newWs, "close", function (event: any) {});
+    addEventListener(newWs, "close", function (event: any) { });
     return newWs;
   }
 

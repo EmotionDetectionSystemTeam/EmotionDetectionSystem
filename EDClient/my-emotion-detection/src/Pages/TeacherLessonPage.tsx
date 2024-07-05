@@ -194,7 +194,7 @@ function TeacherLesson() {
               }}
             >
               {activeStudentList.map((student, index) => (
-              <ActiveStudentCard key={index} student={student} onClick={() => handleStudentCardClick(student)} />
+                <ActiveStudentCard key={index} student={student} onClick={() => handleStudentCardClick(student)} />
 
               ))}
             </Box>

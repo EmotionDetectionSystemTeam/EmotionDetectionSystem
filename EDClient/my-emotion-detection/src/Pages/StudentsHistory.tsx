@@ -24,14 +24,14 @@ function StudentsHistory() {
   const [students, setStudentsData] = useState<StudentDisplay[]>([]);
 
   useEffect(() => {
-    serverGetAllStudentData().then((students : StudentDisplay[]) => {
+    serverGetAllStudentData().then((students: StudentDisplay[]) => {
       setStudentsData(students);
-    }).catch((e) =>alert(e));
+    }).catch((e) => alert(e));
 
     //ServerMockGetStudentsData().then((students :StudentDisplay[]) =>
     //setStudentsData(students));
 
-  },[]);
+  }, []);
 
   const filteredStudents = students.filter((student) =>
     student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -39,7 +39,7 @@ function StudentsHistory() {
   );
 
   const handleStudentClick = async (student: StudentDisplay) => {
-    serverGetStudentData(student.email).then((studentOverview : StudentOverview) => {
+    serverGetStudentData(student.email).then((studentOverview: StudentOverview) => {
       setDialogOpen(true);
       setSelectedStudent(studentOverview);
       setFetchedOverview(studentOverview);
@@ -62,8 +62,8 @@ function StudentsHistory() {
     setFetchedOverview(null);
   };
 
-  
-  
+
+
   return (
     <ThemeProvider theme={mainTheme}>
       <Box>
@@ -93,7 +93,7 @@ function StudentsHistory() {
           {filteredStudents.map((student) => (
             <Grid item key={student.email}>
               <StudentCard student={student} onClick={() => handleStudentClick(student)}
- />
+              />
             </Grid>
           ))}
         </Grid>
@@ -130,9 +130,9 @@ function StudentsHistory() {
           )}
         </DialogContent>
         <DialogActions>
-        <Button variant="contained" color="primary" onClick={handleCloseDialog}>
-      Close
-      </Button>        </DialogActions>
+          <Button variant="contained" color="primary" onClick={handleCloseDialog}>
+            Close
+          </Button>        </DialogActions>
       </Dialog>
     </ThemeProvider>
   );

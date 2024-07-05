@@ -9,7 +9,7 @@ import logo from "../assets/FrontLogo.png";
 
 const mainTheme = createTheme({
   palette: {
-    
+
     primary: {
       main: '#1976d2',
     },
@@ -17,7 +17,7 @@ const mainTheme = createTheme({
       default: '#f5f5f5',
     },
   },
-  
+
   typography: {
     fontFamily: [
       'Roboto',
@@ -65,7 +65,7 @@ function HomePage() {
 
   return (
     <ThemeProvider theme={mainTheme}>
-      
+
       <Box
         sx={{
           minHeight: '100vh',

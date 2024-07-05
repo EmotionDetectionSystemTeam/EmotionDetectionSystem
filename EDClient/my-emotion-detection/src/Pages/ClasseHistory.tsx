@@ -21,14 +21,14 @@ function ClassesDashboard() {
 
 
   useEffect(() => {
-    serverGetEnrolledLessons().then((classes : ClassDisplay[]) => {
+    serverGetEnrolledLessons().then((classes: ClassDisplay[]) => {
       setClasses(classes);
     }).catch((e) => alert(e));
     //ServerMockGetClasses().then((data: ClassDisplay[]) => setClasses(data));
   }, []);
 
   const handleCardClick = async (SelectedClassDisplay: ClassDisplay) => {
-    serverGetStudentDataByLesson(SelectedClassDisplay.id).then((students : Student[]) => {
+    serverGetStudentDataByLesson(SelectedClassDisplay.id).then((students: Student[]) => {
       setSelectedClass(new Class(
         SelectedClassDisplay.id,
         SelectedClassDisplay.name,
@@ -38,8 +38,8 @@ function ClassesDashboard() {
       ))
     }).catch((e) => alert(e));
 
-    
-  
+
+
     // const classData = await ServerMockGetClass(SelectedClassDisplay.id);
     // setSelectedClass(classData);
     setPopupOpen(true);
@@ -49,7 +49,7 @@ function ClassesDashboard() {
     setPopupOpen(false);
     setSelectedClass(null);
   };
-  
+
   const filteredClasses = classes.filter((classItem) =>
     classItem.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -84,7 +84,7 @@ function ClassesDashboard() {
           {filteredClasses.map((classItem) => (
             <Grid item key={classItem.id}>
               <ClassDisplayCard
-                Class ={classItem}
+                Class={classItem}
                 onClick={handleCardClick}
 
               />

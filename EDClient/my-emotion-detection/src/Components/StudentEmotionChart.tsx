@@ -24,7 +24,7 @@ const StudentEmotionChart: React.FC<StudentEmotionChartProps> = ({ studentOvervi
   const chartOptions = {
     scales: {
       x: {
-        
+
         title: {
           display: true,
           text: "Classes Timeline",
@@ -44,7 +44,7 @@ const StudentEmotionChart: React.FC<StudentEmotionChartProps> = ({ studentOvervi
     plugins: {
       tooltip: {
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             let label = context.dataset.label || '';
             if (label) {
               label += ': ';

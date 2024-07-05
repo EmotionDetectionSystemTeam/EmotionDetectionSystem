@@ -32,7 +32,7 @@ function TeacherDashboard() {
 
   return (
     <ThemeProvider theme={mainTheme}>
-            <Box>
+      <Box>
         <Navbar />
       </Box>
       <Container component="main" maxWidth="sm" sx={{ mt: 8 }}>

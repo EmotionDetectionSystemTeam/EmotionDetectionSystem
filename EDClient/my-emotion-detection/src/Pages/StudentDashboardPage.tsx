@@ -15,7 +15,7 @@ function StudentDashboard() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const classCode = data.get("classCode")?.toString();
-    
+
     try {
       const lesson = await serverJoinLesson(classCode);
       setLessonId(lesson.LessonId);
@@ -37,7 +37,7 @@ function StudentDashboard() {
 
   return (
     <ThemeProvider theme={mainTheme}>
-            <Box>
+      <Box>
         <Navbar />
       </Box>
       <Container component="main" maxWidth="sm" sx={{ mt: 8 }}>

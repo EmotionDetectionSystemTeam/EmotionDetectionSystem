@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material";
 
 export const textColor = "black";
-export const serverPort = "https://localhost:7069";
+export const serverPort = "https://emotilink.cs.bgu.ac.il";
 export const squaresColor = "#E8F0FE";
 
 

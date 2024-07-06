@@ -10,293 +10,293 @@ import ClientResponse from "./Response";
 import { getLessonId, getSessionId, getUserName, setIsGuest } from "./SessionService";
 
 export async function serverEnterAsGuest(): Promise<string> {
-    const uri = serverPort + "/api/eds/enter-as-guest";
-    try {
-      const jsonResponse = await fetch(uri, {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify({
-          sessionID: "dummySession", // Pass the appropriate session ID value here
-        }),
-      });
-  
-      if (!jsonResponse.ok) {
-        const errorResponse: ClientResponse<string> = await jsonResponse.json();
-        alert(errorResponse.errorMessage);
-      }
-  
-      const response: ClientResponse<string> = await jsonResponse.json();
-      // Handle empty response
-      if (!response) {
-        throw new Error("Empty response received");
-      }
+  const uri = serverPort + "/api/eds/enter-as-guest";
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        sessionID: "dummySession", // Pass the appropriate session ID value here
+      }),
+    });
 
-      return response.value;
-    } catch (e) {
-      return Promise.reject(e);
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      alert(errorResponse.errorMessage);
     }
+
+    const response: ClientResponse<string> = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    return response.value;
+  } catch (e) {
+    return Promise.reject(e);
   }
+}
 
 export async function serverRegister(
-    email: string | undefined | null,
-    firstName: string | undefined | null,
-    lastName: string | undefined | null,
-    password: string | undefined | null,
-    confirmPassword: string | undefined | null,
-    isStudent: number | undefined | null,
-  ): Promise<string> {
-    const fields: any[] = [email, firstName, lastName, password, isStudent];
-    if (!checkInput(fields)) return Promise.reject();
-    const uri = serverPort + "/api/eds/register";
-    try {
-      const jsonResponse = await fetch(uri, {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-          password: password,
-          confirmPassword: confirmPassword,
-          isStudent: isStudent,
-        }),
-      });
-      if (!jsonResponse.ok) {
-        const errorResponse: ClientResponse<string> = await jsonResponse.json();
-        throw new Error(errorResponse.errorMessage);
-      }
-  
-      const response: ClientResponse<string> = await jsonResponse.json();
-      // Handle empty response
-      if (!response) {
-        throw new Error("Empty response received");
-      }
-      
-      //const response = JSON.parse(responseText);
-      return response.value;
-    } catch (e) {
-      return Promise.reject(e);
+  email: string | undefined | null,
+  firstName: string | undefined | null,
+  lastName: string | undefined | null,
+  password: string | undefined | null,
+  confirmPassword: string | undefined | null,
+  isStudent: number | undefined | null,
+): Promise<string> {
+  const fields: any[] = [email, firstName, lastName, password, isStudent];
+  if (!checkInput(fields)) return Promise.reject();
+  const uri = serverPort + "/api/eds/register";
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        password: password,
+        confirmPassword: confirmPassword,
+        isStudent: isStudent,
+      }),
+    });
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
     }
+
+    const response: ClientResponse<string> = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    //const response = JSON.parse(responseText);
+    return response.value;
+  } catch (e) {
+    return Promise.reject(e);
   }
+}
 
 export async function serverLogin(
-    email: string| undefined | null,
-    password: string| undefined | null
-  ): Promise<string> {
-    const fields: any[] = [email, password];
-    if (!checkInput(fields)) return Promise.reject();
-    const uri = serverPort + "/api/eds/login";
-    try {
-      const jsonResponse = await fetch(uri, {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        // body: '{\n  "userName": "string",\n  "password": "string"\n}',
-        body: JSON.stringify({
-          SessionId: getSessionId(),
-          Email: email,
-          Password: password,
-        }),
-      });
-  
-      if (!jsonResponse.ok) {
-        const errorResponse: ClientResponse<string> = await jsonResponse.json();
-        throw new Error(errorResponse.errorMessage);
-      }
-  
-      const response: ClientResponse<string> = await jsonResponse.json();
-      // Handle empty response
-      if (!response) {
-        throw new Error("Empty response received");
-      }
+  email: string | undefined | null,
+  password: string | undefined | null
+): Promise<string> {
+  const fields: any[] = [email, password];
+  if (!checkInput(fields)) return Promise.reject();
+  const uri = serverPort + "/api/eds/login";
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        Email: email,
+        Password: password,
+      }),
+    });
 
-      setIsGuest(false);
-      return response.value;
-    } catch (e) {
-      return Promise.reject(e);
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
     }
+
+    const response: ClientResponse<string> = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    setIsGuest(false);
+    return response.value;
+  } catch (e) {
+    return Promise.reject(e);
   }
+}
 
 export async function serverJoinLesson(
-    classCode: string | undefined | null,
-  ): Promise<Lesson> {
-    const fields: any[] = [classCode];
-    if (!checkInput(fields)) return Promise.reject();
-    const uri = serverPort + "/api/eds/join-lesson";
-    try {
-      const jsonResponse = await fetch(uri, {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        // body: '{\n  "userName": "string",\n  "password": "string"\n}',
-        body: JSON.stringify({
-          SessionId: getSessionId(),
-          Email: getUserName(),
-          EntryCode: classCode
-        }),
-      });
-  
-      if (!jsonResponse.ok) {
-        const errorResponse: ClientResponse<string> = await jsonResponse.json();
-        throw new Error(errorResponse.errorMessage);
-      }
-  
-      const response = await jsonResponse.json();
-      // Handle empty response
-      if (!response) {
-        throw new Error("Empty response received");
-      }
+  classCode: string | undefined | null,
+): Promise<Lesson> {
+  const fields: any[] = [classCode];
+  if (!checkInput(fields)) return Promise.reject();
+  const uri = serverPort + "/api/eds/join-lesson";
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        Email: getUserName(),
+        EntryCode: classCode
+      }),
+    });
 
-      const lesson : Lesson = new Lesson(
-        response.value.lessonId,
-        response.value.lessonName,
-        response.value.teacher,
-        response.value.date,
-        response.value.isActive,
-        response.value.entryCode,
-        response.value.studentsQuantity,
-        response.value.studentsEmotions
-      )
-
-  
-      return lesson;
-    } catch (e) {
-      return Promise.reject(e);
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
     }
-  }
-  export async function serverCreateLesson(
-    title: string | undefined | null,
-    description: string | undefined | null,
-    tags: string[] | undefined | null
-  ): Promise<Lesson> {
-    const fields: any[] = [title,description];
-    if (!checkInput(fields)) return Promise.reject();
-    const uri = serverPort + "/api/eds/create-lesson";
-    try {
-      const jsonResponse = await fetch(uri, {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        // body: '{\n  "userName": "string",\n  "password": "string"\n}',
-        body: JSON.stringify({
-          SessionId: getSessionId(),
-          Email: getUserName(),
-          Title: title,
-          Description: description,
-          Tags: tags
-        }),
-      });
-  
-      if (!jsonResponse.ok) {
-        const errorResponse: ClientResponse<string> = await jsonResponse.json();
-        throw new Error(errorResponse.errorMessage);
-      }
-  
-      const response = await jsonResponse.json();
-      // Handle empty response
-      if (!response) {
-        throw new Error("Empty response received");
-      }
 
-      const lesson : Lesson = new Lesson(
-        response.value.lessonId,
-        response.value.lessonName,
-        response.value.teacher,
-        response.value.date,
-        response.value.isActive,
-        response.value.entryCode,
-        response.value.studentsQuantity,
-        response.value.studentsEmotions
-        
-      )
-
-      return lesson;
-    } catch (e) {
-      return Promise.reject(e);
+    const response = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
     }
+
+    const lesson: Lesson = new Lesson(
+      response.value.lessonId,
+      response.value.lessonName,
+      response.value.teacher,
+      response.value.date,
+      response.value.isActive,
+      response.value.entryCode,
+      response.value.studentsQuantity,
+      response.value.studentsEmotions
+    )
+
+
+    return lesson;
+  } catch (e) {
+    return Promise.reject(e);
   }
+}
+export async function serverCreateLesson(
+  title: string | undefined | null,
+  description: string | undefined | null,
+  tags: string[] | undefined | null
+): Promise<Lesson> {
+  const fields: any[] = [title, description];
+  if (!checkInput(fields)) return Promise.reject();
+  const uri = serverPort + "/api/eds/create-lesson";
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        Email: getUserName(),
+        Title: title,
+        Description: description,
+        Tags: tags
+      }),
+    });
+
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
+    }
+
+    const response = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    const lesson: Lesson = new Lesson(
+      response.value.lessonId,
+      response.value.lessonName,
+      response.value.teacher,
+      response.value.date,
+      response.value.isActive,
+      response.value.entryCode,
+      response.value.studentsQuantity,
+      response.value.studentsEmotions
+
+    )
+
+    return lesson;
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}
 
 export async function serverLogout(
-  ): Promise<string> {
-    const uri = serverPort + "/api/eds/logout";
-    console.log(getSessionId());
-    console.log(getUserName());
-    try {
-      const jsonResponse = await fetch(uri, {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        // body: '{\n  "userName": "string",\n  "password": "string"\n}',
-        body: JSON.stringify({
-          SessionId: getSessionId(),
-          Email: getUserName(),
-        }),
-      });
-  
-      if (!jsonResponse.ok) {
-        const errorResponse: ClientResponse<string> = await jsonResponse.json();
-        throw new Error(errorResponse.errorMessage);
-      }
-  
-      const response: ClientResponse<string> = await jsonResponse.json();
-      // Handle empty response
-      if (!response) {
-        throw new Error("Empty response received");
-      }
+): Promise<string> {
+  const uri = serverPort + "/api/eds/logout";
+  console.log(getSessionId());
+  console.log(getUserName());
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        Email: getUserName(),
+      }),
+    });
 
-  
-      return response.value;
-    } catch (e) {
-      return Promise.reject(e);
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
     }
+
+    const response: ClientResponse<string> = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+
+    return response.value;
+  } catch (e) {
+    return Promise.reject(e);
   }
+}
 
 export async function serverEndLesson(
 ): Promise<string> {
-    const uri = serverPort + "/api/eds/end-lesson"; // Adjust the URI endpoint accordingly
-    try {
-        const jsonResponse = await fetch(uri, {
-            method: "POST",
-            headers: {
-                accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                SessionId: getSessionId(),
-                Email: getUserName()
-            }),
-        });
+  const uri = serverPort + "/api/eds/end-lesson"; // Adjust the URI endpoint accordingly
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        SessionId: getSessionId(),
+        Email: getUserName()
+      }),
+    });
 
-        if (!jsonResponse.ok) {
-            const errorResponse: ClientResponse<string> = await jsonResponse.json();
-            throw new Error(errorResponse.errorMessage);
-        }
-
-        const response: ClientResponse<string> = await jsonResponse.json();
-        // Handle empty response
-        if (!response) {
-            throw new Error("Empty response received");
-        }
-
-        return response.value;
-    } catch (e) {
-        return Promise.reject(e);
+    if (!jsonResponse.ok) {
+      const errorResponse: ClientResponse<string> = await jsonResponse.json();
+      throw new Error(errorResponse.errorMessage);
     }
+
+    const response: ClientResponse<string> = await jsonResponse.json();
+    // Handle empty response
+    if (!response) {
+      throw new Error("Empty response received");
+    }
+
+    return response.value;
+  } catch (e) {
+    return Promise.reject(e);
+  }
 }
 
 export async function serverGetLastEmotionsData(
@@ -330,7 +330,7 @@ export async function serverGetLastEmotionsData(
       throw new Error("Empty response received");
     }
 
-    const students : ServiceRealTimeUser[] = response.value.map((student : any) => {
+    const students: ServiceRealTimeUser[] = response.value.map((student: any) => {
       return new ServiceRealTimeUser(
         student.email,
         student.firstName,
@@ -416,7 +416,7 @@ export async function serverGetLesson(
       throw new Error("Empty response received");
     }
 
-    const lesson : Lesson = new Lesson(
+    const lesson: Lesson = new Lesson(
       response.value.lessonId,
       response.value.lessonName,
       response.value.teacher,
@@ -517,7 +517,7 @@ export async function serverGetStudentDataByLesson(
 ): Promise<Student[]> {
   const fields: any[] = [lessonId];
   if (!checkInput(fields)) return Promise.reject();
-  const uri = serverPort + "/api/eds/get-students-data-by-lesson"; 
+  const uri = serverPort + "/api/eds/get-students-data-by-lesson";
   try {
     const jsonResponse = await fetch(uri, {
       method: "POST",
@@ -544,13 +544,15 @@ export async function serverGetStudentDataByLesson(
     }
 
     const myClasses: Student[] = response.value.map((student: any) => {
-      return new Student(
+      let s = new Student(
         student.email,
         student.firstName + " " + student.lastName,
         student.className,
         student.emotions,
 
       );
+      s.setApproaches(student.teacherApproach);
+      return s;
     });
 
     return myClasses;
@@ -561,7 +563,7 @@ export async function serverGetStudentDataByLesson(
 
 export async function serverGetAllStudentData(
 ): Promise<StudentDisplay[]> {
-  const uri = serverPort + "/api/eds/get-all-student-data"; 
+  const uri = serverPort + "/api/eds/get-all-student-data";
   try {
     const jsonResponse = await fetch(uri, {
       method: "POST",
@@ -604,7 +606,7 @@ export async function serverGetStudentData(
 ): Promise<StudentOverview> {
   const fields: any[] = [email];
   if (!checkInput(fields)) return Promise.reject();
-  const uri = serverPort + "/api/eds/get-student-data"; 
+  const uri = serverPort + "/api/eds/get-student-data";
   try {
     const jsonResponse = await fetch(uri, {
       method: "POST",
@@ -630,19 +632,19 @@ export async function serverGetStudentData(
       throw new Error("Empty response received");
     }
 
-      let students : Student[] = response.value.lessons.map((student: any) => {
-        return new Student(
-          student.email,
-          student.firstName + " " + student.lastName,
-          student.className,
-          student.emotions,
-        )
-      })
-      return new StudentOverview(
-        response.value.email,
-        response.value.firstName + " " + response.value.lastName,
-        students,
-      );
+    let students: Student[] = response.value.lessons.map((student: any) => {
+      return new Student(
+        student.email,
+        student.firstName + " " + student.lastName,
+        student.className,
+        student.emotions,
+      )
+    })
+    return new StudentOverview(
+      response.value.email,
+      response.value.firstName + " " + response.value.lastName,
+      students,
+    );
     ;
 
   } catch (e) {

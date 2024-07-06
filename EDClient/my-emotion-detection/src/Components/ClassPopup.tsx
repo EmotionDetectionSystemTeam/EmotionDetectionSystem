@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Slider, TextField, ThemeProvider, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Slider, TextField, ThemeProvider, Typography } from "@mui/material";
 import { ArcElement, Chart, Legend, Tooltip } from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import React, { useEffect, useRef, useState } from 'react';
@@ -21,10 +21,10 @@ const emotionColors = {
   'Happy': '#4caf50', // Green
   'Surprised': '#f9a201', // Yellow
   'Neutral': '#9e9e9e', // Gray
-  'Sad' : '#ff6384',
-  'Angry' : '#ff6384',
-  'Fearful' : '#ff6384',
-  'Disgusted' : '#ff6384',
+  'Sad': '#ff6384',
+  'Angry': '#ff6384',
+  'Fearful': '#ff6384',
+  'Disgusted': '#ff6384',
 
 };
 
@@ -193,16 +193,42 @@ const ClassPopup: React.FC<ClassPopupProps> = ({ open, onClose, classLesson }) =
                 />
                 <StudentBarChart student={selectedStudent} intervalMinutes={intervalMinutes} />
                 <Typography variant="h6" sx={{ mt: 4 }}>Teacher Approaches to {selectedStudent.name}  </Typography>
+                <Box sx={{
+                  display: "flex",
+                  flexDirection: "row",
 
+
+                }}>
+                  {selectedStudent.approaches.map(approach => (
+
+                    <Card sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      marginBottom: 0.5,
+                      paddingRight: -1,
+                      background: "#f5f5f5",
+                      boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                      '&:hover': {
+                        boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
+                        transform: 'translateY(-4px)',
+                        transition: '0.3s',
+                      },
+                    }}>
+                      <CardContent>
+                        <Box display="flex" alignItems="center">
+                          <Typography fontSize={16}>{approach}</Typography>
+                        </Box>
+                      </CardContent>
+                    </Card>
+
+                  ))
+
+                  }
+                </Box>
 
               </>
             )}
-            {/* { selectedStudent?.emotions != null ? selectedStudent?.emotions.map(approach => (
-              <Typography fontSize="h6"> {approach.emotion}  </Typography>
 
-            ))
-
-              : null} */}
             <Button variant="contained" sx={{ mt: 4 }} color="primary" onClick={handleCloseStudentDialog}>
               Close
             </Button>

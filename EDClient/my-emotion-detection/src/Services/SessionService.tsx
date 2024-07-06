@@ -94,7 +94,7 @@ export function setLessonTeacher(value: string): void {
 }
 
 export const initializeCookie = (sessionId) => {
-  
+
   const cookieName = `session_${sessionId}`; // Construct the cookie name
   Cookies.set(cookieName, null, { expires: 1 }); // expires in 1 day
 
@@ -124,12 +124,12 @@ export const setCookie = (sessionId, key, value) => {
 export const getCookie = (sessionId, key) => {
   const cookieName = `session_${sessionId}`; // Construct the cookie name
   const cookieMenu = Cookies.get(cookieName); // Retrieve the cookie data
-    //const lesson : Lesson = lessonCookie ? JSON.parse(lessonCookie) : null;
+  //const lesson : Lesson = lessonCookie ? JSON.parse(lessonCookie) : null;
   const cookieData = cookieMenu ? JSON.parse(cookieMenu) : null;
 
   // If the cookie data exists and has the specified key, return its value
   if (cookieData && cookieData.hasOwnProperty(key)) {
-      return cookieData[key];
+    return cookieData[key];
   }
 
   // If the key doesn't exist or cookieData is null, return null

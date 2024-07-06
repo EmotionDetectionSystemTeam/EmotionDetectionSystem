@@ -38,7 +38,7 @@ function CreateClass() {
 
   return (
     <ThemeProvider theme={mainTheme}>
-            <Box>
+      <Box>
         <Navbar />
       </Box>
       <Container component="main" maxWidth="sm" sx={{ mt: 8 }}>
@@ -98,19 +98,19 @@ function CreateClass() {
               Create New Lesson
             </Button>
             <Button
-            fullWidth
-            variant="contained"
-            onClick={() => navigate(pathTeacherDashBoard)}
-            sx={{
-              mt: 3,
-              mb: 2,
-              color: "black",
-              backgroundColor: "#fff",
-              "&:hover": { backgroundColor: squaresColor },
-            }}
-          >
-            Back to Dashboard
-          </Button>
+              fullWidth
+              variant="contained"
+              onClick={() => navigate(pathTeacherDashBoard)}
+              sx={{
+                mt: 3,
+                mb: 2,
+                color: "black",
+                backgroundColor: "#fff",
+                "&:hover": { backgroundColor: squaresColor },
+              }}
+            >
+              Back to Dashboard
+            </Button>
           </Box>
         </Paper>
       </Container>

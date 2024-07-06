@@ -134,12 +134,12 @@ export default function Navbar(classLesson?) {
         >
           <div>
             <Stack direction="row" marginLeft={5} spacing={2}>
-            <img src={logo} alt="Logo" style={{ 
-                  width: "190px", // Adjust the width as needed
-                  height: "auto", // Let height adjust proportionally
-                  marginBottom: "5px", // Adjust margin if necessary
-                  marginRight: "10px", // Adjust margin if necessary
-             }} />
+              <img src={logo} alt="Logo" style={{
+                width: "190px", // Adjust the width as needed
+                height: "auto", // Let height adjust proportionally
+                marginBottom: "5px", // Adjust margin if necessary
+                marginRight: "10px", // Adjust margin if necessary
+              }} />
             </Stack>
 
             <Box sx={{}} />
@@ -155,11 +155,11 @@ export default function Navbar(classLesson?) {
           </div> */}
           <div>
             <Box marginRight={5} sx={{ display: { xs: "none", md: "flex" } }}>
-              {classLesson == null ? null  :
-                    <IconButton  onClick={handleInfoClick}>
-                      <InfoIcon                     
- />
-                    </IconButton>
+              {classLesson == null ? null :
+                <IconButton onClick={handleInfoClick}>
+                  <InfoIcon
+                  />
+                </IconButton>
               }
               {getIsGuest() ? null : (
                 <Tooltip title="Notifications">
@@ -167,8 +167,8 @@ export default function Navbar(classLesson?) {
                     aria-label="notification"
                     size="small"
                     color="default"
-                    //component={Link}           //TODO: notfication impl
-                    //to={pathNotifications}
+                  //component={Link}           //TODO: notfication impl
+                  //to={pathNotifications}
                   >
                     <StyledBadge
                       badgeContent={numOfNotifications}
@@ -209,7 +209,7 @@ export default function Navbar(classLesson?) {
           </div>
         </Toolbar>
       </AppBar>
-      
+
     </ThemeProvider>
   );
 }

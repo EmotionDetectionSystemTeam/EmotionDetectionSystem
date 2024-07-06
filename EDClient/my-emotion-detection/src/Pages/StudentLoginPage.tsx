@@ -17,51 +17,51 @@ import { formatMessage, mainTheme, squaresColor } from "../Utils";
 
 
 
-  
-  function StudentLogin() {
-    const [showMessage, setShowMessage] = React.useState(false);
-    const [messageContent, setMessageContent] = React.useState('');
-    const [messageType, setMessageType] = React.useState<'error' | 'success'>('error');
-  
-  
-    const handleClose = () => {
-      setShowMessage(false);
-    };
-  
-    const displayMessage = (message: string, type: 'error' | 'success') => {
-      setMessageContent(formatMessage(message));
-      setMessageType(type);
-      setShowMessage(true);
-    };
-  
-    const navigate = useNavigate();
-  
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        /*
-      if (!sessionService.getIsGuest()) {
-        alert("You are already logged in!\n");
-        return;
-      }
-      */
-      event.preventDefault();
-      const data = new FormData(event.currentTarget);
-      const email = data.get("email")?.toString();
-      const password = data.get("password")?.toString();
 
-      const serverResponse = await serverLogin(email, password).then(() => {
-        // const address = `ws://127.0.0.1:4560/${email}-notifications`;
-        //initWebSocket(address);
-        setUsername(String(email));
+function StudentLogin() {
+  const [showMessage, setShowMessage] = React.useState(false);
+  const [messageContent, setMessageContent] = React.useState('');
+  const [messageType, setMessageType] = React.useState<'error' | 'success'>('error');
 
-        navigate(pathStudentDashBoard);
-        }).catch((e) => displayMessage(e,'error'));
-    };
-  
-    return (
-      <ThemeProvider theme={mainTheme}>
 
-      
-      <Grid           item
+  const handleClose = () => {
+    setShowMessage(false);
+  };
+
+  const displayMessage = (message: string, type: 'error' | 'success') => {
+    setMessageContent(formatMessage(message));
+    setMessageType(type);
+    setShowMessage(true);
+  };
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    /*
+  if (!sessionService.getIsGuest()) {
+    alert("You are already logged in!\n");
+    return;
+  }
+  */
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const email = data.get("email")?.toString();
+    const password = data.get("password")?.toString();
+
+    const serverResponse = await serverLogin(email, password).then(() => {
+      // const address = `ws://127.0.0.1:4560/${email}-notifications`;
+      //initWebSocket(address);
+      setUsername(String(email));
+
+      navigate(pathStudentDashBoard);
+    }).catch((e) => displayMessage(e, 'error'));
+  };
+
+  return (
+    <ThemeProvider theme={mainTheme}>
+
+
+      <Grid item
         xs={false}
         sm={6}
         md={7} />
@@ -165,16 +165,15 @@ import { formatMessage, mainTheme, squaresColor } from "../Utils";
           </Box>
         </Box>
       </Grid>
-    {showMessage && (
-      <NotificationMessage
-        message={messageContent}
-        onClose={handleClose}
-        type={messageType}
-      />
-    )}
-  </ThemeProvider>
-    );
-  }
-  
-  export default StudentLogin;
-  
+      {showMessage && (
+        <NotificationMessage
+          message={messageContent}
+          onClose={handleClose}
+          type={messageType}
+        />
+      )}
+    </ThemeProvider>
+  );
+}
+
+export default StudentLogin;

@@ -102,7 +102,7 @@ const StudentBarChart: React.FC<StudentBarChartProps> = ({ student, intervalMinu
     plugins: {
       tooltip: {
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             let label = context.dataset.label || '';
             if (label) {
               label += ': ';

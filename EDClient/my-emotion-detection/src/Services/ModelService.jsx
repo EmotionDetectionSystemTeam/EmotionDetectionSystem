@@ -2,7 +2,7 @@ import { ServiceEmotionData } from "../Objects/EmotionData";
 import { serverPushEmotionData } from "./ClientService";
 import { getLessonId } from "./SessionService";
 
-const intervalTime = 4000;
+const intervalTime = 3500;
 
 class ExpressionProcessor {
   constructor() {
@@ -79,10 +79,10 @@ class ExpressionProcessor {
 
     try {
       const detections = await faceapi
-          .detectAllFaces(this.video, new faceapi.TinyFaceDetectorOptions())
-          .withFaceLandmarks()
-          .withFaceDescriptors()
-          .withFaceExpressions();
+        .detectAllFaces(this.video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceDescriptors()
+        .withFaceExpressions();
 
       // Update display size
       let displaySize = { width: this.video.videoWidth, height: this.video.videoHeight };
@@ -118,24 +118,24 @@ class ExpressionProcessor {
 
   async sendResultToServer() {
     const emotionData = new ServiceEmotionData(
-        this.expressionsData.neutral,
-        this.expressionsData.happy,
-        this.expressionsData.sad,
-        this.expressionsData.angry,
-        this.expressionsData.surprised,
-        this.expressionsData.disgusted,
-        this.expressionsData.fearful
+      this.expressionsData.neutral,
+      this.expressionsData.happy,
+      this.expressionsData.sad,
+      this.expressionsData.angry,
+      this.expressionsData.surprised,
+      this.expressionsData.disgusted,
+      this.expressionsData.fearful
     );
 
     // Send data to server
     serverPushEmotionData(getLessonId(), emotionData)
-        .then(() => {
-          // Clear expressions data after successful send
-          Object.keys(this.expressionsData).forEach((expression) => {
-            this.expressionsData[expression] = 0;
-          });
-        })
-        .catch((e) => console.error("Error sending data to server:", e));
+      .then(() => {
+        // Clear expressions data after successful send
+        Object.keys(this.expressionsData).forEach((expression) => {
+          this.expressionsData[expression] = 0;
+        });
+      })
+      .catch((e) => console.error("Error sending data to server:", e));
   }
 
   stopProcessing() {

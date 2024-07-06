@@ -35,4 +35,11 @@ public class Emotions
                 return NEUTRAL;
         }
     }
+    
+    public static string GenerateRandomEmotion()
+    {
+        var random = new Random();
+        var emotions = new List<string> {NEUTRAL, HAPPY, SAD, ANGRY, SURPRISED, DISGUSTED, FEARFUL};
+        return emotions[random.Next(emotions.Count)];
+    }
 }

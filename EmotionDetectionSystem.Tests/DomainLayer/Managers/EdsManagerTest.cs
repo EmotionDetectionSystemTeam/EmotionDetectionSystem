@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using EmotionDetectionServer;
 using EmotionDetectionSystem.DomainLayer.Managers;
 using EmotionDetectionSystem.DomainLayer.objects;
 using EmotionDetectionSystem.ServiceLayer;
@@ -291,7 +292,7 @@ public class EdsManagerTest
         {
             string studentEmail = $"student{(i % 50) + 1}@example.com"; // Corrected index
             _edsManager.PushEmotionData("correlationId1",(i % 50 + 1).ToString(), studentEmail, lesson.LessonId, new EmotionData(
-                                            DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0));
+                                            DateTime.Now, Emotions.GenerateRandomEmotion()));
         }
         while (_edsManager.IsProcessingTasks)
         {

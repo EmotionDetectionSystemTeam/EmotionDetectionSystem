@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EmotionDetectionServer;
 using EmotionDetectionSystem.DomainLayer.objects;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -85,7 +86,7 @@ public class LessonTest
     [TestMethod]
     public void PutEmotionData_Success()
     {
-        var emotionData = new EmotionData(DateTime.Now,1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var emotionData = new EmotionData(DateTime.Now,Emotions.DISGUSTED);
         _lesson.AddStudent(_student);
         _lesson.PushEmotionData(_student.Email, emotionData);
         Assert.AreEqual(emotionData, _lesson.GetEnrollmentSummaries()[0].EmotionData[0]);
@@ -94,7 +95,7 @@ public class LessonTest
     [TestMethod]
     public void PushEmotionData_Fail()
     {
-        var emotionData = new EmotionData(DateTime.Now,1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var emotionData = new EmotionData(DateTime.Now,Emotions.SAD);
         Assert.ThrowsException<Exception>(() => _lesson.PushEmotionData(_student.Email, emotionData));
     }
     

@@ -19,7 +19,7 @@ public class ServiceEnrollmentSummary
         EmotionData = new List<ServiceEmotionData>();
         foreach (var emotionData in enrollmentSummary.EmotionData)
         {
-            EmotionData.Add(new ServiceEmotionData(emotionData.Neutral, emotionData.Happy, emotionData.Sad, emotionData.Angry, emotionData.Surprised, emotionData.Disgusted, emotionData.Fearful));
+            EmotionData.Add(new ServiceEmotionData(emotionData.WinningEmotion, emotionData.Time));
         }
     }
     

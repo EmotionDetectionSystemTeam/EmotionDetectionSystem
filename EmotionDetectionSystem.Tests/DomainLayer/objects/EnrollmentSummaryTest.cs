@@ -31,7 +31,7 @@ public class EnrollmentSummaryTest
     [TestMethod]
     public void AddEmotionData_Success()
     {
-        EmotionData emotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        EmotionData emotionData = new EmotionData(DateTime.Now, Emotions.GenerateRandomEmotion());
         _enrollmentSummary.AddEmotionData(emotionData);
         Assert.AreEqual(emotionData, _enrollmentSummary.EmotionData[0]);
     }
@@ -39,8 +39,8 @@ public class EnrollmentSummaryTest
     [TestMethod]
     public void GetFirstNotSeenEmotionData_Success()
     {
-        var firstEmotionData  = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
-        var secondEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var firstEmotionData  = new EmotionData(DateTime.Now, Emotions.GenerateRandomEmotion());
+        var secondEmotionData = new EmotionData(DateTime.Now, Emotions.GenerateRandomEmotion());
         _enrollmentSummary.AddEmotionData(firstEmotionData);
         _enrollmentSummary.AddEmotionData(secondEmotionData);
         Assert.AreEqual(secondEmotionData,  _enrollmentSummary.GetFirstNotSeenEmotionData());
@@ -51,7 +51,7 @@ public class EnrollmentSummaryTest
     [TestMethod]
     public void GetFirstNotSeenEmotionData_EmptyQueueAndOneSeenEmotionData_Success()
     {
-        var firstEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var firstEmotionData = new EmotionData(DateTime.Now, Emotions.GenerateRandomEmotion());
         _enrollmentSummary.AddEmotionData(firstEmotionData);
         Assert.AreEqual(firstEmotionData, _enrollmentSummary.GetFirstNotSeenEmotionData());
         Assert.AreEqual(Emotions.NODATA, _enrollmentSummary.GetFirstNotSeenEmotionData().GetWinningEmotion());
@@ -61,13 +61,13 @@ public class EnrollmentSummaryTest
     [TestMethod]
     public void GetLatestSeenEmotionData_EmptyQueueAndManySeenEmotionData_Success()
     {
-        var firstEmotionData  = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var firstEmotionData = new EmotionData(DateTime.Now, Emotions.GenerateRandomEmotion());
         Thread.Sleep(1000);
-        var fourthEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var fourthEmotionData = new EmotionData(DateTime.Now, Emotions.GenerateRandomEmotion());
         Thread.Sleep(1000);
-        var thirdEmotionData  = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var thirdEmotionData = new EmotionData(DateTime.Now, Emotions.GenerateRandomEmotion());
         Thread.Sleep(1000);
-        var secondEmotionData = new EmotionData(DateTime.Now, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        var secondEmotionData = new EmotionData(DateTime.Now, Emotions.GenerateRandomEmotion());
         _enrollmentSummary.AddEmotionData(firstEmotionData);
         _enrollmentSummary.AddEmotionData(secondEmotionData);
         _enrollmentSummary.AddEmotionData(thirdEmotionData);

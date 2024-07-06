@@ -48,8 +48,7 @@ namespace EmotionDetectionSystem.Tests.AcceptanceTests
             _edsService = new EdsService();
             //new ConfigurationFileHandler(_edsService).Parse(); //init a class with 10 students.
             Random rand = new Random();
-            _emotionData = new ServiceEmotionData( rand.NextDouble(), rand.NextDouble(), rand.NextDouble(), rand.NextDouble(),
-                rand.NextDouble(), rand.NextDouble(), rand.NextDouble());
+            _emotionData = new ServiceEmotionData(Emotions.SURPRISED, DateTime.Now);
         }
         [TestCleanup]
         public void Cleanup()
@@ -429,7 +428,7 @@ namespace EmotionDetectionSystem.Tests.AcceptanceTests
             var createLessonResponse = _edsService.CreateLesson(SessionId, TeacherEmail, LessonTitle, LessonDescription, new[] { "tag1", "tag2" });
             Assert.IsFalse(createLessonResponse.ErrorOccured, createLessonResponse.ErrorMessage);
             var lessonId = createLessonResponse.Value.LessonId;
-            var emotionData = new ServiceEmotionData(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7);
+            var emotionData = new ServiceEmotionData(Emotions.FEARFUL, DateTime.Now);
             var response = _edsService.PushEmotionData(SessionId, TeacherEmail, lessonId, emotionData);
             Assert.IsFalse(response.ErrorOccured, response.ErrorMessage);
         }

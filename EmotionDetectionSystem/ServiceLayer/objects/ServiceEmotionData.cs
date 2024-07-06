@@ -6,31 +6,17 @@ namespace EmotionDetectionSystem.ServiceLayer.objects
     public class ServiceEmotionData
     {
         public DateTime Time { get; set; }
-        public double Neutral { get; set; }
-        public double Happy { get; set; }
-        public double Sad { get; set; }
-        public double Angry { get; set; }
-        public double Surprised { get; set; }
-        public double Disgusted { get; set; }
-        public double Fearful { get; set; }
-
-        public ServiceEmotionData(double neutral, double happy, double sad, double angry, double surprised,
-                                  double disgusted,
-                                  double fearful)
+        public string WinningEmotion { get; set; }
+        
+        public ServiceEmotionData(string winningEmotion, DateTime time)
         {
-            Time = DateTime.Now;
-            Neutral = neutral;
-            Happy = happy;
-            Sad = sad;
-            Angry = angry;
-            Surprised = surprised;
-            Disgusted = disgusted;
-            Fearful = fearful;
+            Time      = time;
+            WinningEmotion = winningEmotion;
         }
 
         public EmotionData ToDomainObject()
         {
-            return new EmotionData(Time, Neutral, Happy, Sad, Angry, Surprised, Disgusted, Fearful);
+            return new EmotionData(Time, WinningEmotion);
         }
     }
 }

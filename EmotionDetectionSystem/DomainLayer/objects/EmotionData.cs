@@ -21,7 +21,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// </summary>
         public EmotionData()
         {
-            Nodata = 1;
+            WinningEmotion = Emotions.NODATA;
         }
 
         /// <summary>
@@ -29,8 +29,6 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// </summary>
         public DateTime Time { get; set; }
         public string WinningEmotion { get; set; }
-        private double Nodata { get; set; }
-        
         public bool Seen
         {
             get => _seen;
@@ -39,7 +37,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
 
         public string GetWinningEmotion()
         {
-            return WinningEmotion ?? Emotions.NODATA;
+            return WinningEmotion;
         }
     }
 }

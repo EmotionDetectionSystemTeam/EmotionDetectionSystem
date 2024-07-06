@@ -1,3 +1,4 @@
+using EmotionDetectionServer;
 using EmotionDetectionSystem.DomainLayer.objects;
 
 namespace EmotionDetectionSystem.ServiceLayer.objects
@@ -11,7 +12,7 @@ namespace EmotionDetectionSystem.ServiceLayer.objects
         public ServiceEmotionData(string winningEmotion, DateTime time)
         {
             Time      = time;
-            WinningEmotion = winningEmotion;
+            WinningEmotion = Emotions.CastEmotion(winningEmotion);
         }
 
         public EmotionData ToDomainObject()

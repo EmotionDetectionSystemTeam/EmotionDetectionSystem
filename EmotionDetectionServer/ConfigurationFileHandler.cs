@@ -125,13 +125,7 @@ public class ConfigurationFileHandler
                         usecaseJson["sessionid"].ToString(),
                         usecaseJson["email"].ToString(),
                         lessonId,
-                        new EmotionDetectionSystem.ServiceLayer.objects.ServiceEmotionData(Convert.ToDouble(usecaseJson["neutral"].ToString()),
-                        Convert.ToDouble(usecaseJson["happy"].ToString()),
-                        Convert.ToDouble(usecaseJson["sad"].ToString()),
-                        Convert.ToDouble(usecaseJson["angry"].ToString()),
-                        Convert.ToDouble(usecaseJson["suprised"].ToString()),
-                        Convert.ToDouble(usecaseJson["disgusted"].ToString()),
-                        Convert.ToDouble(usecaseJson["fear"].ToString())));
+                        new EmotionDetectionSystem.ServiceLayer.objects.ServiceEmotionData(Emotions.GenerateRandomEmotion(),DateTime.Now));
                     if (res.ErrorOccured)
                         throw new Exception("Failed to parse the JoinLesson " + res.ErrorMessage);
                     break;
@@ -145,13 +139,7 @@ public class ConfigurationFileHandler
                             usecaseJson["sessionid"].ToString(),
                             usecaseJson["email"].ToString(),
                             lessonId,
-                            new EmotionDetectionSystem.ServiceLayer.objects.ServiceEmotionData(rand.NextDouble(),
-                                rand.NextDouble(),
-                                rand.NextDouble(),
-                                rand.NextDouble(),
-                                rand.NextDouble(),
-                                rand.NextDouble(),
-                                rand.NextDouble()));
+                            new EmotionDetectionSystem.ServiceLayer.objects.ServiceEmotionData(Emotions.GenerateRandomEmotion(), DateTime.Now));
                         if (res.ErrorOccured)
                             throw new Exception("Failed to parse the JoinLesson " + res.ErrorMessage);
                     }

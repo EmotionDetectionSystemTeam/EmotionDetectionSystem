@@ -14,7 +14,7 @@ The goal of the Emotion Detection System is to detect students' expressions duri
 
 ## Features
 * **Real-Time Facial Expression Detection**:
-    - Detects students' facial expressions in real-time during lessons using `face-api.js`.
+    - Detects student's facial expressions in real-time during lessons using `face-api.js`.
     - Provides immediate feedback to teachers on students' emotional states.
 
 * **Teacher Dashboard**:

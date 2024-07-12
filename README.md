@@ -1,6 +1,6 @@
 # Emotion Detection System
 
-The Emotion Detection System is a real-time application that uses the `face-api.js` library to detect facial expressions from a video stream and send emotion data to a server at regular intervals. This system is designed to handle video input, process facial expressions, and transmit the detected emotions efficiently
+The Emotion Detection System is a real-time application that uses the `face-api.js` library to detect facial expressions from a video stream and send emotion data to a server at regular intervals. This system is designed to handle video input, process facial expressions, and transmit the detected emotions efficiently.
 
 ## Table of Contents
 - [Features](#features)

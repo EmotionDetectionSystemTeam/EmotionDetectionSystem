@@ -220,6 +220,12 @@ public class EdsManager
     public void PushEmotionData(string      correlationId, string sessionId, string email, string lessonId,
                                 EmotionData emotionData)
     {
+        var lesson = _lessonManager.GetLesson(lessonId);
+        if (!lesson.IsActive)
+        {
+            Log.Warn($"[{correlationId}] Lesson {lessonId} is not active. Cannot push emotion data");
+            throw new Exception($"Lesson {lessonId} is not active");
+        }
         var pushTaskInfo = new PushEmotionDataTask(correlationId, sessionId, email, lessonId, emotionData);
         _emotionDataTasks.Enqueue(pushTaskInfo);
         _taskEvent.Set(); // Signal the event to unblock the background thread

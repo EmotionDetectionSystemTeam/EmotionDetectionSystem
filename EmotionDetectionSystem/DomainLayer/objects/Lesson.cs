@@ -188,7 +188,10 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <param name="emotionData">The emotion data to push.</param>
         public void PushEmotionData(string userEmail, EmotionData emotionData)
         {
-            _enrollmentSummaryRepo.PutEmotionData(userEmail, emotionData);
+            if (_isActive)
+            {
+                _enrollmentSummaryRepo.PutEmotionData(userEmail, emotionData);   
+            }
         }
 
         /// <summary>

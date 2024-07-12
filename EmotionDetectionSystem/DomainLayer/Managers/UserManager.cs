@@ -12,7 +12,9 @@ public class UserManager
     private static          ConcurrentDictionary<string, User> _userBySession = null!;
     private readonly        Security                           _passwordSecurity;
     private static readonly ILog                               Log = LogManager.GetLogger(typeof(UserManager));
-    private readonly string _notValidEmail = "Invalid Password:\\n•At least 8 characters\\n•Include 1 uppercase letter (A-Z)\\n•Include 1 lowercase letter (a-z)\\n•Include 1 special character (e.g.,!@#$%^&*)\"";
+
+    private readonly string _notValidEmail =
+        "Invalid Password:\\n•At least 8 characters\\n•Include 1 uppercase letter (A-Z)\\n•Include 1 lowercase letter (a-z)\\n•Include 1 special character (e.g.,!@#$%^&*)\"";
 
     public UserManager()
     {
@@ -30,7 +32,8 @@ public class UserManager
     /// <param name="lastName">The last name of the user.</param>
     /// <param name="password">The password of the user.</param>
     /// <param name="userType">The type of the user, represented as an integer.</param>
-    public void Register(string correlationId, string email, string firstName, string lastName, string password, int userType)
+    public void Register(string correlationId, string email, string firstName, string lastName, string password,
+                         int    userType)
     {
         Log.Info($"[{correlationId}] Validating input for user: {email}");
         ValidateInput(email, firstName, lastName, password);
@@ -49,10 +52,10 @@ public class UserManager
         Log.Info($"[{correlationId}] User registered: {email}");
     }
 
-
     private void ValidateInput(string email, string firstName, string lastName, string password)
     {
-        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || string.IsNullOrEmpty(password))
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) ||
+            string.IsNullOrEmpty(password))
         {
             throw new Exception("One or more fields are empty");
         }
@@ -64,12 +67,12 @@ public class UserManager
         {
             throw new Exception("Email is not valid");
         }
-        
+
         if (_userRepo.ContainsEmail(email))
         {
             throw new Exception("Email is already in use");
         }
-        
+
         if (!_passwordSecurity.IsValidPassword(password))
         {
             throw new Exception("Password is not valid");
@@ -103,8 +106,8 @@ public class UserManager
         email = email.ToLower();
         if (IsLoggedIn(sessionId, email))
         {
-            Log.Error($"[{correlationId}] User {email} is already logged in with session {sessionId}");
-            throw new Exception("User is already logged in");
+            Log.Warn($"[{correlationId}] User {email} is already logged in with session {sessionId}");
+            RemoveUserFromSession(correlationId,sessionId, email);
         }
 
         if (!_userRepo.ContainsEmail(email))
@@ -125,6 +128,14 @@ public class UserManager
         return user;
     }
 
+    private void RemoveUserFromSession(string correlationId, string sessionId, string email)
+    {
+        _userBySession.TryRemove(sessionId, out var user);
+        if (user != null && user.Email.Equals(email)) return;
+        var msg = $"User {email} is not logged in with session {sessionId}";
+        Log.Warn($"[{correlationId}] {msg}");
+        throw new Exception(msg);
+    }
 
     private bool IsLoggedIn(string sessionId, string email)
     {

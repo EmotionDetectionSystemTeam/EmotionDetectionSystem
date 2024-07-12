@@ -1,14 +1,29 @@
 import { ServiceEmotionData } from "../Objects/EmotionData";
-import { serverNotifyEmotion, serverPushEmotionData } from "./ClientService";
+import { serverPushEmotionData } from "./ClientService";
 import { getLessonId } from "./SessionService";
 
-const intervalTime = 5000;
-let winningEmotion;
+const intervalTime = 1000;
+const frameBufferSize = 15; // Number of frames to average
+const emotionThreshold = 0.6;
+const processIntervalTime = 100; // Interval for processing frames in milliseconds
+const minSendInterval = 5000; // Minimum interval in milliseconds to resend the same emotion
 
 class ExpressionProcessor {
   constructor() {
-    this.intervalId = null;
-    this.expressionsData = {
+    this.frameBuffer = [];
+    this.video = null;
+    this.canvas = null;
+    this.processing = false;
+    this.processInterval = null;
+    this.sendInterval = null;
+    this.lastSentTimes = {}; // To track the last sent time for each emotion
+
+    // Bind methods to the instance to maintain correct context
+    this.processLoop = this.processLoop.bind(this);
+  }
+
+  initializeExpressionsData() {
+    return {
       neutral: 0,
       happy: 0,
       sad: 0,
@@ -17,145 +32,176 @@ class ExpressionProcessor {
       disgusted: 0,
       fearful: 0,
     };
-    this.video = null;
-    this.canvas = null; // Store the canvas element reference
   }
 
   async startVideo() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       this.video.srcObject = stream;
-      // Wait until the video element is ready to play
       await new Promise((resolve) => {
-        this.video.addEventListener('loadeddata', () => {
-          resolve();
-        });
+        this.video.addEventListener('loadeddata', resolve);
       });
       await this.video.play();
     } catch (error) {
-      console.error(error);
+      console.error('Error starting video stream:', error);
     }
   }
-  async processExpressions() {
+
+  async loadModels() {
     await Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
       faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
       faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
       faceapi.nets.faceExpressionNet.loadFromUri('/models'),
     ]);
-    // Create and append the video element to the DOM
+  }
+
+  createVideoElement() {
     this.video = document.createElement('video');
-    this.video.setAttribute('id', 'video');
-    this.video.setAttribute('autoplay', 'muted');
-    document.body.appendChild(this.video);
+    this.video.id = 'video';
+    this.video.autoplay = true;
+    this.video.muted = true;
     this.video.style.display = 'none';
-    // Start video stream
+    document.body.appendChild(this.video);
+  }
+
+  async processExpressions() {
+    await this.loadModels();
+    this.createVideoElement();
     await this.startVideo();
+
     this.canvas = faceapi.createCanvasFromMedia(this.video);
     document.body.append(this.canvas);
 
-    let displaySize = { width: this.video.videoWidth, height: this.video.videoHeight };
+    this.processing = true;
+    this.processInterval = setInterval(this.processLoop, processIntervalTime);
+    this.sendInterval = setInterval(() => this.sendResultToServer(), intervalTime);
+  }
 
-    faceapi.matchDimensions(this.canvas, displaySize);
+  async processLoop() {
+    if (!this.processing) return;
 
-    let totalTime = 0;
-    let expressionCount = 0;
+    try {
+      const detections = await this.detectFaces();
+      this.updateCanvas(detections);
+    } catch (error) {
+      console.error('Error processing expressions:', error);
+    }
+  }
 
-    this.intervalId = setInterval(async () => {
-      try {
-        const detections = await faceapi
-          .detectAllFaces(this.video, new faceapi.TinyFaceDetectorOptions())
-          .withFaceLandmarks()
-          .withFaceDescriptors()
-          .withFaceExpressions();
+  async detectFaces() {
+    return await faceapi
+        .detectAllFaces(this.video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceExpressions();
+  }
 
-        displaySize = { width: this.video.videoWidth, height: this.video.videoHeight };
+  updateCanvas(detections) {
+    const displaySize = { width: this.video.videoWidth, height: this.video.videoHeight };
+    const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
-        const resizedDetections = faceapi.resizeResults(detections, displaySize);
-        this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-        detections.forEach((detection) => {
-          const expressions = detection.expressions;
-          for (const expression in this.expressionsData) {
-            this.expressionsData[expression] += expressions[expression];
-          }
-          expressionCount++;
-        });
+    this.clearCanvas();
 
-        totalTime += 100;
-
-        if (totalTime >= intervalTime) {
-          const averageExpressions = {};
-          for (const expression in this.expressionsData) {
-            averageExpressions[expression] =
-              this.expressionsData[expression] / expressionCount;
-          }
-          console.log('Average Expressions:', averageExpressions);
-
-          this.sendResultToServer(averageExpressions);
-
-          // Clear expressions data for the next calculation
-          this.expressionsData = {
-            neutral: 0,
-            happy: 0,
-            sad: 0,
-            angry: 0,
-            surprised: 0,
-            disgusted: 0,
-            fearful: 0
-          };
-          totalTime = 0;
-          expressionCount = 0;
-        }
-      } catch (error) {
-        console.error(error);
+    const frameData = this.initializeExpressionsData();
+    resizedDetections.forEach((detection) => {
+      const expressions = detection.expressions;
+      for (const expression in expressions) {
+        frameData[expression] += expressions[expression];
       }
-    }, 100);
-  }
-
-  notify() {
-    serverNotifyEmotion("a");
-  }
-
-  sendResultToServer(data) {
-    let max = 0
-    Object.keys(this.expressionsData).forEach((expression) => {
-      if (this.expressionsData[expression] > max){
-        max = this.expressionsData[expression];
-        winningEmotion = expression;
-      } 
     });
-    console.log(this.expressionsData);
-    console.log(winningEmotion);
-    const emotionData = new ServiceEmotionData(
-      winningEmotion
-    );
-    serverPushEmotionData(getLessonId(), emotionData)
-      .catch((e) => alert(e));
+
+    this.addToFrameBuffer(frameData);
+  }
+
+  clearCanvas() {
+    this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  addToFrameBuffer(frameData) {
+    if (this.frameBuffer.length >= frameBufferSize) {
+      this.frameBuffer.shift(); // Remove the oldest frame
+    }
+    this.frameBuffer.push(frameData);
+  }
+
+  getAverageExpressions() {
+    const averageExpressions = this.initializeExpressionsData();
+    this.frameBuffer.forEach((frame) => {
+      for (const emotion in frame) {
+        averageExpressions[emotion] += frame[emotion];
+      }
+    });
+    for (const emotion in averageExpressions) {
+      averageExpressions[emotion] /= this.frameBuffer.length;
+    }
+    return averageExpressions;
+  }
+
+  sendResultToServer() {
+    const averageExpressions = this.getAverageExpressions();
+    const winningEmotion = this.getWinningEmotion(averageExpressions);
+
+    if (winningEmotion && this.shouldSendEmotion(winningEmotion)) {
+      console.log('Average Expressions:', averageExpressions);
+      console.log('Winning Emotion:', winningEmotion);
+
+      const emotionData = new ServiceEmotionData(winningEmotion);
+      serverPushEmotionData(getLessonId(), emotionData).catch((e) => alert(e));
+      this.updateLastSentTime(winningEmotion);
+    }
+  }
+
+  getWinningEmotion(expressionsData) {
+    let maxExpression = { emotion: '', value: 0 };
+    for (const [emotion, value] of Object.entries(expressionsData)) {
+      if (emotion !== 'neutral' && value > emotionThreshold && value > maxExpression.value) {
+        maxExpression = { emotion, value };
+      }
+    }
+    return maxExpression.emotion ? maxExpression.emotion : null;
+  }
+
+  shouldSendEmotion(emotion) {
+    const lastSentTime = this.lastSentTimes[emotion];
+    if (!lastSentTime) return true;
+    const now = Date.now();
+    return now - lastSentTime >= minSendInterval;
+  }
+
+  updateLastSentTime(emotion) {
+    this.lastSentTimes[emotion] = Date.now();
   }
 
   stopProcessing() {
-    // Clear the interval
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
+    this.processing = false;
 
-    // Stop the video stream
-    if (this.video && this.video.srcObject) {
-      const stream = this.video.srcObject;
-      const tracks = stream.getTracks();
-      tracks.forEach(track => track.stop());
+    this.stopVideoStream();
+    this.removeElements();
+    this.clearIntervals();
+  }
+
+  stopVideoStream() {
+    if (this.video?.srcObject) {
+      this.video.srcObject.getTracks().forEach((track) => track.stop());
       this.video.srcObject = null;
     }
-    // Remove video element from the DOM
-    if (this.video) {
-      this.video.remove();
-      this.video = null;
+  }
+
+  removeElements() {
+    this.video?.remove();
+    this.video = null;
+
+    this.canvas?.remove();
+    this.canvas = null;
+  }
+
+  clearIntervals() {
+    if (this.processInterval) {
+      clearInterval(this.processInterval);
+      this.processInterval = null;
     }
-    // Remove canvas element from the DOM
-    if (this.canvas) {
-      this.canvas.remove();
-      this.canvas = null;
+    if (this.sendInterval) {
+      clearInterval(this.sendInterval);
+      this.sendInterval = null;
     }
   }
 }

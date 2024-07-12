@@ -5,8 +5,5 @@ export class ServiceEmotionData {
     constructor(winningEmotion) {
         this.Time = new Date();
         this.WinningEmotion = winningEmotion;
-
-        
-
     }
 }

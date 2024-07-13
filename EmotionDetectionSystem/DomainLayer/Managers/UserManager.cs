@@ -148,7 +148,7 @@ public class UserManager
             return false;
         }
 
-        if (user.Email.Equals(email)) return true;
+        if (user.Email.Equals(email.ToLower())) return true;
         Log.ErrorFormat($"Session: {sessionId} is not valid for user with email: {email}");
         return false;
     }

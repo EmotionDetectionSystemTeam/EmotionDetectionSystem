@@ -6,8 +6,6 @@ import Navbar from "../Components/Navbar";
 import { pathStudentDashBoard } from "../Paths";
 import { serverLeaveLesson } from "../Services/ClientService";
 import ExpressionProcessor from "../Services/ModelService";
-import { initWebSocket } from "../Services/NotificationService";
-import { getUserName } from "../Services/SessionService";
 
 const theme = createTheme({
   typography: {
@@ -32,8 +30,18 @@ function StudentLesson() {
   const navigate = useNavigate();
   const processorRef = React.useRef<ExpressionProcessor | null>(null);
 
+  const handleExitLesson = () => {
+    if (processorRef.current) {
+      processorRef.current.stopProcessing();
+    }
+
+    serverLeaveLesson().then((response: string) => {
+      navigate(pathStudentDashBoard);
+    }).catch((e) => alert(e));
+  };
+
   React.useEffect(() => {
-    const processor = new ExpressionProcessor();
+    const processor = new ExpressionProcessor(handleExitLesson);
     processorRef.current = processor;
     processor.processExpressions();
 
@@ -46,22 +54,14 @@ function StudentLesson() {
     };
   }, []);
 
-  const handleExitLesson = () => {
-    if (processorRef.current) {
-      processorRef.current.stopProcessing();
-    }
 
-    serverLeaveLesson().then((response: string) => {
-      navigate(pathStudentDashBoard);
-    }).catch((e) => alert(e));
-  };
 
-  const handleWebSocketMessage = (data) => {
-    alert(data);
-    handleExitLesson();
-  };
-  const address = `ws://127.0.0.1:4560/${getUserName()}-notifications`;
-  initWebSocket(address, handleWebSocketMessage); // Initialize WebSocket with the message handler
+  // const handleWebSocketMessage = (data) => {
+  //   alert(data);
+  //   handleExitLesson();
+  // };
+  // const address = `ws://127.0.0.1:4560/${getUserName()}-notifications`;
+  // initWebSocket(address, handleWebSocketMessage); // Initialize WebSocket with the message handler
 
   return (
     <ThemeProvider theme={theme}>

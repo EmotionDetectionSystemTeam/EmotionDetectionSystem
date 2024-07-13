@@ -9,7 +9,7 @@ const processIntervalTime = 100; // Interval for processing frames in millisecon
 const minSendInterval = 5000; // Minimum interval in milliseconds to resend the same emotion
 
 class ExpressionProcessor {
-  constructor() {
+  constructor(handleExitLesson) {
     this.frameBuffer = [];
     this.video = null;
     this.canvas = null;
@@ -17,6 +17,7 @@ class ExpressionProcessor {
     this.processInterval = null;
     this.sendInterval = null;
     this.lastSentTimes = {}; // To track the last sent time for each emotion
+    this.handleExitLesson = handleExitLesson;
 
     // Bind methods to the instance to maintain correct context
     this.processLoop = this.processLoop.bind(this);
@@ -145,7 +146,9 @@ class ExpressionProcessor {
       console.log('Winning Emotion:', winningEmotion);
 
       const emotionData = new ServiceEmotionData(winningEmotion);
-      serverPushEmotionData(getLessonId(), emotionData).catch((e) => alert(e));
+      console.log("sending");
+      serverPushEmotionData(getLessonId(), emotionData).catch((e) => this.handleExitLesson());
+      console.log("sent");
       this.updateLastSentTime(winningEmotion);
     }
   }

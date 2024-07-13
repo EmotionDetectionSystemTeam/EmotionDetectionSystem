@@ -30,6 +30,10 @@ public class LessonManager
     public Lesson CreateLesson(string correlationId, Teacher teacher, string title, string description, string[] tags)
     {
         Log.Info($"[{correlationId}] Creating lesson titled: {title} by teacher: {teacher.Email}");
+        if (string.IsNullOrEmpty(title))
+        {
+            throw new Exception("Title cannot be empty");
+        }
 
         if (HasActiveLesson(correlationId, teacher.Email))
         {

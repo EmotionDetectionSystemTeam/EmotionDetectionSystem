@@ -12,10 +12,6 @@ public class UserManager
     private static          ConcurrentDictionary<string, User> _userBySession = null!;
     private readonly        Security                           _passwordSecurity;
     private static readonly ILog                               Log = LogManager.GetLogger(typeof(UserManager));
-
-    private readonly string _notValidEmail =
-        "Invalid Password:\\n•At least 8 characters\\n•Include 1 uppercase letter (A-Z)\\n•Include 1 lowercase letter (a-z)\\n•Include 1 special character (e.g.,!@#$%^&*)\"";
-
     public UserManager()
     {
         _userRepo         = new UserRepo();
@@ -131,7 +127,8 @@ public class UserManager
     private void RemoveUserFromSession(string correlationId, string sessionId, string email)
     {
         _userBySession.TryRemove(sessionId, out var user);
-        if (user != null && user.Email.Equals(email)) return;
+        var canChangeSession = user != null && user.Email.Equals(email) || user == null;
+        if (canChangeSession) return;
         var msg = $"User {email} is not logged in with session {sessionId}";
         Log.Warn($"[{correlationId}] {msg}");
         throw new Exception(msg);
@@ -145,13 +142,13 @@ public class UserManager
 
     public bool IsValidSession(string sessionId, string email)
     {
-        if (!_userBySession.ContainsKey(sessionId))
+        if (!_userBySession.TryGetValue(sessionId, out var user))
         {
             Log.ErrorFormat($"Session: {sessionId} is not valid");
             return false;
         }
 
-        if (_userBySession[sessionId].Email.Equals(email)) return true;
+        if (user.Email.Equals(email)) return true;
         Log.ErrorFormat($"Session: {sessionId} is not valid for user with email: {email}");
         return false;
     }

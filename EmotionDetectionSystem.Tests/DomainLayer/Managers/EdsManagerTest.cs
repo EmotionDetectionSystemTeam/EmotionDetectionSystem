@@ -303,4 +303,17 @@ public class EdsManagerTest
         Assert.AreEqual(expectedEmotionDataCount, lesson.GetEmotionDataEntries().Count());
     }
 
+    [TestMethod]
+    public void Login_ValidSessionAndEmailWithUpperCase_Success()
+    {
+        const string email     = "tEST.Email@gmail.com";
+        const string firstName = "John";
+        const string lastName  = "Doe";
+        const string password  = "1q2w3eAS!";
+        const int    userType  = 1;
+        _edsManager.Register("correlationId1", email, firstName, lastName, password, userType);
+        var user = _edsManager.Login("correlationId1", _sessionId, email, password);
+        Assert.IsNotNull(user);
+    }
+
 }

@@ -2,9 +2,9 @@ import { ServiceEmotionData } from "../Objects/EmotionData";
 import { serverPushEmotionData } from "./ClientService";
 import { getLessonId } from "./SessionService";
 
-const intervalTime = 1000;
-const frameBufferSize = 15; // Number of frames to average
-const emotionThreshold = 0.6;
+const intervalTime = 300;
+const frameBufferSize = 3; // Number of frames to average
+const emotionThreshold = 0.75;
 const processIntervalTime = 100; // Interval for processing frames in milliseconds
 const minSendInterval = 5000; // Minimum interval in milliseconds to resend the same emotion
 

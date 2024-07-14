@@ -21,6 +21,7 @@ public class UserRepo : IRepo<User>
 
     public User GetById(string email)
     {
+        email = email.ToLower();
         if (!_userByEmail.ContainsKey(email))
         {
             _logger.ErrorFormat($"User with email: {email} does not exist");
@@ -32,6 +33,7 @@ public class UserRepo : IRepo<User>
 
     public User GetByEmail(string email)
     {
+        email = email.ToLower();
         if (_userByEmail.TryGetValue(email, out var value)) return value;
         var errorMsg = $"User with email: {email} does not exist";
         _logger.ErrorFormat(errorMsg);

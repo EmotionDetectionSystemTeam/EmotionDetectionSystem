@@ -313,6 +313,7 @@ public class EdsManagerTest
         const int    userType  = 1;
         _edsManager.Register("correlationId1", email, firstName, lastName, password, userType);
         var user = _edsManager.Login("correlationId1", _sessionId, email, password);
+        _edsManager.CreateLesson("correlationId1", _sessionId, email, "test", "test", new[] { "test" });
         Assert.IsNotNull(user);
     }
 

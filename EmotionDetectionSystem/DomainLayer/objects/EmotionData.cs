@@ -1,12 +1,18 @@
 using EmotionDetectionServer;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace EmotionDetectionSystem.DomainLayer.objects
 {
     /// <summary>
     /// Represents emotional data captured at a specific time.
     /// </summary>
+    [Table("EmotionData")]
     public class EmotionData
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string Id { get; set; }
         private bool _seen;
         
         public EmotionData(DateTime time,  string winningEmotion)

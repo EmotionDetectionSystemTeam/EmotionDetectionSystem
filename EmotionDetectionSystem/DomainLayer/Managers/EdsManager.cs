@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using EmotionDetectionSystem.DataLayer;
 using EmotionDetectionSystem.DomainLayer.Events;
 using EmotionDetectionSystem.DomainLayer.objects;
 using log4net;
@@ -29,8 +30,11 @@ public class EdsManager
         // Start the background worker thread
         ThreadPool.QueueUserWorkItem(ProcessQueue);
     }
-
-    public void StopProcessingTasks()
+    public void ClearSessions()
+    {
+        _userManager.ClearSessions();
+    }
+        public void StopProcessingTasks()
     {
         _isProcessingTasks = false;
         _cancellationTokenSource.Cancel();
@@ -174,17 +178,18 @@ public class EdsManager
     public IEnumerable<Lesson> ViewTeacherDashboard(string correlationId, string sessionId, string email)
     {
         IsValidSession(sessionId, email);
-        var user = _userManager.GetUser(email);
-        if (user is not Teacher)
+        try
         {
-            Log.Warn($"[{correlationId}] User {user.Email} is not a teacher. Unable to retrieve teacher dashboard.");
-            throw new Exception($"User {user.Email} is not a teacher");
+            var teacher = _userManager.GetTeacher(email);
+            Log.Info($"[{correlationId}] Retrieving dashboard for teacher {teacher.Email}");
+            return teacher.Lessons;
+
         }
-
-        var teacher = (Teacher)user;
-        Log.Info($"[{correlationId}] Retrieving dashboard for teacher {teacher.Email}");
-
-        return teacher.Lessons;
+        catch (Exception ex)
+        {
+            Log.Warn($"[{correlationId}] User {email} is not a teacher (or user doesn't exist). Unable to retrieve teacher dashboard.");
+            throw new Exception($"User {email} is not a teacher");
+        }
     }
 
     /// <summary>
@@ -480,5 +485,9 @@ public class EdsManager
     
         lesson.AddTeacherApproach(teacher, student);
     }
-
+    internal void ClearAll()
+    {
+        ClearSessions();
+        DBHandler.Instance.CleanDB();
+    }
 }

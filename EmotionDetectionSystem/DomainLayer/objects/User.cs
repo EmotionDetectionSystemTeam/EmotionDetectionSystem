@@ -1,11 +1,11 @@
 using EmotionDetectionSystem.DomainLayer.Managers;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmotionDetectionSystem.DomainLayer.objects;
-
+[Table("User")]
 public abstract class User
 {
     protected NotificationManager _notificationManager = NotificationManager.GetInstance();
-
     protected User(string email, string firstName, string lastName, string password)
     {
         _email = email;
@@ -13,13 +13,19 @@ public abstract class User
         _lastName = lastName;
         _password = password;
     }
-
+    public User() { }
+    private string _id;
     private string _email;
     private string _firstName;
     private string _lastName;
     private string _password;
     protected string _type;
-    
+
+    public string Id
+    {
+        get => _id;
+        set => _id = value;
+    }
     public string Email
     {
         get => _email;

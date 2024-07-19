@@ -124,15 +124,16 @@ public class EnrollmentSummary
     /// Retrieves all previous winning emotions from the recorded emotion data.
     /// </summary>
     /// <returns>List of previous winning emotions.</returns>
-    public List<string> GetPreviousEmotionData()
+    public List<EmotionData> GetPreviousEmotionData()
     {
-        var winningEmotions = new List<string>();
+        var winningEmotions = new List<EmotionData>();
         foreach (var emotionData in EmotionData)
         {
             var winningEmotion = emotionData.GetWinningEmotion();
+            emotionData.Seen = true;
             if (winningEmotion != null && winningEmotion != Emotions.NODATA)
             {
-                winningEmotions.Add(winningEmotion);
+                winningEmotions.Add(emotionData);
             }
         }
 
@@ -167,7 +168,6 @@ public class EnrollmentSummary
     /// Gets or sets the list of teacher approach messages.
     /// </summary>
     public List<string> TeacherApproach { get; set; }
-    public List<EmotionData> NegativeEmotionData { get; set; }
     public string StudentId { get; set; }
     public string LessonId { get; set; }
 }

@@ -177,8 +177,8 @@ public class UserManager
     {
         try
         {
-            var user = _userRepo.GetTeacherByEmail(email);
-            if (user is Teacher teacher)
+            Teacher teacher = _userRepo.GetTeacherByEmail(email);
+            if (teacher.Type.ToLower().Equals("teacher"))
             {
                 return teacher;
             }

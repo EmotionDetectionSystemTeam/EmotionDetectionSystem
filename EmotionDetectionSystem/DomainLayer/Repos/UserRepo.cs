@@ -114,7 +114,10 @@ public class UserRepo : IRepo<User>
 
     public Teacher GetTeacherByEmail(string email)
     {
-        return DBHandler.Instance.GetTeacherByEmail(email);
+        string lowerEmail = email.ToLower();
+        if (_userByEmail.TryGetValue(lowerEmail, out var user) && user.Type.Equals("Teacher"))
+            return (Teacher)user;
+        return DBHandler.Instance.GetTeacherByEmail(lowerEmail);
     }
     public void ClearCache()
     {

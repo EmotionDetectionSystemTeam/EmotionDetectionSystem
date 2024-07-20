@@ -181,7 +181,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <returns><c>true</c> if the viewer is allowed; otherwise, <c>false</c>.</returns>
         public bool IsAllowedToViewStudentsData(Viewer viewer)
         {
-            return Viewers.Contains(viewer) || viewer == _teacher;
+            return Viewers.Contains(viewer) || viewer.Email == _teacher.Email;
         }
 
         /// <summary>

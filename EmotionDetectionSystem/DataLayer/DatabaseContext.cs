@@ -23,16 +23,18 @@ namespace EmotionDetectionSystem.DataLayer
 
         public DatabaseContext()
         {
+            Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "SystemDB.db"));
             string absolutePath = $"Data Source={path};";
-            absolutePath = "Data Source=market-db-server.database.windows.net;Initial Catalog=MarketDataBase;User ID=tamuzg@post.bgu.ac.il;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Authentication=ActiveDirectoryDefault;Application Intent=ReadWrite;Multi Subnet Failover=False;";
+            //absolutePath = "Data Source=market-db-server.database.windows.net;Initial Catalog=MarketDataBase;User ID=tamuzg@post.bgu.ac.il;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Authentication=ActiveDirectoryDefault;Application Intent=ReadWrite;Multi Subnet Failover=False;";
             //absolutePath = "Server=tcp:market-db-server.database.windows.net,1433;Initial Catalog=MarketDataBase;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication="Active Directory Default";";
             optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder.UseSqlite(absolutePath);
             //optionsBuilder.UseSqlServer($"Data Source={absolutePath}");
-            optionsBuilder.UseSqlServer(absolutePath);
+            //optionsBuilder.UseSqlServer(absolutePath);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,10 +50,13 @@ namespace EmotionDetectionSystem.DataLayer
             {
                 entity.HasKey(e => e.Id);
                 entity.HasKey(e => e.Email);
+                entity.Property(e => e.Id).HasMaxLength(100);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.FirstName).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.LastName).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Type).IsRequired().HasMaxLength(100);
+
             });
             modelBuilder.Entity<Student>(entity =>
             {
@@ -70,6 +75,7 @@ namespace EmotionDetectionSystem.DataLayer
             {
                 entity.HasKey(e => e.Id);
                 entity.HasKey(e => e.LessonId);
+                entity.Property(e => e.LessonId).HasMaxLength(100);
                 entity.Property(e => e.LessonId).IsRequired();
                 entity.Property(e => e.LessonName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(500);

@@ -3,7 +3,6 @@ using System;
 using EmotionDetectionSystem.DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -12,52 +11,40 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmotionDetectionSystem.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240719122247_initialCreate")]
-    partial class initialCreate
+    [Migration("20240720090147_Initcreate")]
+    partial class Initcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.20")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.20");
 
             modelBuilder.Entity("EmotionDetectionSystem.DomainLayer.objects.EmotionData", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EnrollmentSummaryLessonId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("EnrollmentSummaryLessonId1")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EnrollmentSummaryStudentId")
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("EnrollmentSummaryStudentId1")
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("Seen")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("WinningEmotion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EnrollmentSummaryLessonId", "EnrollmentSummaryStudentId");
-
-                    b.HasIndex("EnrollmentSummaryLessonId1", "EnrollmentSummaryStudentId1");
 
                     b.ToTable("EmotionData");
                 });
@@ -65,41 +52,42 @@ namespace EmotionDetectionSystem.Migrations
             modelBuilder.Entity("EmotionDetectionSystem.DomainLayer.objects.Lesson", b =>
                 {
                     b.Property<string>("LessonId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EntryCode")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LessonName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Tags")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("TeacherId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("LessonId");
 
@@ -112,33 +100,35 @@ namespace EmotionDetectionSystem.Migrations
                 {
                     b.Property<string>("Email")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UserType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Email");
 
@@ -152,19 +142,19 @@ namespace EmotionDetectionSystem.Migrations
             modelBuilder.Entity("EnrollmentSummary", b =>
                 {
                     b.Property<string>("LessonId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("TeacherApproach")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("LessonId", "StudentId");
 
@@ -196,10 +186,6 @@ namespace EmotionDetectionSystem.Migrations
                     b.HasOne("EnrollmentSummary", null)
                         .WithMany("EmotionData")
                         .HasForeignKey("EnrollmentSummaryLessonId", "EnrollmentSummaryStudentId");
-
-                    b.HasOne("EnrollmentSummary", null)
-                        .WithMany("NegativeEmotionData")
-                        .HasForeignKey("EnrollmentSummaryLessonId1", "EnrollmentSummaryStudentId1");
                 });
 
             modelBuilder.Entity("EmotionDetectionSystem.DomainLayer.objects.Lesson", b =>
@@ -235,8 +221,6 @@ namespace EmotionDetectionSystem.Migrations
             modelBuilder.Entity("EnrollmentSummary", b =>
                 {
                     b.Navigation("EmotionData");
-
-                    b.Navigation("NegativeEmotionData");
                 });
 
             modelBuilder.Entity("EmotionDetectionSystem.DomainLayer.objects.Teacher", b =>

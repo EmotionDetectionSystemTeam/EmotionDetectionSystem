@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EmotionDetectionSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreate : Migration
+    public partial class Initcreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,13 +15,13 @@ namespace EmotionDetectionSystem.Migrations
                 name: "User",
                 columns: table => new
                 {
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Id = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserType = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Email = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Id = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    FirstName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Password = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Type = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    UserType = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,15 +32,15 @@ namespace EmotionDetectionSystem.Migrations
                 name: "Lesson",
                 columns: table => new
                 {
-                    LessonId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Id = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LessonName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    TeacherId = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    EntryCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Tags = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    LessonId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Id = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    LessonName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    TeacherId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Date = table.Column<DateTime>(type: "TEXT", maxLength: 100, nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EntryCode = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Tags = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,10 +57,10 @@ namespace EmotionDetectionSystem.Migrations
                 name: "EnrollmentSummary",
                 columns: table => new
                 {
-                    StudentId = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    LessonId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Id = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TeacherApproach = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
+                    StudentId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    LessonId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Id = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    TeacherApproach = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,23 +83,16 @@ namespace EmotionDetectionSystem.Migrations
                 name: "EmotionData",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Time = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WinningEmotion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Seen = table.Column<bool>(type: "bit", nullable: false),
-                    EnrollmentSummaryLessonId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    EnrollmentSummaryLessonId1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    EnrollmentSummaryStudentId = table.Column<string>(type: "nvarchar(100)", nullable: true),
-                    EnrollmentSummaryStudentId1 = table.Column<string>(type: "nvarchar(100)", nullable: true)
+                    Id = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Time = table.Column<DateTime>(type: "TEXT", maxLength: 100, nullable: false),
+                    WinningEmotion = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Seen = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EnrollmentSummaryLessonId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    EnrollmentSummaryStudentId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EmotionData", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EmotionData_EnrollmentSummary_EnrollmentSummaryLessonId1_EnrollmentSummaryStudentId1",
-                        columns: x => new { x.EnrollmentSummaryLessonId1, x.EnrollmentSummaryStudentId1 },
-                        principalTable: "EnrollmentSummary",
-                        principalColumns: new[] { "LessonId", "StudentId" });
                     table.ForeignKey(
                         name: "FK_EmotionData_EnrollmentSummary_EnrollmentSummaryLessonId_EnrollmentSummaryStudentId",
                         columns: x => new { x.EnrollmentSummaryLessonId, x.EnrollmentSummaryStudentId },
@@ -111,11 +104,6 @@ namespace EmotionDetectionSystem.Migrations
                 name: "IX_EmotionData_EnrollmentSummaryLessonId_EnrollmentSummaryStudentId",
                 table: "EmotionData",
                 columns: new[] { "EnrollmentSummaryLessonId", "EnrollmentSummaryStudentId" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EmotionData_EnrollmentSummaryLessonId1_EnrollmentSummaryStudentId1",
-                table: "EmotionData",
-                columns: new[] { "EnrollmentSummaryLessonId1", "EnrollmentSummaryStudentId1" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_EnrollmentSummary_StudentId",

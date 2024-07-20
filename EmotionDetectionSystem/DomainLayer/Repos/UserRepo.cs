@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Security.Cryptography;
 using EmotionDetectionSystem.DataLayer;
 using EmotionDetectionSystem.DomainLayer.objects;
 using log4net;
@@ -10,25 +11,43 @@ public class UserRepo : IRepo<User>
 {
     private static ConcurrentDictionary<string, User> _userByEmail = new ConcurrentDictionary<string, User>();
     private static readonly ILog _logger = LogManager.GetLogger(typeof(UserRepo));
-
+    private bool _enableCache = true;
+    public bool EnableCache
+    {
+        get => _enableCache;
+        set => _enableCache = value;
+    }
     public UserRepo()
     {
         _userByEmail = new ConcurrentDictionary<string, User>();
     }
-
-    public List<User> GetAll()
+    public void CacheUsers(List<User> users)
     {
-        List<User> users = DBHandler.Instance.GetAllUsers();
+        if (!EnableCache)
+            return;
         foreach (var user in users)
         {
             _userByEmail.AddOrUpdate(user.Email, user, (key, oldValue) => user);
         }
+    }
+    public void CacheUser(User user)
+    {
+        if (!EnableCache)
+            return;
+       _userByEmail.AddOrUpdate(user.Email, user, (key, oldValue) => user);
+    }
+    public List<User> GetAll()
+    {
+        List<User> users = DBHandler.Instance.GetAllUsers();
+        CacheUsers(users);
         return users;
     }
 
     public User GetById(string id)
     {
-        return GetByEmail(id);
+        User user = GetByEmail(id);
+        CacheUser(user);
+        return user;
     }
 
     public User GetByEmail(string email)
@@ -41,7 +60,7 @@ public class UserRepo : IRepo<User>
         user = DBHandler.Instance.GetUserByEmail(email);
         if (user != null)
         {
-            _userByEmail.TryAdd(email, user);
+            CacheUser(user);
         }
         else
         {
@@ -60,7 +79,7 @@ public class UserRepo : IRepo<User>
         }
 
         DBHandler.Instance.AddUser(item);
-        _userByEmail.TryAdd(item.Email, item);
+        CacheUser(item);
     }
 
     public void Update(User item)
@@ -117,7 +136,9 @@ public class UserRepo : IRepo<User>
         string lowerEmail = email.ToLower();
         if (_userByEmail.TryGetValue(lowerEmail, out var user) && user.Type.Equals("Teacher"))
             return (Teacher)user;
-        return DBHandler.Instance.GetTeacherByEmail(lowerEmail);
+        Teacher teacher = DBHandler.Instance.GetTeacherByEmail(lowerEmail);
+        CacheUser(teacher);
+        return teacher;
     }
     public void ClearCache()
     {

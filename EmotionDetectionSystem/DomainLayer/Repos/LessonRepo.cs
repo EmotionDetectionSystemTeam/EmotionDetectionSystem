@@ -10,6 +10,12 @@ public class LessonRepo : IRepo<Lesson>
     //Dictionary<teacherEmail, List<Lesson>>
     private Dictionary<string, List<Lesson>> _lessonsByEmail = new Dictionary<string, List<Lesson>>();
     private Dictionary<string, Lesson> _lessonsByEntryCode = new Dictionary<string, Lesson>();
+    private bool _enableCache = true;
+    public bool EnableCache
+    {
+        get => _enableCache;
+        set => _enableCache = value;
+    }
     public void ClearCache()
     {
         _lessonsByEmail.Clear();
@@ -17,6 +23,8 @@ public class LessonRepo : IRepo<Lesson>
     }
     private void CacheLesson(Lesson lesson, bool update = false)
     {
+        if (!EnableCache)
+            return;
         if (!_lessonsByEmail.TryGetValue(lesson.Teacher.Email, out var lessons))
         {
             lessons = new List<Lesson>();

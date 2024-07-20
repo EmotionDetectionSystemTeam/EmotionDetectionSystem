@@ -13,6 +13,12 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
         private Dictionary<string, EnrollmentSummary> _enrollmentSummaryByEmail;
         private Dictionary<string, List<string>> _studentWinningEmotions;
         private Dictionary<string, EmotionData> _emotionDataByEmail;
+        private bool _enableCache = true;
+        public bool EnableCache
+        {
+            get => _enableCache;
+            set => _enableCache = value;
+        }
 
         public EnrollmentSummaryRepo(string lessonId)
         {
@@ -21,6 +27,14 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
             _enrollmentSummaryByEmail = new Dictionary<string, EnrollmentSummary>();
             _studentWinningEmotions = new Dictionary<string, List<string>>();
             _emotionDataByEmail = new Dictionary<string, EmotionData>();
+        }
+        
+        public void ClearCache()
+        {
+            _enrollmentSummaries.Clear();
+            _enrollmentSummaryByEmail.Clear();
+            _studentWinningEmotions.Clear();
+            _emotionDataByEmail.Clear();
         }
 
         public List<EnrollmentSummary> GetAll()
@@ -32,12 +46,13 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
 
         public EnrollmentSummary GetById(string email)
         {
-            if (_enrollmentSummaryByEmail.TryGetValue(email, out var enrollmentSummary))
+            string lower_email = email.ToLower();
+            if (_enrollmentSummaryByEmail.TryGetValue(lower_email, out var enrollmentSummary))
             {
                 return enrollmentSummary;
             }
 
-            enrollmentSummary = DBHandler.Instance.GetEnrollmentSummaryByEmail(_lessonId, email);
+            enrollmentSummary = DBHandler.Instance.GetEnrollmentSummaryByEmail(_lessonId, lower_email);
             if (enrollmentSummary != null)
             {
                 CacheEnrollmentSummary(enrollmentSummary);
@@ -122,6 +137,8 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
 
         private void CacheEnrollmentSummary(EnrollmentSummary summary)
         {
+            if (!EnableCache)
+                return;
             if (!_enrollmentSummaryByEmail.ContainsKey(summary.Student.Email))
             {
                 _enrollmentSummaryByEmail[summary.Student.Email] = summary;
@@ -130,6 +147,8 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
 
         private void CacheEnrollmentSummaries(IEnumerable<EnrollmentSummary> summaries)
         {
+            if (!EnableCache)
+                return;
             if (summaries == null) {  return; }
             foreach (var summary in summaries)
             {
@@ -139,6 +158,8 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
 
         private void CacheEmotionData(string email, EmotionData data)
         {
+            if (!EnableCache)
+                return;
             if (!_emotionDataByEmail.ContainsKey(email))
             {
                 _emotionDataByEmail[email] = data;

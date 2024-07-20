@@ -9,6 +9,7 @@ using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using EmotionDetectionSystem.DomainLayer.Repos;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Configuration;
 
 namespace EmotionDetectionSystem.DataLayer
 {
@@ -23,12 +24,15 @@ namespace EmotionDetectionSystem.DataLayer
         public DatabaseContext()
         {
         }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var DbPath = "Data Source=(localdb)\\ProjectModels;Initial Catalog=EmotionDetectionDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "SystemDB.db"));
+            string absolutePath = $"Data Source={path};";
+            absolutePath = "Data Source=market-db-server.database.windows.net;Initial Catalog=MarketDataBase;User ID=tamuzg@post.bgu.ac.il;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Authentication=ActiveDirectoryDefault;Application Intent=ReadWrite;Multi Subnet Failover=False;";
+            //absolutePath = "Server=tcp:market-db-server.database.windows.net,1433;Initial Catalog=MarketDataBase;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication="Active Directory Default";";
             optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseSqlServer($"{DbPath}");
+            //optionsBuilder.UseSqlServer($"Data Source={absolutePath}");
+            optionsBuilder.UseSqlServer(absolutePath);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -150,6 +154,7 @@ namespace EmotionDetectionSystem.DataLayer
         public static DatabaseContext ConnectToDatabase()
         {
             return new DatabaseContext();
+            
         }
     }
 }

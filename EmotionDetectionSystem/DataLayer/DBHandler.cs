@@ -667,6 +667,7 @@ namespace EmotionDetectionSystem.DataLayer
                             else
                             {
                                 enrollmentSummary.AddEmotionData(emotionData);
+                                db.EnrollmentSummaries.Update(enrollmentSummary);
                                 db.SaveChanges(true);
                             }
                         }

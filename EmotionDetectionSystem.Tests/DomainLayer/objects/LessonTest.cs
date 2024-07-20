@@ -50,7 +50,8 @@ public class LessonTest
     {
         DBHandler.Instance = _mockDBHandler.Object;
         _mockDBHandler.Setup(db => db.AddEnrollmentSummary(It.IsAny<EnrollmentSummary>())).Callback(() => { });
-        _mockDBHandler.Setup(db => db.GetEnrollmentSummaryByEmail(It.IsAny<string>(), It.IsAny<string>())).Returns(new EnrollmentSummary());
+        _mockDBHandler.Setup(db => db.GetEnrollmentSummaryByEmail(_lesson.LessonId, _student.Email.ToLower())).Returns(new EnrollmentSummary(_student, _lesson));
+        _lesson.AddStudent(_student);
         Assert.IsTrue(_lesson.ContainStudent(_student));
 
     }

@@ -50,16 +50,6 @@ function TeacherLesson() {
       Fearful: 'red',
     };
 
-    const emotionSorMap: { [key: string]: number } = {
-      yellow: 1,
-      red: 2,
-      green: 3,
-      gray: 4,
-    };
-
-
-
-
     const mappedStudents: ClientStudent[] = students.map((student: ServiceRealTimeUser) => {
       const color: string = emotionColorMap[student.winingEmotion];
 

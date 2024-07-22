@@ -119,10 +119,14 @@ namespace EmotionDetectionSystem.DataLayer
                         try
                         {
                             result = db.Users.FirstOrDefault(m => m.Email.ToLower().Equals(email.ToLower()));
+                            if (result != null && result.Type.Equals("Teacher"))
+                            {
+                                return db.Users.OfType<Teacher>().Include(t => t.Lessons).FirstOrDefault(m => m.Email.ToLower().Equals(email.ToLower()));
+                            }
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to get member by email. user isn't exist.");
+                            throw new Exception("failed to get user by email. user isn't exist.");
                         }
                     }
                 }
@@ -382,6 +386,7 @@ namespace EmotionDetectionSystem.DataLayer
 
         public User GetUserById(string id)
         {
+            User result;
             lock (this)
             {
                 try
@@ -390,11 +395,15 @@ namespace EmotionDetectionSystem.DataLayer
                     {
                         try
                         {
-                            return db.Users.FirstOrDefault(m => m.Email.Equals(id));
+                            result = db.Users.FirstOrDefault(m => m.Email.ToLower().Equals(id.ToLower()));
+                            if (result != null && result.Type.Equals("Teacher"))
+                            {
+                                return db.Users.OfType<Teacher>().Include(t => t.Lessons).FirstOrDefault(m => m.Email.ToLower().Equals(id.ToLower()));
+                            }
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to fatch lesson by id.");
+                            throw new Exception("failed to get member by email. user isn't exist.");
                         }
                     }
                 }
@@ -403,6 +412,7 @@ namespace EmotionDetectionSystem.DataLayer
                     throw new Exception(DbErrorMessage);
                 }
             }
+            return result;
         }
 
         public List<User> GetAllUsers()
@@ -415,7 +425,10 @@ namespace EmotionDetectionSystem.DataLayer
                     {
                         try
                         {
-                            return db.Users.ToList<User>();
+                            List<User> users = db.Users.OfType<Student>().ToList<User>();
+                            List<User> teachers = db.Users.OfType<Teacher>().Include(t => t.Lessons).ToList<User>();
+                            return users.Union(teachers).ToList<User>();
+
                         }
                         catch (Exception ex)
                         {

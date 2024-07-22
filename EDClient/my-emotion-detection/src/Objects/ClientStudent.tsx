@@ -1,12 +1,14 @@
+import Emotion from "./Emotion";
+
 class ClientStudent {
   public name: string;
   public lastName: string;
   public email: string;
   public emotion: string;
-  public previousEmotions : string[];
+  public previousEmotions : Emotion[];
   public color: string;
 
-  constructor(name: string, lastName: string, email: string, emotion: string, previousEmotions : string[], color: string) {
+  constructor(name: string, lastName: string, email: string, emotion: string, previousEmotions : Emotion[], color: string) {
     this.name = name;
     this.lastName = lastName;
     this.email = email;

@@ -1,4 +1,5 @@
 using EmotionDetectionSystem.DomainLayer.objects;
+using EmotionDetectionSystem.ServiceLayer.objects.charts;
 
 namespace EmotionDetectionSystem.ServiceLayer.objects;
 
@@ -11,12 +12,12 @@ public class ServiceRealTimeUser
         LastName      = user.LastName;
         WiningEmotion = winingEmotion;
         PreviousEmotions = previousEmotions
-            .Select(emotion => new ServiceEmotionData(emotion.WinningEmotion, emotion.Time)).ToList();
+            .Select(emotion => new EmotionDataChart(emotion)).ToList();
     }
 
     public string                   Email            { get; set; }
     public string                   FirstName        { get; set; }
     public string                   LastName         { get; set; }
     public string                   WiningEmotion    { get; set; }
-    public List<ServiceEmotionData> PreviousEmotions { get; set; }
+    public List<EmotionDataChart> PreviousEmotions { get; set; }
 }

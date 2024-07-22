@@ -1,20 +1,14 @@
 using EmotionDetectionSystem.DomainLayer.Events;
 using EmotionDetectionSystem.DomainLayer.Repos;
 using log4net;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmotionDetectionSystem.DomainLayer.objects
 {
     /// <summary>
     /// Represents a lesson in the Emotion Detection System.
     /// </summary>
-    [Table("Lesson")]
     public class Lesson
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string Id { get; set; }
         private string _lessonId;
         private string _lessonName;
         private string _description;
@@ -27,7 +21,6 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         private EnrollmentSummaryRepo _enrollmentSummaryRepo;
         private static readonly ILog Log = LogManager.GetLogger(typeof(Lesson));
 
-        public Lesson() { }
         /// <summary>
         /// Initializes a new instance of the <see cref="Lesson"/> class.
         /// </summary>
@@ -110,7 +103,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// </summary>
         public List<Viewer> Viewers
         {
-            get => _viewers ??= new List<Viewer>();
+            get => _viewers;
             set => _viewers = value;
         }
 
@@ -131,19 +124,14 @@ namespace EmotionDetectionSystem.DomainLayer.objects
             get => _lessonId;
             set => _lessonId = value;
         }
-        public EnrollmentSummaryRepo EnrollmentSummaryRepo
-        {
-            get => _enrollmentSummaryRepo ??= new EnrollmentSummaryRepo(_lessonId);
-            set => _enrollmentSummaryRepo = value;
-        }
 
         /// <summary>
         /// Ends the lesson and notifies all enrolled students.
         /// </summary>
         public void EndLesson()
         {
-            IsActive = false;
-            foreach (var student in EnrollmentSummaryRepo.GetAll().Select(enrollment => enrollment.Student))
+            _isActive = false;
+            foreach (var student in _enrollmentSummaryRepo.GetAll().Select(enrollment => enrollment.Student))
             {
                 student.Notify(new LessonEndedEvent(this).GenerateMsg());
             }
@@ -156,7 +144,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <returns><c>true</c> if the student is enrolled; otherwise, <c>false</c>.</returns>
         public bool ContainStudent(Student student)
         {
-            return EnrollmentSummaryRepo.ContainStudent(student);
+            return _enrollmentSummaryRepo.ContainStudent(student);
         }
 
         /// <summary>
@@ -170,7 +158,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
                 return;
             }
             var enrollmentSummary = new EnrollmentSummary(student, this);
-            EnrollmentSummaryRepo.Add(enrollmentSummary);
+            _enrollmentSummaryRepo.Add(enrollmentSummary);
             _teacher.Notify(new StudentJoinLessonEvent(student).GenerateMsg());
         }
 
@@ -181,7 +169,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <returns><c>true</c> if the viewer is allowed; otherwise, <c>false</c>.</returns>
         public bool IsAllowedToViewStudentsData(Viewer viewer)
         {
-            return Viewers.Contains(viewer) || viewer.Email == _teacher.Email;
+            return _viewers.Contains(viewer) || viewer == _teacher;
         }
 
         /// <summary>
@@ -190,7 +178,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <returns>The list of enrollment summaries.</returns>
         public List<EnrollmentSummary> GetEnrollmentSummaries()
         {
-            return EnrollmentSummaryRepo.GetAll();
+            return _enrollmentSummaryRepo.GetAll();
         }
 
         /// <summary>
@@ -202,7 +190,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         {
             if (_isActive)
             {
-                EnrollmentSummaryRepo.PutEmotionData(userEmail, emotionData);   
+                _enrollmentSummaryRepo.PutEmotionData(userEmail, emotionData);   
             }
         }
 
@@ -212,9 +200,9 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <param name="viewer">The viewer to add.</param>
         public void AddViewer(Viewer viewer)
         {
-            if (!Viewers.Contains(viewer) || viewer != _teacher)
+            if (!_viewers.Contains(viewer) || viewer != _teacher)
             {
-                Viewers.Add(viewer);
+                _viewers.Add(viewer);
             }
         }
 
@@ -225,7 +213,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         public IEnumerable<EmotionData> GetEmotionDataEntries()
         {
             var entries = new List<EmotionData>();
-            entries.AddRange(EnrollmentSummaryRepo.GetEmotionDataEntries());
+            entries.AddRange(_enrollmentSummaryRepo.GetEmotionDataEntries());
             return entries;
         }
 
@@ -237,7 +225,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         public IEnumerable<EnrollmentSummary> GetEnrollmentSummariesWithData(string correlationId)
         {
             Log.Info($"[{correlationId}] Getting enrollment summaries with data for lesson {_lessonId}");
-            return EnrollmentSummaryRepo.GetEnrollmentSummariesWithData();
+            return _enrollmentSummaryRepo.GetEnrollmentSummariesWithData();
         }
 
         /// <summary>
@@ -246,7 +234,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <returns>The dictionary mapping student IDs to winning emotions.</returns>
         public Dictionary<string, List<string>> GetStudentWiningEmotions()
         {
-            return EnrollmentSummaryRepo.GetStudentWiningEmotions();
+            return _enrollmentSummaryRepo.GetStudentWiningEmotions();
         }
 
         /// <summary>
@@ -255,7 +243,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <returns>The dictionary mapping students to their enrollment summaries containing emotions data.</returns>
         public Dictionary<Student, EnrollmentSummary> GetStudentsEmotions()
         {
-            return EnrollmentSummaryRepo.GetStudentsEmotions();
+            return _enrollmentSummaryRepo.GetStudentsEmotions();
         }
 
         /// <summary>
@@ -273,7 +261,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <param name="viewer">The viewer to remove.</param>
         public void Leave(Viewer viewer)
         {
-            Viewers.Remove(viewer);
+            _viewers.Remove(viewer);
         }
 
         /// <summary>
@@ -282,7 +270,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <param name="teacher">The teacher who left.</param>
         public void Leave(Teacher teacher)
         {
-            foreach (var student in EnrollmentSummaryRepo.GetAll().Select(enrollment => enrollment.Student))
+            foreach (var student in _enrollmentSummaryRepo.GetAll().Select(enrollment => enrollment.Student))
             {
                 student.Notify(new TeacherLeftLesson(teacher).GenerateMsg());
             }
@@ -295,7 +283,7 @@ namespace EmotionDetectionSystem.DomainLayer.objects
         /// <returns>The enrollment summary for the student.</returns>
         public EnrollmentSummary GetEnrollmentSummaryByEmail(string studentEmail)
         {
-            return EnrollmentSummaryRepo.GetById(studentEmail);
+            return _enrollmentSummaryRepo.GetById(studentEmail);
         }
 
         /// <summary>

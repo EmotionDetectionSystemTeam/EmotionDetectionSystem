@@ -19,7 +19,6 @@ public class EdsService : IEdsService
     public void Dispose()
     {
         _edsManager.StopProcessingTasks();
-        _edsManager.ClearAll();
     }
 
     public Response Register(string email, string firstName, string lastName, string password, string confirmPassword,

@@ -80,7 +80,7 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
 
         public void Update(EnrollmentSummary item)
         {
-            throw new NotImplementedException();
+            DBHandler.Instance.UpdateEnrollmentSummary(item);
         }
 
         public void Delete(string id)
@@ -131,9 +131,14 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
         }
         public IEnumerable<EmotionData> GetEmotionDataEntries()
         {
-            var emotionsData = new List<EmotionData>();
             List<EnrollmentSummary> _enrollmentSummaries = _enrollmentSummaryByEmail.Values.ToList<EnrollmentSummary>();
-            return emotionsData.Concat(_enrollmentSummaries.SelectMany(x => x.GetAllEmotionData()));
+            List<EmotionData> emotionsData = (new List<EmotionData>()).Concat(_enrollmentSummaries.SelectMany(x => x.GetAllEmotionData())).ToList<EmotionData>();
+            foreach(EnrollmentSummary summary in _enrollmentSummaries)
+            {
+                Update(summary);
+            }
+            return emotionsData;
+
         }
         public IEnumerable<EnrollmentSummary> GetEnrollmentSummariesWithData()
         {

@@ -662,7 +662,7 @@ namespace EmotionDetectionSystem.DataLayer
             }
         }
 
-        public void PutEmotionData(string userEmail, string lessonId, EmotionData emotionData)
+        public void UpdateEnrollmentSummary(EnrollmentSummary enrollmentSummary)
         {
             lock (this)
             {
@@ -672,21 +672,12 @@ namespace EmotionDetectionSystem.DataLayer
                     {
                         try
                         {
-                            EnrollmentSummary enrollmentSummary = GetEnrollmentSummaryPerStudentLesson(userEmail, lessonId);
-                            if (enrollmentSummary == null)
-                            {
-                                throw new Exception($" Student with email {userEmail} not found in lesson");
-                            }
-                            else
-                            {
-                                enrollmentSummary.AddEmotionData(emotionData);
-                                db.EnrollmentSummaries.Update(enrollmentSummary);
-                                db.SaveChanges(true);
-                            }
+                            db.EnrollmentSummaries.Update(enrollmentSummary);
+                            db.SaveChanges(true);
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with enrollment summaries table and add a new item.");
+                            throw new Exception("failed to interact with enrollment summaries table and update the item.");
                         }
                     }
                 }

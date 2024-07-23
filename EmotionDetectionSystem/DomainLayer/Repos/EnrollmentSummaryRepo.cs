@@ -9,10 +9,7 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
     public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
     {
         private readonly string _lessonId;
-        private List<EnrollmentSummary> _enrollmentSummaries;
         private Dictionary<string, EnrollmentSummary> _enrollmentSummaryByEmail;
-        private Dictionary<string, List<string>> _studentWinningEmotions;
-        private Dictionary<string, EmotionData> _emotionDataByEmail;
         private bool _enableCache = true;
         public bool EnableCache
         {
@@ -23,23 +20,18 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
         public EnrollmentSummaryRepo(string lessonId)
         {
             _lessonId = lessonId;
-            _enrollmentSummaries = new List<EnrollmentSummary>();
             _enrollmentSummaryByEmail = new Dictionary<string, EnrollmentSummary>();
-            _studentWinningEmotions = new Dictionary<string, List<string>>();
-            _emotionDataByEmail = new Dictionary<string, EmotionData>();
+            GetAll();
         }
-        
+
         public void ClearCache()
         {
-            _enrollmentSummaries.Clear();
             _enrollmentSummaryByEmail.Clear();
-            _studentWinningEmotions.Clear();
-            _emotionDataByEmail.Clear();
         }
 
         public List<EnrollmentSummary> GetAll()
         {
-            _enrollmentSummaries = DBHandler.Instance.GetAllEnrollmentSummariesPerLesson(_lessonId);
+            List<EnrollmentSummary> _enrollmentSummaries = DBHandler.Instance.GetAllEnrollmentSummariesPerLesson(_lessonId);
             CacheEnrollmentSummaries(_enrollmentSummaries);
             return _enrollmentSummaries;
         }
@@ -62,11 +54,22 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
 
         public Dictionary<string, List<string>> GetStudentWiningEmotions()
         {
-            if (_studentWinningEmotions.Count == 0)
+            Dictionary<string, List<string>> studentWiningEmotions = new Dictionary<string, List<string>>();
+            foreach (var enrollmentSummary in _enrollmentSummaryByEmail.Values)
             {
-                _studentWinningEmotions = DBHandler.Instance.GetStudentWiningEmotions(_lessonId);
+                string studentEmail = enrollmentSummary.Student.Email.ToLower();
+                List<string> studentEmotions = enrollmentSummary.GetAllWiningEmotionData();
+
+                if (!studentWiningEmotions.ContainsKey(studentEmail))
+                {
+                    studentWiningEmotions.Add(studentEmail, studentEmotions);
+                }
+                else
+                {
+                    studentWiningEmotions[studentEmail].AddRange(studentEmotions);
+                }
             }
-            return _studentWinningEmotions;
+            return studentWiningEmotions;
         }
 
         public void Add(EnrollmentSummary item)
@@ -77,7 +80,7 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
 
         public void Update(EnrollmentSummary item)
         {
-            throw new NotImplementedException();
+            DBHandler.Instance.UpdateEnrollmentSummary(item);
         }
 
         public void Delete(string id)
@@ -97,10 +100,7 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
 
         public void ResetDomainData()
         {
-            _enrollmentSummaries.Clear();
             _enrollmentSummaryByEmail.Clear();
-            _studentWinningEmotions.Clear();
-            _emotionDataByEmail.Clear();
         }
 
         public void Clear()
@@ -112,36 +112,54 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
         {
             return (GetById(student.Email) != null);
         }
-
         public void PutEmotionData(string userEmail, EmotionData emotionData)
         {
-            DBHandler.Instance.PutEmotionData(userEmail, _lessonId, emotionData);
-            CacheEmotionData(userEmail, emotionData);
+            if (!_enrollmentSummaryByEmail.TryGetValue(userEmail.ToLower(), out EnrollmentSummary enrollmentSummary))
+            {
+                enrollmentSummary = DBHandler.Instance.GetEnrollmentSummaryPerStudentLesson(userEmail.ToLower(), _lessonId);
+                if (enrollmentSummary == null)
+                {
+                    throw new Exception("Student didn't join the lesson.");
+                }
+                else
+                {
+                    CacheEnrollmentSummary(enrollmentSummary);
+                }
+            }
+            enrollmentSummary.AddEmotionData(emotionData);
+            DBHandler.Instance.UpdateEnrollmentSummary(enrollmentSummary);
         }
-
         public IEnumerable<EmotionData> GetEmotionDataEntries()
         {
-            return DBHandler.Instance.GetEmotionDataEntries(_lessonId);
+            List<EnrollmentSummary> _enrollmentSummaries = _enrollmentSummaryByEmail.Values.ToList<EnrollmentSummary>();
+            List<EmotionData> emotionsData = (new List<EmotionData>()).Concat(_enrollmentSummaries.SelectMany(x => x.GetAllEmotionData())).ToList<EmotionData>();
+            foreach(EnrollmentSummary summary in _enrollmentSummaries)
+            {
+                Update(summary);
+            }
+            return emotionsData;
 
         }
-
         public IEnumerable<EnrollmentSummary> GetEnrollmentSummariesWithData()
         {
-            return DBHandler.Instance.GetEnrollmentSummariesWithData(_lessonId);
+            List<EnrollmentSummary> _enrollmentSummaries = _enrollmentSummaryByEmail.Values.ToList<EnrollmentSummary>();
+            return _enrollmentSummaries
+                .Where(enrollmentSummary => enrollmentSummary.PeekFirstNotSeenEmotionData() != null).ToList();
         }
-
         public Dictionary<Student, EnrollmentSummary> GetStudentsEmotions()
         {
-            return DBHandler.Instance.GetStudentsEmotions(_lessonId);
+            List<EnrollmentSummary> _enrollmentSummaries = _enrollmentSummaryByEmail.Values.ToList<EnrollmentSummary>();
+            return _enrollmentSummaries.ToDictionary(enrollmentSummary => enrollmentSummary.Student, enrollmentSummary => enrollmentSummary);
         }
 
         private void CacheEnrollmentSummary(EnrollmentSummary summary)
         {
             if (!EnableCache)
                 return;
-            if (!_enrollmentSummaryByEmail.ContainsKey(summary.Student.Email))
+            string email = summary.Student.Email.ToLower();
+            if (!_enrollmentSummaryByEmail.ContainsKey(email))
             {
-                _enrollmentSummaryByEmail[summary.Student.Email] = summary;
+                _enrollmentSummaryByEmail[email] = summary;
             }
         }
 
@@ -153,16 +171,6 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
             foreach (var summary in summaries)
             {
                 CacheEnrollmentSummary(summary);
-            }
-        }
-
-        private void CacheEmotionData(string email, EmotionData data)
-        {
-            if (!EnableCache)
-                return;
-            if (!_emotionDataByEmail.ContainsKey(email))
-            {
-                _emotionDataByEmail[email] = data;
             }
         }
     }

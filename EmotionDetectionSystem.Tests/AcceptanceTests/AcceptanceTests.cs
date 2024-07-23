@@ -46,6 +46,7 @@ namespace EmotionDetectionSystem.Tests.AcceptanceTests
         public void Setup()
         {
             _edsService = new EdsService();
+            _edsService.Dispose();
             //new ConfigurationFileHandler(_edsService).Parse(); //init a class with 10 students.
             Random rand = new Random();
             _emotionData = new ServiceEmotionData(Emotions.SURPRISED, DateTime.Now);

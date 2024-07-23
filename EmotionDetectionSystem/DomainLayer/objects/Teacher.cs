@@ -20,6 +20,7 @@ public class Teacher: User, Viewer
         _lessons = new List<Lesson>();
         _type = "Teacher";
     }
+    public Teacher() { }
 
     public override void JoinLesson(Lesson lesson)
     {

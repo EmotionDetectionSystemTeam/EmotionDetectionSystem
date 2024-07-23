@@ -3,13 +3,20 @@ using EmotionDetectionSystem.DomainLayer.Events;
 using EmotionDetectionSystem.DomainLayer.objects;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 /// <summary>
 /// Represents a summary of enrollment details including student, lesson, and emotion data.
 /// </summary>
+[Table("EnrollmentSummary")]
 public class EnrollmentSummary
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public string Id { get; set; }
     private object _lock = new object();
+    public EnrollmentSummary() { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EnrollmentSummary"/> class with emotion data.
@@ -23,6 +30,8 @@ public class EnrollmentSummary
         Lesson = lesson;
         EmotionData = emotionData;
         TeacherApproach = new List<string>();
+        StudentId = student.Email;
+        LessonId = lesson.LessonId;
     }
 
     /// <summary>
@@ -36,6 +45,8 @@ public class EnrollmentSummary
         Lesson = lesson;
         EmotionData = new List<EmotionData>();
         TeacherApproach = new List<string>();
+        StudentId = student.Email;
+        LessonId = lesson.LessonId;
     }
 
     /// <summary>
@@ -157,4 +168,6 @@ public class EnrollmentSummary
     /// Gets or sets the list of teacher approach messages.
     /// </summary>
     public List<string> TeacherApproach { get; set; }
+    public string StudentId { get; set; }
+    public string LessonId { get; set; }
 }

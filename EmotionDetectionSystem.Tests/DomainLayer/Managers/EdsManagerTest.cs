@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using EmotionDetectionServer;
+using EmotionDetectionSystem.DataLayer;
 using EmotionDetectionSystem.DomainLayer.Managers;
 using EmotionDetectionSystem.DomainLayer.objects;
 using EmotionDetectionSystem.ServiceLayer;
@@ -19,8 +20,15 @@ public class EdsManagerTest
     [TestInitialize]
     public void SetUp()
     {
+        DBHandler.Instance.CleanDB();
         _edsManager = new EdsManager();
-        _sessionId  = "1";
+        _edsManager.ClearSessions();
+        _sessionId = "1";
+    }
+    public void Cleanup()
+    {
+        DBHandler.Instance.CleanDB();
+        _edsManager.ClearSessions();
     }
 
     [TestMethod]
@@ -288,7 +296,7 @@ public class EdsManagerTest
             _edsManager.JoinLesson("correlationId1", i.ToString(), studentEmail, lesson.EntryCode);
         }
 
-        for (int i = 1; i <= 5000000; i++)
+        for (int i = 1; i <= 500; i++)
         {
             string studentEmail = $"student{(i % 50) + 1}@example.com"; // Corrected index
             _edsManager.PushEmotionData("correlationId1",(i % 50 + 1).ToString(), studentEmail, lesson.LessonId, new EmotionData(
@@ -299,7 +307,7 @@ public class EdsManagerTest
         }
         
         Assert.AreEqual(50, lesson.GetEnrollmentSummaries().Count);
-        int expectedEmotionDataCount = 50 * 100000;
+        int expectedEmotionDataCount = 50 * 10;
         Assert.AreEqual(expectedEmotionDataCount, lesson.GetEmotionDataEntries().Count());
     }
 

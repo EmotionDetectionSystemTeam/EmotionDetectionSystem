@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using EmotionDetectionSystem.DomainLayer.Repos;
+using log4net;
 
 namespace EmotionDetectionSystem.DataLayer
 {
@@ -12,6 +13,7 @@ namespace EmotionDetectionSystem.DataLayer
         private static readonly object databaseLock = new object();
 
         private readonly string DbErrorMessage = "Unfortunatly connecting to the db faild, please try again in a few minutes";
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(DBHandler));
 
         private bool testMode = false;
 
@@ -64,13 +66,15 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("setting up database for tests failed!");
+                            throw new Exception("setting up database for tests failed!" + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
+
                 }
             }
         }
@@ -80,8 +84,6 @@ namespace EmotionDetectionSystem.DataLayer
 
         public bool UserExistsByEmail(string email)
         {
-            bool result = false;
-
             lock (this)
             {
                 try
@@ -90,52 +92,58 @@ namespace EmotionDetectionSystem.DataLayer
                     {
                         try
                         {
-                            result = db.Users.FirstOrDefault(m => m.Email.ToLower().Equals(email.ToLower())) != null;
+                            return db.Users.FirstOrDefault(m => m.Email.ToLower().Equals(email.ToLower())) != null;
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed tofind member by email");
+                            throw new Exception("failed to find member by email:" + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
-
-                return result;
             }
         }
 
         public User GetUserByEmail(string email)
         {
-            User result;
             lock (this)
             {
                 try
                 {
                     using (var db = DatabaseContextFactory.ConnectToDatabase())
                     {
+                        User result;
                         try
                         {
                             result = db.Users.FirstOrDefault(m => m.Email.ToLower().Equals(email.ToLower()));
-                            if (result != null && result.Type.Equals("Teacher"))
+                            if (result != null)
                             {
-                                return db.Users.OfType<Teacher>().Include(t => t.Lessons).FirstOrDefault(m => m.Email.ToLower().Equals(email.ToLower()));
+                                if (result.Type.Equals("Teacher")) {
+                                    return db.Users.OfType<Teacher>().Include(t => t.Lessons).FirstOrDefault(m => m.Email.ToLower().Equals(email.ToLower()));
+                                }
+                                else
+                                {
+                                    return result;
+                                }
                             }
+                            throw new Exception("failed to get user by email. user doesn't exist.");
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to get user by email. user isn't exist.");
+                            throw new Exception("failed to get user by email. user doesn't exist.");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
-            return result;
         }
 
         public void AddUser(User newUser)
@@ -160,6 +168,9 @@ namespace EmotionDetectionSystem.DataLayer
                 }
                 catch (Exception ex)
                 {
+
+
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -167,36 +178,34 @@ namespace EmotionDetectionSystem.DataLayer
 
         public void RemoveUser(string userEmail)
         {
-            if (!testMode)
+            lock (this)
             {
-                lock (this)
+                try
                 {
-                    try
+                    using (var db = DatabaseContextFactory.ConnectToDatabase())
                     {
-                        using (var db = DatabaseContextFactory.ConnectToDatabase())
+                        try
                         {
-                            try
-                            {
-                                var memberFound = db.Users.FirstOrDefault(m => m.Email.Equals(userEmail));
+                            var memberFound = db.Users.FirstOrDefault(m => m.Email.Equals(userEmail));
 
-                                if (memberFound != null)
-                                {
-                                    db.Users.Remove(memberFound);
-                                    db.SaveChanges(true);
-                                }
-                            }
-                            catch (Exception ex)
+                            if (memberFound != null)
                             {
-                                //throw new Exception("failed to interact with stores table");
+                                db.Users.Remove(memberFound);
+                                db.SaveChanges(true);
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(DbErrorMessage);
+                        catch (Exception ex)
+                        {
+                            throw new Exception("failed to interact with stores table: " + ex);
+                        }
                     }
                 }
-            }
+                catch (Exception ex)
+                {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
+                    throw new Exception(DbErrorMessage);
+                }
+                }
         }
 
         public List<Lesson> GetAllLessons()
@@ -219,12 +228,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with lessons table");
+                            throw new Exception("failed to interact with lessons table: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -244,12 +254,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to fatch lesson by entry code.");
+                            throw new Exception("failed to fatch lesson by entry code." + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -275,12 +286,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to fatch lesson by id.");
+                            throw new Exception("failed to fatch lesson by id." + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -304,7 +316,7 @@ namespace EmotionDetectionSystem.DataLayer
                             if (teacher != null)
                             {
                                 // Check if the lesson is already being tracked by the context
-                                var existingLesson = db.Lessons.Local.FirstOrDefault(l => l.Id == item.Id);
+                                var existingLesson = db.Lessons.Local.FirstOrDefault(l => l.LessonId == item.LessonId);
                                 if (existingLesson != null)
                                 {
                                     // Detach the existing lesson to avoid conflicts
@@ -332,10 +344,12 @@ namespace EmotionDetectionSystem.DataLayer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("Error in AddLesson method: " + ex.Message, ex);
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
+                    throw new Exception(DbErrorMessage);
                 }
             }
         }
+
         public List<Lesson> GetByTeacherEmail(string email)
         {
             lock (this)
@@ -350,12 +364,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to fetch lessons by teacher email.");
+                            throw new Exception("failed to fetch lessons by teacher email: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -364,31 +379,29 @@ namespace EmotionDetectionSystem.DataLayer
 
         public void CanConnectToDatabase()
         {
-            if (!testMode)
+            lock (this)
             {
-                lock (this)
+                try
                 {
-                    try
+                    using (var db = DatabaseContextFactory.ConnectToDatabase())
                     {
-                        using (var db = DatabaseContextFactory.ConnectToDatabase())
-                        {
-                            db.Database.GetDbConnection().Open();
-                            db.Database.GetDbConnection().Close();
-                        }
+                        db.Database.GetDbConnection().Open();
+                        db.Database.GetDbConnection().Close();
                     }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(DbErrorMessage + " or check your internet Connection");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
+                    throw new Exception(DbErrorMessage);
                 }
             }
         }
 
         public User GetUserById(string id)
         {
-            User result;
             lock (this)
             {
+                User result;
                 try
                 {
                     using (var db = DatabaseContextFactory.ConnectToDatabase())
@@ -403,16 +416,17 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to get member by email. user isn't exist.");
+                            throw new Exception("failed to get member by email. user isn't exist: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
+                return result;
             }
-            return result;
         }
 
         public List<User> GetAllUsers()
@@ -432,12 +446,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with users table");
+                            throw new Exception("failed to interact with users table: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -459,8 +474,6 @@ namespace EmotionDetectionSystem.DataLayer
                             if (teacher != null)
                             {
 
-                                // Add the lesson to the teacher's lessons
-                                //teacher.Lessons = db.Lessons.Where(l => l.Teacher.Email == email).ToList<Lesson>();
                                 return teacher;
                             }
                             else
@@ -476,7 +489,8 @@ namespace EmotionDetectionSystem.DataLayer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("Error in AddLesson method: " + ex.Message, ex);
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
+                    throw new Exception(DbErrorMessage);
                 }
             }
         }
@@ -495,12 +509,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with enrollment summaries table");
+                            throw new Exception("failed to interact with enrollment summaries table: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -520,21 +535,22 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to fatch enrollment summary by student email.");
+                            throw new Exception("failed to fatch enrollment summary by student email: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
         }
         public Dictionary<string, List<string>> GetStudentWiningEmotions(string lessonId)
         {
-            Dictionary<string, List<string>> studentWiningEmotions = new Dictionary<string, List<string>>();
             lock (this)
             {
+                Dictionary<string, List<string>> studentWiningEmotions = new Dictionary<string, List<string>>();
                 try
                 {
                     using (var db = DatabaseContextFactory.ConnectToDatabase())
@@ -565,6 +581,7 @@ namespace EmotionDetectionSystem.DataLayer
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -600,13 +617,14 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with enrollment summaries table and add a new item.");
+                            throw new Exception("failed to interact with enrollment summaries table and add a new item: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(DbErrorMessage + ex);
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
+                    throw new Exception(DbErrorMessage);
                 }
             }
         }
@@ -626,12 +644,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with enrollment summaries table and check if enrollment summary contain student.");
+                            throw new Exception("failed to interact with enrollment summaries table and check if enrollment summary contain student." + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -651,12 +670,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with enrollment summaries table and fetch enrollment summary.");
+                            throw new Exception("failed to interact with enrollment summaries table and fetch enrollment summary: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -677,12 +697,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with enrollment summaries table and update the item.");
+                            throw new Exception("failed to interact with enrollment summaries table and update the item: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -703,12 +724,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with enrollment summaries table and fetch emotion data.");
+                            throw new Exception("failed to interact with enrollment summaries table and fetch emotion data: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -728,12 +750,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with enrollment summaries table and fetch GetEnrollmentSummariesWithData.");
+                            throw new Exception("failed to interact with enrollment summaries table and fetch GetEnrollmentSummariesWithData: " + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -754,12 +777,13 @@ namespace EmotionDetectionSystem.DataLayer
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception("failed to interact with enrollment summaries table and fetch the studnets' emotions.");
+                            throw new Exception("failed to interact with enrollment summaries table and fetch the studnets' emotions:" + ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }
@@ -789,6 +813,7 @@ namespace EmotionDetectionSystem.DataLayer
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
                     throw new Exception(DbErrorMessage);
                 }
             }

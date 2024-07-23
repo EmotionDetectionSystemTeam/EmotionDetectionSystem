@@ -366,14 +366,14 @@ public class EdsManager
     /// <param name="teacherEmail">The email address of the teacher requesting student data.</param>
     /// <returns>A dictionary where each key is a student and the value is a list of enrollment summaries for that student across all lessons.</returns>
     /// <exception cref="Exception">Thrown when there is an issue with session validation or if the teacher's lessons cannot be retrieved.</exception>
-    public Dictionary<Student, List<EnrollmentSummary>> GetAllStudentsData(string correlationId, string sessionId, string teacherEmail)
+    public Dictionary<string, List<EnrollmentSummary>> GetAllStudentsData(string correlationId, string sessionId, string teacherEmail)
     {
         IsValidSession(sessionId, teacherEmail);
     
         var teacher = _userManager.GetTeacher(teacherEmail);
         var lessons = teacher.Lessons;
     
-        var studentData = new Dictionary<Student, List<EnrollmentSummary>>();
+        var studentData = new Dictionary<string, List<EnrollmentSummary>>();
 
         foreach (var lesson in lessons)
         {
@@ -381,10 +381,10 @@ public class EdsManager
         
             foreach (var enrollmentSummary in enrollmentSummaries)
             {
-                if (!studentData.TryGetValue(enrollmentSummary.Student, out var value))
+                if (!studentData.TryGetValue(enrollmentSummary.Student.Email, out var value))
                 {
                     value                                  = new List<EnrollmentSummary>();
-                    studentData[enrollmentSummary.Student] = value;
+                    studentData[enrollmentSummary.Student.Email] = value;
                 }
 
                 value.Add(enrollmentSummary);

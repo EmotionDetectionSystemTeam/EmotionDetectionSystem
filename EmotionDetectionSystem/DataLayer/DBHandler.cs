@@ -399,34 +399,7 @@ namespace EmotionDetectionSystem.DataLayer
 
         public User GetUserById(string id)
         {
-            lock (this)
-            {
-                User result;
-                try
-                {
-                    using (var db = DatabaseContextFactory.ConnectToDatabase())
-                    {
-                        try
-                        {
-                            result = db.Users.FirstOrDefault(m => m.Email.ToLower().Equals(id.ToLower()));
-                            if (result != null && result.Type.Equals("Teacher"))
-                            {
-                                return db.Users.OfType<Teacher>().Include(t => t.Lessons).FirstOrDefault(m => m.Email.ToLower().Equals(id.ToLower()));
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception("failed to get member by email. user isn't exist: " + ex);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error($"DBHandler exception. ex.Message: {ex.Message}, ex.InnerException: {ex.InnerException}, ex: {ex}");
-                    throw new Exception(DbErrorMessage);
-                }
-                return result;
-            }
+            return GetUserByEmail(id);
         }
 
         public List<User> GetAllUsers()

@@ -143,7 +143,8 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
         }
         public Dictionary<Student, EnrollmentSummary> GetStudentsEmotions()
         {
-            return DBHandler.Instance.GetStudentsEmotions(_lessonId);
+            List<EnrollmentSummary> _enrollmentSummaries = _enrollmentSummaryByEmail.Values.ToList<EnrollmentSummary>();
+            return _enrollmentSummaries.ToDictionary(enrollmentSummary => enrollmentSummary.Student, enrollmentSummary => enrollmentSummary);
         }
 
         private void CacheEnrollmentSummary(EnrollmentSummary summary)

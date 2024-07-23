@@ -15,7 +15,7 @@ namespace TestEDS.ServerTests
 
     public class MultipleStudentsSendsEmotionToServer
     {
-        private const string BaseUrl = "https://fab7-2a0d-6fc2-5ce0-d00-8978-f9cc-e4b7-4a88.ngrok-free.app"; // Replace with your API base URL
+        private const string BaseUrl = "https://localhost:7069"; // Replace with your API base URL
         private static Logger log = LogManager.GetCurrentClassLogger();
         private const string registerEnd = "/api/eds/register";
         private const string loginEnd = "/api/eds/login";

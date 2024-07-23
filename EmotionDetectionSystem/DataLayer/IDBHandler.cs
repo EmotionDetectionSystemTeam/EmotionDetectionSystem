@@ -24,7 +24,7 @@ namespace EmotionDetectionSystem.DataLayer
         void AddEnrollmentSummary(EnrollmentSummary item);
         bool EnrollmentSummaryContainStudent(Student student, string lessonId);
         EnrollmentSummary GetEnrollmentSummaryPerStudentLesson(string userEmail, string lessonId);
-        void PutEmotionData(string userEmail, string lessonId, EmotionData emotionData);
+        void UpdateEnrollmentSummary(EnrollmentSummary enrollmentSummary);
         IEnumerable<EmotionData> GetEmotionDataEntries(string lessonId);
         IEnumerable<EnrollmentSummary> GetEnrollmentSummariesWithData(string lessonId);
         Dictionary<Student, EnrollmentSummary> GetStudentsEmotions(string lessonId);

@@ -175,19 +175,12 @@ public class UserManager
 
     public Teacher GetTeacher(string email)
     {
-        try
+        var user = _userRepo.GetByEmail(email);
+        if (user is Teacher teacher)
         {
-            Teacher teacher = _userRepo.GetTeacherByEmail(email);
-            if (teacher.Type.ToLower().Equals("teacher"))
-            {
-                return teacher;
-            }
+            return teacher;
         }
-        catch (Exception ex)
-        {
-            Log.InfoFormat($"GetTeacher with email: {email} failed. Exception: {ex}.");
-            throw new Exception("User is not a teacher");
-        }
+
         throw new Exception("User is not a teacher");
     }
 
@@ -210,9 +203,5 @@ public class UserManager
         const string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
 
         return Regex.IsMatch(email, pattern);
-    }
-    public void ClearSessions()
-    {
-        _userBySession.Clear();
     }
 }

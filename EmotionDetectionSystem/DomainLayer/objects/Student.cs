@@ -7,7 +7,6 @@ public class Student : User
     {
         Type = "Student";
     }
-    public Student() { }
 
     public override void JoinLesson(Lesson lesson)
     {

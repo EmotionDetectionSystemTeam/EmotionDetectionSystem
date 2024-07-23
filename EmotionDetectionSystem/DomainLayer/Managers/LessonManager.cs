@@ -12,16 +12,10 @@ public class LessonManager
     private                 LessonRepo _lessonRepo;
     private                 long       _lessonIdFactory = 1;
     private static readonly ILog       Log              = LogManager.GetLogger(typeof(LessonManager));
-    private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1); // Semaphore for thread safety
 
     public LessonManager()
     {
         _lessonRepo = new LessonRepo();
-    }
-    public LessonRepo LessonRepo
-    {
-        get => _lessonRepo ??= new LessonRepo();
-        set => _lessonRepo = value;
     }
 
     /// <summary>
@@ -35,34 +29,22 @@ public class LessonManager
     /// <returns>The created lesson.</returns>
     public Lesson CreateLesson(string correlationId, Teacher teacher, string title, string description, string[] tags)
     {
-        return CreateLessonAsync(correlationId, teacher, title, description, tags).GetAwaiter().GetResult();
-    }
-    public async Task<Lesson> CreateLessonAsync(string correlationId, Teacher teacher, string title, string description, string[] tags)
-    {
-        await _semaphore.WaitAsync(); // Acquire semaphore for thread-safe access
-        try
+        Log.Info($"[{correlationId}] Creating lesson titled: {title} by teacher: {teacher.Email}");
+        if (string.IsNullOrEmpty(title))
         {
-            Log.Info($"[{correlationId}] Creating lesson titled: {title} by teacher: {teacher.Email}");
-            if (string.IsNullOrEmpty(title))
-            {
-                throw new Exception("Title cannot be empty");
-            }
-
-            if (HasActiveLesson(correlationId, teacher.Email))
-            {
-                throw new Exception("Teacher already has an active lesson");
-            }
-
-            var newLesson = new Lesson(_lessonIdFactory++.ToString(), teacher, title, description, GenerateEntryCode(),
-                                       tags.ToList());
-            _lessonRepo.Add(newLesson);
-            teacher.AddLesson(newLesson);
-            return newLesson;
+            throw new Exception("Title cannot be empty");
         }
-        finally
+
+        if (HasActiveLesson(correlationId, teacher.Email))
         {
-            _semaphore.Release(); // Release semaphore after operation
+            throw new Exception("Teacher already has an active lesson");
         }
+
+        var newLesson = new Lesson(_lessonIdFactory++.ToString(), teacher, title, description, GenerateEntryCode(),
+                                   tags.ToList());
+        _lessonRepo.Add(newLesson);
+        teacher.AddLesson(newLesson);
+        return newLesson;
     }
 
     private bool HasActiveLesson(string correlationId, string email)

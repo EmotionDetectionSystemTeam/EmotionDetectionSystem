@@ -287,7 +287,7 @@ public class EdsService : IEdsService
             var correlationId = Guid.NewGuid().ToString();
             var enrollmentSummariesDict = _edsManager.GetAllStudentsData(correlationId,sessionId, teacherEmail);
             var response = enrollmentSummariesDict
-                .Select(enrollmentSummary => new StudentOverview(enrollmentSummary.Key, enrollmentSummary.Value))
+                .Select(enrollmentSummary => new StudentOverview(enrollmentSummary.Value[0].Student, enrollmentSummary.Value))
                 .ToList();
             return Response<List<StudentOverview>>.FromValue(response);
         }

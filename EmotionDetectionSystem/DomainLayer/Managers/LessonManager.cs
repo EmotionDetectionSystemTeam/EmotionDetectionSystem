@@ -10,7 +10,6 @@ namespace EmotionDetectionSystem.DomainLayer.Managers;
 public class LessonManager
 {
     private                 LessonRepo _lessonRepo;
-    private                 long       _lessonIdFactory = 1;
     private static readonly ILog       Log              = LogManager.GetLogger(typeof(LessonManager));
     private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1); // Semaphore for thread safety
 
@@ -53,7 +52,7 @@ public class LessonManager
                 throw new Exception("Teacher already has an active lesson");
             }
 
-            var newLesson = new Lesson(_lessonIdFactory++.ToString(), teacher, title, description, GenerateEntryCode(),
+            var newLesson = new Lesson(Guid.NewGuid().ToString(), teacher, title, description, GenerateEntryCode(),
                                        tags.ToList());
             _lessonRepo.Add(newLesson);
             teacher.AddLesson(newLesson);

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using EmotionDetectionSystem.DataLayer;
@@ -9,7 +10,7 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
     public class EnrollmentSummaryRepo : IRepo<EnrollmentSummary>
     {
         private readonly string _lessonId;
-        private Dictionary<string, EnrollmentSummary> _enrollmentSummaryByEmail;
+        private ConcurrentDictionary<string, EnrollmentSummary> _enrollmentSummaryByEmail;
         private bool _enableCache = true;
         public bool EnableCache
         {
@@ -20,7 +21,7 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
         public EnrollmentSummaryRepo(string lessonId)
         {
             _lessonId = lessonId;
-            _enrollmentSummaryByEmail = new Dictionary<string, EnrollmentSummary>();
+            _enrollmentSummaryByEmail = new ConcurrentDictionary<string, EnrollmentSummary>();
             GetAll();
         }
 
@@ -95,7 +96,7 @@ namespace EmotionDetectionSystem.DomainLayer.Repos
 
         public bool ContainsValue(EnrollmentSummary item)
         {
-            return _enrollmentSummaryByEmail.ContainsValue(item);
+            return _enrollmentSummaryByEmail.ContainsKey(item.Student.Email);
         }
 
         public void ResetDomainData()

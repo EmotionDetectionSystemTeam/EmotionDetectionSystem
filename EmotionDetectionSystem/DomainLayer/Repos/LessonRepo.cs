@@ -1,6 +1,7 @@
 using EmotionDetectionSystem.DataLayer;
 using EmotionDetectionSystem.DomainLayer.objects;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Concurrent;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace EmotionDetectionSystem.DomainLayer.Repos;
@@ -8,8 +9,8 @@ namespace EmotionDetectionSystem.DomainLayer.Repos;
 public class LessonRepo : IRepo<Lesson>
 {
     //Dictionary<teacherEmail, List<Lesson>>
-    private Dictionary<string, List<Lesson>> _lessonsByEmail = new Dictionary<string, List<Lesson>>();
-    private Dictionary<string, Lesson> _lessonsByEntryCode = new Dictionary<string, Lesson>();
+    private ConcurrentDictionary<string, List<Lesson>> _lessonsByEmail = new ConcurrentDictionary<string, List<Lesson>>();
+    private ConcurrentDictionary<string, Lesson> _lessonsByEntryCode = new ConcurrentDictionary<string, Lesson>();
     private bool _enableCache = true;
     public bool EnableCache
     {
@@ -41,9 +42,9 @@ public class LessonRepo : IRepo<Lesson>
         lessons.Add(lesson);
         if (_lessonsByEntryCode.ContainsKey(lesson.EntryCode))
         {
-            _lessonsByEntryCode.Remove(lesson.EntryCode);
+            _lessonsByEntryCode.Remove(lesson.EntryCode ,out var removedLesson);
         }
-        _lessonsByEntryCode.Add(lesson.EntryCode, lesson);
+        _lessonsByEntryCode.AddOrUpdate(lesson.EntryCode, lesson, (key, oldValue) => lesson);
     }
 
     public List<Lesson> GetAll()
